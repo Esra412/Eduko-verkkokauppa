@@ -1,0 +1,90 @@
+/* --- EDUKO MUUTTUJAT --- */
+:root {
+    --eduko-gold: #b0a078;
+    --eduko-dark: #333333;
+    --eduko-bg: #f9f7f2;
+    --white: #ffffff;
+    --text-main: #2c3e50;
+    --danger: #d9534f;
+    --shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+* { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+body { margin: 0; background-color: var(--eduko-bg); color: var(--text-main); }
+
+/* --- HEADER & NAV (Eduko tyyli) --- */
+.main-header { background: var(--white); padding: 15px 0; border-bottom: 2px solid var(--eduko-gold); }
+.header-container { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
+
+.eduko-text { font-size: 32px; font-weight: 900; color: var(--eduko-dark); text-decoration: none; }
+.eduko-text span { color: var(--eduko-gold); }
+.logo small { display: block; font-size: 11px; text-transform: uppercase; margin-top: -5px; }
+
+.search-box { display: flex; flex: 1; max-width: 500px; margin: 0 40px; }
+.search-box input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px 0 0 4px; outline: none; }
+.search-box button { background: var(--eduko-gold); border: none; color: white; padding: 0 20px; border-radius: 0 4px 4px 0; cursor: pointer; }
+
+.auth-buttons { display: flex; align-items: center; }
+.btn-primary { background: var(--eduko-gold); color: white; padding: 10px 22px; border-radius: 4px; text-decoration: none; font-weight: bold; }
+.btn-text { text-decoration: none; color: var(--eduko-dark); margin-right: 20px; font-weight: 500; }
+
+.main-nav { background: var(--eduko-dark); width: 100%; position: sticky; top: 0; z-index: 1000; }
+.nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
+.nav-links a { color: var(--white); text-decoration: none; padding: 18px 20px; display: inline-block; font-size: 14px; font-weight: 600; text-transform: uppercase; }
+.nav-links a.active, .nav-links a:hover { background: var(--eduko-gold); color: var(--eduko-dark); }
+
+.cart-container { color: white; position: relative; cursor: pointer; padding: 15px; font-size: 20px; }
+#cart-count { position: absolute; top: 10px; right: 5px; background: var(--danger); font-size: 11px; padding: 2px 6px; border-radius: 50%; }
+
+/* --- TUOTESIVUN SISÄLTÖ (Luonnoksen mukaan) --- */
+.layout-container { max-width: 1200px; margin: 30px auto; display: grid; grid-template-columns: 280px 1fr; gap: 30px; padding: 0 20px; }
+
+.product-main { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 40px; 
+    background: white; 
+    padding: 30px; 
+    border-radius: 8px; 
+    box-shadow: var(--shadow); 
+}
+
+.main-image-container { position: relative; border: 1px solid #eee; border-radius: 4px; overflow: hidden; }
+.main-image-container img { width: 100%; display: block; }
+.pickup-badge { position: absolute; top: 10px; left: 10px; background: var(--eduko-dark); color: var(--eduko-gold); padding: 5px 10px; font-weight: bold; font-size: 12px; }
+
+.divider { border: none; border-bottom: 2px solid var(--eduko-dark); margin: 10px 0 20px 0; }
+.purchase-section { display: flex; align-items: center; gap: 30px; margin-bottom: 30px; }
+
+/* Soikea OSTA-nappi luonnoksesta */
+.buy-now-btn { 
+    background: var(--white); 
+    border: 2px solid var(--eduko-dark); 
+    padding: 10px 45px; 
+    border-radius: 30px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    transition: 0.3s; 
+}
+.buy-now-btn:hover { background: var(--eduko-gold); border-color: var(--eduko-gold); color: white; }
+
+/* Välilehdet katkoviivalla */
+.tab-buttons { display: flex; gap: 10px; border-bottom: 2px dashed #ccc; padding-bottom: 10px; margin-bottom: 20px; }
+.tab-btn { background: white; border: 1px solid #ccc; padding: 8px 20px; cursor: pointer; }
+.tab-btn.active { background: #f0f0f0; font-weight: bold; border-bottom: 2px solid var(--eduko-gold); }
+
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+.no-return { color: var(--danger); font-weight: bold; margin-top: 15px; font-size: 13px; }
+
+/* Sivupalkki */
+.side-nav a { display: block; padding: 12px 15px; color: var(--eduko-dark); text-decoration: none; background: white; margin-bottom: 5px; border-radius: 4px; transition: 0.2s; font-size: 14px; }
+.side-nav a:hover { background: #fdfcf9; border-left: 3px solid var(--eduko-gold); color: var(--eduko-gold); }
+.side-nav i { margin-right: 10px; width: 20px; text-align: center; }
+
+@media (max-width: 992px) { .product-main { grid-template-columns: 1fr; } .sidebar { display: none; } .layout-container { grid-template-columns: 1fr; } }
+
+/* Lisää tämä CSS-tiedostosi loppuun */
+.tab-pane.active {
+    display: block !important; /* Pakottaa näkyviin, kun luokka on aktiivinen */
+}

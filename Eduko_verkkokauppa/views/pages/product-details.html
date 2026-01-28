@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eduko – Tuotetiedot</title>
+    <link rel="stylesheet" href="/styles/product-details.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<header class="main-header">
+    <div class="header-container">
+        <div class="logo">
+            <span class="eduko-text">edu<span>ko</span></span>
+            <small>Kouvolan Ammattiopisto</small>
+        </div>
+        <div class="search-box">
+            <input type="text" placeholder="Hae tuotteita tai palveluita...">
+            <button><i class="fas fa-search"></i></button>
+        </div>
+        <div class="auth-buttons">
+            <a href="#" class="btn-text">Rekisteröidy</a>
+            <a href="#" class="btn-primary">Kirjaudu</a>
+        </div>
+    </div>
+</header>
+
+<nav class="main-nav">
+    <div class="nav-container">
+        <div class="nav-links">
+            <a href="/" class="active">Kaikki ilmoitukset</a>
+            <a href="#">Miten ostat?</a>
+            <a href="#">Myyntipalvelut</a>
+            <a href="#">Tietoa meistä</a>
+            <a href="#">Yhteystiedot</a>
+        </div>
+        <div class="cart-container" id="cart-btn">
+            <i class="fas fa-shopping-cart"></i>
+            <span id="cart-count">0</span>
+        </div>
+    </div>
+</nav>
+
+<div class="layout-container">
+    <aside class="sidebar">
+        <h3>Kategoriat</h3>
+        <nav class="side-nav">
+            <a href="/kategoria/ajoneuvoala"><i class="fas fa-hammer"></i> Ajoneuvoala</a>
+            <a href="/kategoria/hiusala"><i class="fas fa-magic"></i> Hius- ja kauneudenhoito</a>
+            <a href="/kategoria/metalli"><i class="fas fa-bolt"></i> Kone- ja metalliala</a>
+            <a href="/kategoria/logistiikka"><i class="fas fa-truck"></i> Logistiikka ja varasto</a>
+            <a href="/kategoria/prosessi"><i class="fas fa-flask"></i> Prosessi- ja laboratorio</a>
+            <a href="/kategoria/turvallisuus"><i class="fas fa-shield-alt"></i> Turvallisuusala</a>
+            <a href="/kategoria/rakennus"><i class="fas fa-paint-roller"></i> Rakennus ja pintakäsittely</a>
+            <a href="/kategoria/ravintola"><i class="fas fa-utensils"></i> Ravintola ja catering</a>
+            <a href="/kategoria/sahko"><i class="fas fa-plug"></i> Sähkö ja automaatio</a>
+            <a href="/kategoria/sote"><i class="fas fa-heartbeat"></i> Sosiaali- ja terveysala</a>
+            <a href="/kategoria/it"><i class="fas fa-laptop-code"></i> Tieto- ja viestintätekniikka</a>
+        </nav>
+    </aside>
+
+    <main class="product-main">
+        <section class="product-gallery">
+            <div class="main-image-container">
+                <img id="display-img" src="/images/placeholder.jpg" alt="Tuotteen kuva">
+                <span class="pickup-badge">Vain nouto</span>
+            </div>
+        </section>
+
+        <section class="product-info-box">
+            <h1 id="product-name">Tuotteen nimi</h1>
+            <hr class="divider">
+            
+            <div class="purchase-section">
+                <div class="price-tag">
+                    <small>Hinta</small>
+                    <h2 id="product-price">0,00 €</h2>
+                </div>
+                <button class="buy-now-btn">OSTA</button>
+            </div>
+
+            <div class="info-tabs">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" data-target="kuvaus">Kuvaus</button>
+                    <button class="tab-btn" data-target="tekniset">Tekniset tiedot</button>
+                    <button class="tab-btn" data-target="kuvat">Kuvat</button>
+                </div>
+
+                <div id="kuvaus" class="tab-pane active">
+                    <p id="product-desc">Tuotetiedot ladataan tästä...</p>
+                    <p class="no-return">Huom: Noutotuotteilla ei ole palautusoikeutta.</p>
+                </div>
+
+                <div id="tekniset" class="tab-pane">
+                    <ul id="product-specs" class="specs-list"></ul>
+                </div>
+
+                <div id="kuvat" class="tab-pane">
+                    <div class="thumbnail-grid" id="thumbnail-container"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script src="/script/product-details.js"></script>
+</body>
+</html>
