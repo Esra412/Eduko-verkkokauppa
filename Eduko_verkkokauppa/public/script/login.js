@@ -1,31 +1,50 @@
-async function sendCode() {
-    const email = document.getElementById("email").value;
+ async function sendCode() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const errorDiv = document.getElementById('error-step1');
+        errorDiv.innerText = "";
 
-    const res = await fetch("/api/send-code", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email })
-    });
+        try {
+            const response = await fetch('/api/login-step1', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
 
-    const data = await res.json();
-    document.getElementById("message").innerText = data.message;
+            const result = await response.json();
 
-    if (data.success) {
-        document.getElementById("code").disabled = false;
+            if (response.ok) {
+                document.getElementById('step1').style.display = 'none';
+                document.getElementById('step2').style.display = 'block';
+            } else {
+                errorDiv.innerText = result.message;
+            }
+        } catch (err) {
+            errorDiv.innerText = "Yhteysvirhe palvelimeen.";
+        }
     }
-}
 
-async function login() {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-    const code = document.getElementById("code").value;
+    async function verifyCode() {
+        const code = document.getElementById('code').value;
+        const errorDiv = document.getElementById('error-step2');
+        errorDiv.innerText = "";
 
-    const res = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, code })
-    });
+        try {
+            const response = await fetch('/api/verify-code', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code })
+            });
 
-    const data = await res.json();
-    document.getElementById("message").innerText = data.message;
-}
+            const result = await response.json();
+
+            if (response.ok) {
+                // Backend'den gelen redirect adresine (/) git
+                window.location.href = result.redirect;
+            } else {
+                errorDiv.innerText = result.message;
+            }
+        } catch (err) {
+            errorDiv.innerText = "Vahvistus epäonnistui.";
+        }
+    }
