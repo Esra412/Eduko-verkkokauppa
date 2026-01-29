@@ -1,0 +1,267 @@
+:root {
+    --eduko-gold: #b0a078;
+    --eduko-dark: #333333;
+    --eduko-bg: #f9f7f2;
+    --white: #ffffff;
+    --text-main: #2c3e50;
+    --shadow: 0 4px 15px rgba(0,0,0,0.08);
+    --danger: #d9534f;
+    --success: #28a745;
+}
+
+
+* {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    margin: 0;
+    background-color: var(--eduko-bg);
+    color: var(--text-main);
+    line-height: 1.6;
+}
+
+/* --- HEADER (Ylätunniste) --- */
+.main-header {
+    background: var(--white);
+    padding: 15px 0;
+    border-bottom: 2px solid var(--eduko-gold);
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+}
+
+.btn-primary { background: var(--eduko-gold); color: white; padding: 10px 22px; border-radius: 4px; text-decoration: none; font-weight: bold; }
+
+.logo {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+}
+
+.eduko-text {
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    color: var(--eduko-dark);
+}
+
+.eduko-text span {
+    color: var(--eduko-gold);
+}
+
+.logo small {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: -5px;
+    color: var(--eduko-dark);
+}
+
+/* --- HAKU --- */
+.search-box {
+    display: flex;
+    flex: 1;
+    max-width: 500px;
+    margin: 0 40px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px 0 0 4px;
+    outline: none;
+}
+
+.search-box button {
+    background: var(--eduko-gold);
+    border: none;
+    color: white;
+    padding: 0 20px;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+}
+
+
+
+/* --- NAVIGOINTI & OSTOSKORI --- */
+.main-nav {
+    background: var(--eduko-dark);
+    width: 100%;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    padding: 0 20px;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links a {
+    display: inline-block;
+    color: var(--white);
+    text-decoration: none;
+    padding: 18px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+.nav-links a:hover, .nav-links a.active {
+    background: var(--eduko-gold);
+    color: var(--eduko-dark);
+}
+
+.cart-container {
+    position: relative;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 15px 10px;
+    display: flex;
+    align-items: center;
+    transition: transform 0.2s;
+}
+
+
+.cart-container:hover {
+    transform: scale(1.05);
+}
+
+.cart-badge {
+    position: absolute;
+    top: 8px;
+    right: 4px;
+    background: var(--danger);
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 50%;
+}
+
+/* --- TIETOA MEISTÄ - SISÄLTÖ --- */
+.about-section {
+    max-width: 1100px;
+    margin: 60px auto;
+    padding: 0 20px;
+}
+
+.about-hero {
+    background: var(--white);
+    padding: 50px;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    margin-bottom: 40px;
+}
+
+.about-hero h1 {
+    margin-top: 0;
+    font-size: 36px;
+    color: var(--eduko-dark);
+}
+
+.about-hero p {
+    font-size: 17px;
+    max-width: 800px;
+}
+
+.about-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+}
+
+.about-card {
+    background: var(--white);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.about-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+
+.about-card h3 {
+    margin-top: 0;
+    color: var(--eduko-gold);
+}
+
+.about-card p {
+    font-size: 15px;
+}
+
+/* --- INFO-BANNER --- */
+.info-banner {
+    background: var(--eduko-dark);
+    color: white;
+    padding: 40px 20px;
+    text-align: center;
+    margin-top: 60px;
+}
+
+.info-banner h2 {
+    margin: 0 0 10px;
+}
+
+.info-banner p {
+    margin: 0;
+    opacity: 0.9;
+}
+
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .search-box {
+        margin: 0;
+        max-width: 100%;
+    }
+
+    .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .nav-links a {
+        padding: 14px;
+        font-size: 13px;
+    }
+
+    .about-hero {
+        padding: 30px;
+    }
+
+    .about-hero h1 {
+        font-size: 28px;
+    }
+}

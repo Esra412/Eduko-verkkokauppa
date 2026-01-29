@@ -37,6 +37,7 @@ app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views', 'pages', '
 app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'views', 'pages', 'login.html')));
 app.get('/kategoria/:id', (req, res) => res.sendFile(path.join(__dirname, 'views', 'pages', 'category.html')));
 app.get('/tuote/:id', (req, res) => res.sendFile(path.join(__dirname, 'views', 'pages', 'product-details.html')));
+app.get('/tietoa-meista', (req, res) => res.sendFile(path.join(__dirname, 'views', 'pages', 'Tietoa_meista.html')));
 
 // --- API: KIRJAUTUMINEN JA KOODIN LÄHETYS ---
 app.post('/api/login-step1', async (req, res) => {
