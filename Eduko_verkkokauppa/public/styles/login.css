@@ -1,0 +1,75 @@
+:root {
+    --eduko-gold: #b0a078;
+    --eduko-dark: #333333;
+    --eduko-bg: #f9f7f2;
+    --white: #ffffff;
+    --text-main: #2c3e50;
+    --shadow: 0 4px 15px rgba(0,0,0,0.08);
+    --danger: #d9534f;
+    --success: #28a745;
+}
+
+body {
+    background: var(--eduko-bg);
+    font-family: Arial, sans-serif;
+}
+
+.login-container {
+    width: 400px;
+    margin: 80px auto;
+    background: var(--white);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: var(--eduko-dark);
+}
+
+label {
+    font-size: 14px;
+    color: var(--text-main);
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 6px 0 15px 0;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.code-row {
+    display: flex;
+    gap: 10px;
+}
+
+.code-row input {
+    flex: 1;
+}
+
+.code-row button {
+    background: #eef1ff;
+    color: #4f46e5;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--eduko-gold);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+#message {
+    margin-top: 15px;
+    text-align: center;
+}
