@@ -4,7 +4,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Tarjoillaan staattiset tiedostot (CSS, kuvat, selain-JS)
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public')));        
 
 // Reitti pääsivulle
 app.get('/', (req, res) => {
@@ -14,6 +14,10 @@ app.get('/', (req, res) => {
 // Tuotelistaus-sivu (esim. Ajoneuvoala)
 app.get('/kategoria/:id', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'pages', 'category.html'));
+});
+
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'pages', 'admin.html'));
 });
 
 // Tuotteen lisätiedot (yksittäinen kohde)
