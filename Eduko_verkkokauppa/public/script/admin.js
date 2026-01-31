@@ -4,12 +4,6 @@ const addProductForm = document.getElementById("addProductForm");
 const productList = document.getElementById("productList");
 const searchBtn = document.getElementById("searchBtn");
 
-// Takaisin etusivulle -painike
-const backBtn = document.getElementById('BackToMenuBtn');
-backBtn.addEventListener('click', () => {
-    window.location.href = 'index.html'; // muokkaa tarvittaessa oikea URL
-});
-
 function saveProducts() {
   localStorage.setItem("products", JSON.stringify(products));
 }

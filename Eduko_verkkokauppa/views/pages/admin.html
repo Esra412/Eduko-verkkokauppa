@@ -19,15 +19,53 @@
     }
 
     header {
-      background: var(--eduko-dark);
-      color: white;
+      background: var(--white);       
+      color: var(--eduko-dark);
       padding: 1.5rem 2rem;
+      border-bottom: 2px solid var(--eduko-gold);
+    }
+
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 2rem;
     }
 
-    nav button {
+    .logo {
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      text-decoration: none;
+    }
+
+    .eduko-text {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      color: var(--eduko-dark);
+    }
+
+    .eduko-text span {
+      color: var(--eduko-gold);
+    }
+
+    .logo small {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: -5px;
+      color: #666;
+    }
+
+    header nav {
+      display: flex;
+      gap: 1rem;
+    }
+
+    header nav button {
       background: var(--eduko-gold);
       color: white;
       border: none;
@@ -35,6 +73,46 @@
       border-radius: 6px;
       padding: 0.5rem 1rem;
       font-weight: bold;
+    }
+
+    /* --- NAVIGOINTI --- */
+    .main-nav {
+      background: var(--eduko-dark);
+      width: 100%;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      display: inline-block;
+      color: white;
+      text-decoration: none;
+      padding: 1rem 0;
+      border-bottom: 3px solid transparent;
+      transition: border-bottom 0.3s;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      border-bottom-color: var(--eduko-gold);
     }
 
     main {
@@ -103,11 +181,22 @@
 <body>
 
 <header>
-  <h1>Admin</h1>
-  <nav>
-    <button id="BackToMenuBtn">Palaa etusivulle</button>
-  </nav>
+  <div class="header-container">
+    <div class="logo">
+      <span class="eduko-text">edu<span>ko</span></span>
+      <small>Kouvolan Ammattiopisto</small>
+    </div>
+    <h1>Admin</h1>
+    <nav>
+      <button id="BackToMenuBtn">Palaa etusivulle</button>
+    </nav>
+  </div>
 </header>
+
+<nav class="main-nav">
+  <div class="nav-container">
+  </div>
+</nav>
 
 <main>
 
@@ -177,5 +266,13 @@
 </main>
 
 <script src="admin.js"></script>
+
+<script>
+  // Back-nappi etusivulle
+  document.getElementById("BackToMenuBtn").onclick = function () {
+    window.location.href = "/";
+  };
+</script>
+
 </body>
 </html>
