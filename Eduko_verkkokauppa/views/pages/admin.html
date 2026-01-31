@@ -226,19 +226,40 @@
       <textarea name="description" placeholder="Kuvaus"></textarea>
       <input name="price" type="number" step="0.01" placeholder="Hinta" required />
       <textarea name="specs" placeholder="Tekniset tiedot"></textarea>
+
+      <!-- ANA ÜRÜN GÖRSELİ -->
+<label><b>Tuotteen pääkuva (1 kpl)</b></label>
+<input 
+  type="file" 
+  name="mainImage" 
+  accept="image/*" 
+  required
+/>
+
+<!-- EK GÖRSELLER -->
+<label><b>Muut kuvat (max 5 kpl)</b></label>
+<input 
+  type="file" 
+  name="extraImages" 
+  accept="image/*" 
+  multiple
+/>
+
+<div id="imagePreview" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
+
       <select name="category">
         <option value="">Valitse kategoria</option>
-        <option>Ajoneuvoala</option>
-        <option>Hius- ja kauneudenhoito</option>
-        <option>Kone- ja metalliala</option>
-        <option>Logistiikka ja varasto</option>
-        <option>Prosessi- ja laboratorio</option>
-        <option>Turvallisuusala</option>
-        <option>Rakennus ja pintakäsittely</option>
-        <option>Ravintola ja catering</option>
-        <option>Sähkö ja automaatio</option>
-        <option>Sosiaali- ja terveysala</option>
-        <option>Tieto- ja viestintätekniikka</option>
+        <option value="1">Ajoneuvoala</option>
+        <option value="2">Hius- ja kauneudenhoito</option>
+        <option value="3">Kone- ja metalliala</option>
+        <option value="4">Logistiikka ja varasto</option>
+        <option value="5">Prosessi- ja laboratorio</option>
+        <option value="6">Turvallisuusala</option>
+        <option value="7">Rakennus ja pintakäsittely</option>
+        <option value="8">Ravintola ja catering</option>
+        <option value="9">Sähkö ja automaatio</option>
+        <option value="10">Sosiaali- ja terveysala</option>
+        <option value="11">Tieto- ja viestintätekniikka</option>
       </select>
 
       <select name="type">
@@ -265,7 +286,7 @@
 
 </main>
 
-<script src="admin.js"></script>
+<script src="/script/admin.js"></script>
 
 <script>
   // Back-nappi etusivulle
