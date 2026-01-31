@@ -36,16 +36,6 @@ const lahetin = nodemailer.createTransport({
     tls: { rejectUnauthorized: false }
 });
 
-<<<<<<< Updated upstream
-// --- SIVUJEN REITIT ---
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views', 'pages', 'index.html')));
-app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'views', 'pages', 'login.html')));
-app.get('/kategoria/:id', (req, res) => res.sendFile(path.join(__dirname, 'views', 'pages', 'category.html')));
-app.get('/tuote/:id', (req, res) => res.sendFile(path.join(__dirname, 'views', 'pages', 'product-details.html')));
-app.get('/tietoa-meista', (req, res) => res.sendFile(path.join(__dirname, 'views', 'pages', 'Tietoa_meista.html')));
-app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'views', 'pages', 'admin.html')));
-// --- API: KIRJAUTUMINEN JA KOODIN LÄHETYS ---
-=======
 // ================= AUTH MIDDLEWARE =================
 function vaadiKirjautuminen(req, res, next) {
     console.log("Tarkistetaan istunto:", req.session); // Lisää tämä
@@ -116,7 +106,6 @@ app.get('/api/products/:id', (req, res) => {
 
 // ================= KIRJAUTUMISLOGIIKKA =================
 
->>>>>>> Stashed changes
 app.post('/api/login-step1', async (req, res) => {
     const { email, password } = req.body;
 
