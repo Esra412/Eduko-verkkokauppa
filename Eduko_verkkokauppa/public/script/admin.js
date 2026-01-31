@@ -9,16 +9,6 @@ const imagePreview = document.getElementById("imagePreview");
 const mainImageInput = document.querySelector('input[name="mainImage"]');
 const extraImagesInput = document.querySelector('input[name="extraImages"]');
 
-<<<<<<< Updated upstream
-// Takaisin etusivulle -painike
-const backBtn = document.getElementById('BackToMenuBtn');
-backBtn.addEventListener('click', () => {
-    window.location.href = 'index.html'; // muokkaa tarvittaessa oikea URL
-});
-
-function saveProducts() {
-  localStorage.setItem("products", JSON.stringify(products));
-=======
 // ==========================================
 // 1. TUOTTEIDEN LISTAUS (PALVELIMELTA)
 // ==========================================
@@ -43,7 +33,6 @@ async function renderProducts(filter = "") {
     } catch (err) {
         console.error("Virhe ladattaessa tuotteita:", err);
     }
->>>>>>> Stashed changes
 }
 
 // ==========================================
