@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ostoskori - Eduko</title>
+    <link rel="stylesheet" href="/styles/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        .cart-wrapper { max-width: 800px; margin: 50px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .cart-item { display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #eee; }
+        .cart-item img { width: 80px; height: 80px; object-fit: cover; border-radius: 5px; }
+        .cart-details { flex: 1; margin-left: 20px; }
+        .remove-btn { color: #e74c3c; cursor: pointer; border: none; background: none; font-size: 1.1rem; }
+        .cart-summary { margin-top: 30px; text-align: right; }
+        .checkout-section { margin-top: 20px; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+        .email-input { padding: 12px; width: 300px; border: 1px solid #ddd; border-radius: 6px; }
+    </style>
+</head>
+<body>
+
+<div class="cart-wrapper">
+    <a href="/"><i class="fas fa-arrow-left"></i> Jatka ostoksia</a>
+    <h2><i class="fas fa-shopping-cart"></i> Ostoskorisi</h2>
+    
+    <div id="cart-list">
+        </div>
+
+    <div class="cart-summary">
+        <h3>Yhteensä: <span id="cart-total">0.00</span> €</h3>
+        
+        <div class="checkout-section">
+            <input type="email" id="customer-email" class="email-input" placeholder="Sähköpostiosoitteesi..." required>
+            <button id="pay-button" class="bid-btn" style="padding: 15px 30px; font-size: 1.1rem;">
+                Siirry maksamaan <i class="fas fa-credit-card"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const cartList = document.getElementById('cart-list');
+    const totalElem = document.getElementById('cart-total');
+    const payBtn = document.getElementById('pay-button');
+
+    function renderCart() {
+    // TÄMÄN ON OLTAVA SAMA NIMI KUIN YLLÄ
+    let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
+    console.log("Korin sisältö:", cart); // Katso selaimen F12-konsolista näkyykö mitään
+
+    const cartList = document.getElementById('cart-list');
+    if (cart.length === 0) {
+        cartList.innerHTML = "<h3>Ostoskorisi on tyhjä.</h3><p><a href='/'>Palaa ostoksille tästä.</a></p>";
+        return;
+    }
+
+        cart.forEach((item, index) => {
+            total += parseFloat(item.price);
+            cartList.innerHTML += `
+                <div class="cart-item">
+                    <img src="${item.image || '/images/no-image.png'}" alt="">
+                    <div class="cart-details">
+                        <h4>${item.name}</h4>
+                        <p>${item.price} €</p>
+                    </div>
+                    <button class="remove-btn" onclick="removeItem(${index})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `;
+        });
+        totalElem.innerText = total.toFixed(2);
+    }
+
+    function removeItem(index) {
+        let cart = JSON.parse(localStorage.getItem('eduko_cart'));
+        cart.splice(index, 1);
+        localStorage.setItem('eduko_cart', JSON.stringify(cart));
+        renderCart();
+    }
+
+    payBtn.addEventListener('click', async () => {
+        const email = document.getElementById('customer-email').value;
+        if (!email) {
+            alert("Ole hyvä ja syötä sähköpostiosoite tilausvahvistusta varten.");
+            return;
+        }
+
+        let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
+        const total = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
+
+        payBtn.innerText = "Valmistellaan maksua...";
+        payBtn.disabled = true;
+
+        try {
+            const response = await fetch('/api/paytrail/create-payment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    items: cart,
+                    amount: total,
+                    customerEmail: email
+                })
+            });
+
+            const data = await response.json();
+            if (data.href) {
+                // TÄMÄ OHJAA PAYTRAILIIN
+                window.location.href = data.href;
+            } else {
+                alert("Maksun luominen epäonnistui.");
+                payBtn.disabled = false;
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Yhteysvirhe palvelimeen.");
+            payBtn.disabled = false;
+        }
+    });
+
+    renderCart();
+</script>
+
+</body>
+</html>
