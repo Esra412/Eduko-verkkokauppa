@@ -376,3 +376,81 @@ body {
     .layout-container, .product-main { grid-template-columns: 1fr; }
     .sidebar { display: none; }
 }
+
+
+/* Tuotekortin alaosa */
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: #fff;
+    border-top: 1px solid #f0f0f0;
+}
+
+/* Hinnan tyylit */
+.price {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #2c3e50; /* Tumma tyylikäs harmaa */
+    letter-spacing: -0.5px;
+}
+
+/* Lisää ostoskoriin -painike */
+.bid-btn {
+    background-color: #b0a078; /* Edukon kullan sävy */
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Tilaa mahdolliselle ikonille */
+    box-shadow: 0 2px 4px rgba(176, 160, 120, 0.3);
+}
+
+/* Painikkeen efektit */
+.bid-btn:hover {
+    background-color: #968863; /* Hieman tummempi sävy hoverissa */
+    transform: translateY(-2px); /* Kevyt nosto */
+    box-shadow: 0 4px 8px rgba(176, 160, 120, 0.4);
+}
+
+.bid-btn:active {
+    transform: translateY(0); /* Painallus-efekti */
+    box-shadow: 0 1px 2px rgba(176, 160, 120, 0.2);
+}
+
+/* Jos haluat lisätä kärry-ikonin painikkeen sisälle JavaScriptissä */
+.bid-btn::before {
+    content: '\f07a'; /* FontAwesome kärry-ikoni */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+}
+
+
+/* Tyylikäs badge vasempaan yläkulmaan */
+.product-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: rgba(176, 160, 120, 0.9); /* Edukon kullan sävy läpinäkyvänä */
+    color: white;
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border-radius: 4px;
+    z-index: 10;
+    text-transform: uppercase;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    pointer-events: none; /* Ei estä klikkaamasta kuvaa */
+}
+
+/* Vaihtoehtoinen väri palveluille (jos haluat erotella) */
+.product-badge:contains("Palvelu") {
+    background-color: rgba(44, 62, 80, 0.9);
+}

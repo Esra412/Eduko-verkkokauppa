@@ -85,6 +85,54 @@ body { margin: 0; background-color: var(--eduko-bg); color: var(--text-main); }
 @media (max-width: 992px) { .product-main { grid-template-columns: 1fr; } .sidebar { display: none; } .layout-container { grid-template-columns: 1fr; } }
 
 /* Lisää tämä CSS-tiedostosi loppuun */
+.tab-pane {
+    display: none; /* Piilota kaikki oletuksena */
+}
+
 .tab-pane.active {
-    display: block !important; /* Pakottaa näkyviin, kun luokka on aktiivinen */
+    display: block; /* Näytä vain aktiivinen */
+}
+
+/* Pääkuvan säiliö */
+.main-image-container {
+    width: 100%;
+    max-width: 500px; /* Rajoittaa pääkuvan leveyden */
+    height: 400px;    /* Kiinteä korkeus estää sivun hyppimisen */
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+/* Itse pääkuva */
+#display-img {
+    transition: opacity 0.15s ease-in-out;
+    opacity: 1;
+}
+
+/* Kuvat-välilehden ruudukko */
+.thumbnail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+    padding: 15px 0;
+}
+
+/* Pikkukuvat (thumbnails) */
+.thumbnail {
+    width: 100%;
+    height: 100px;
+    object-fit: cover; /* Täyttää neliön siististi */
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: 0.2s;
+    border-radius: 4px;
+}
+
+.thumbnail:hover {
+    border-color: #b0a078; /* Edukon kullan sävy */
+    opacity: 0.8;
 }

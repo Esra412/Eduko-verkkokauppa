@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // ===============================
-    // 1️⃣ TABS
+    // 1️⃣ TABS LOGIIKKA
     // ===============================
     const tabButtons = document.querySelectorAll('.tab-btn');
     const tabPanes = document.querySelectorAll('.tab-pane');
@@ -11,16 +11,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const targetId = button.dataset.target;
 
             tabButtons.forEach(btn => btn.classList.remove('active'));
-            tabPanes.forEach(pane => {
-                pane.classList.remove('active');
-                pane.style.display = 'none';
-            });
+            tabPanes.forEach(pane => pane.classList.remove('active'));
 
             button.classList.add('active');
             const targetPane = document.getElementById(targetId);
             if (targetPane) {
                 targetPane.classList.add('active');
-                targetPane.style.display = 'block';
             }
         });
     });
@@ -42,58 +38,103 @@ document.addEventListener('DOMContentLoaded', () => {
             return res.json();
         })
         .then(product => {
-
-            // Nimi & hinta
+            // Perustiedot
             document.getElementById('product-name').innerText = product.name;
             document.getElementById('product-price').innerText = product.price + " €";
+            document.getElementById('product-desc').innerText = product.description || "Ei kuvausta.";
 
-            // Kuva
+            // Pääkuva
             const mainImg = document.getElementById('display-img');
             mainImg.src = product.image || "/images/placeholder.jpg";
-            mainImg.alt = product.name;
-
-            // Kuvaus
-            document.getElementById('product-desc').innerText =
-                product.description || "Ei kuvausta saatavilla.";
 
             // ===============================
-            // 4️⃣ TEKNISET TIEDOT
+            // 4️⃣ VARASTO JA NOUTOPISTE (Dynaaminen)
+            // ===============================
+            // Luodaan meta-tiedot ja lisätään ne kuvauksen perään
+            const noutopiste = product.pickup_point || "Ei määritelty";
+            const varastossa = product.stock !== undefined ? product.stock : "0";
+
+            const metaDiv = document.createElement('div');
+            metaDiv.className = "product-meta";
+            metaDiv.style.marginTop = "20px";
+            metaDiv.style.borderTop = "1px solid #ddd";
+            metaDiv.style.paddingTop = "10px";
+            metaDiv.innerHTML = `
+                <p><strong>📦 Varastossa:</strong> ${varastossa} kpl</p>
+                <p><strong>📍 Noutopiste:</strong> ${noutopiste}</p>
+            `;
+            document.getElementById('product-desc').appendChild(metaDiv);
+
+            // ===============================
+            // 5️⃣ TEKNISET TIEDOT
             // ===============================
             const specsList = document.getElementById('product-specs');
             specsList.innerHTML = "";
 
-            if (product.specs && product.specs.length > 0) {
-                product.specs.forEach(spec => {
+            if (product.specs && typeof product.specs === 'string' && product.specs.trim() !== "") {
+                const specsArray = product.specs.split(',');
+                specsArray.forEach(item => {
                     const li = document.createElement('li');
-                    li.innerText = spec;
+                    li.innerText = item.trim();
                     specsList.appendChild(li);
                 });
             } else {
-                specsList.innerHTML = "<li>Ei teknisiä tietoja</li>";
+                specsList.innerHTML = "<li>Ei teknisiä tietoja saatavilla</li>";
             }
 
             // ===============================
-            // 5️⃣ LISÄKUVAT
+            // 6️⃣ KUVAT-VÄLILEHTI (Galleria)
             // ===============================
             const thumbContainer = document.getElementById('thumbnail-container');
             thumbContainer.innerHTML = "";
 
-            if (product.images && product.images.length > 0) {
-                product.images.forEach(img => {
-                    const thumb = document.createElement('img');
-                    thumb.src = img;
-                    thumb.className = "thumbnail";
-                    thumb.addEventListener('click', () => {
-                        mainImg.src = img;
-                    });
-                    thumbContainer.appendChild(thumb);
-                });
+            let allImages = [];
+
+            // Lisätään pääkuva pikkukuvien joukkoon ensimmäiseksi
+            if (product.image) allImages.push(product.image);
+
+            // Lisätään lisäkuvat JSON-kentästä
+            if (product.images) {
+                try {
+                    const extraImages = typeof product.images === 'string' ? JSON.parse(product.images) : product.images;
+                    if (Array.isArray(extraImages)) {
+                        allImages = allImages.concat(extraImages);
+                    }
+                } catch (e) {
+                    console.error("Virhe lisäkuvien käsittelyssä:", e);
+                }
             }
+
+            // Luodaan pikkukuvat
+            allImages.forEach(imgUrl => {
+                const thumb = document.createElement('img');
+                thumb.src = imgUrl;
+                thumb.className = "thumbnail";
+                
+                thumb.addEventListener('click', () => {
+                    // Tarkistetaan nykyinen kuva (käytetään URL-polkua vertailuun)
+                    const currentPath = new URL(mainImg.src, window.location.origin).pathname;
+                    const newPath = new URL(imgUrl, window.location.origin).pathname;
+
+                    if (currentPath === newPath) return;
+
+                    // Vaihtoanimaatio
+                    mainImg.style.opacity = "0";
+                    setTimeout(() => {
+                        mainImg.src = imgUrl;
+                        mainImg.style.opacity = "1";
+                    }, 150);
+                });
+
+                thumbContainer.appendChild(thumb);
+            });
 
         })
         .catch(err => {
             console.error(err);
-            document.querySelector('.product-main').innerHTML =
-                "<p>Tuotetta ei löytynyt tai tapahtui virhe.</p>";
+            const mainContainer = document.querySelector('.product-main');
+            if (mainContainer) {
+                mainContainer.innerHTML = "<p>Tuotetietojen haku epäonnistui.</p>";
+            }
         });
 });

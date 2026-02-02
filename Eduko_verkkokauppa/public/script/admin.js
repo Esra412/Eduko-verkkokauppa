@@ -43,54 +43,80 @@ async function renderProducts(filter = "") {
 // ==========================================
 // 2. TUOTTEEN LISÄÄMINEN
 // ==========================================
-addProductForm.addEventListener("submit", async (e) => {
+document.getElementById('addProductForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    
-    const fd = new FormData(addProductForm);
 
-    // Apu-funktio kuvan muuntamiseen Base64-muotoon
-    const fileToBase64 = (file) => new Promise((resolve) => {
+    const formData = new FormData(e.target);
+    
+    // Apufunktio kuvan muuttamiseksi Base64-muotoon
+    const toBase64 = file => new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
         reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
     });
 
     try {
-        const mainImageFile = mainImageInput.files[0];
-        let mainImageBase64 = null;
+        // 1. Käsittele pääkuva
+        const mainImageFile = formData.get('mainImage');
+        const mainImageBase64 = await toBase64(mainImageFile);
 
-        if (mainImageFile) {
-            mainImageBase64 = await fileToBase64(mainImageFile);
+        // 2. Käsittele lisäkuvat (max 5)
+        const extraImageFiles = e.target.extraImages.files;
+        const extraImagesArray = [];
+        
+        // Otetaan vain 5 ensimmäistä kuvaa
+        const count = Math.min(extraImageFiles.length, 5);
+        for (let i = 0; i < count; i++) {
+            const base64 = await toBase64(extraImageFiles[i]);
+            extraImagesArray.push(base64);
         }
 
-        const tuoteData = {
-            name: fd.get("name"),
-            description: fd.get("description"),
-            price: parseFloat(fd.get("price")),
-            image: mainImageBase64,
-            category_id: parseInt(fd.get("category"))
-        };
+        // 3. Valmistele lähetettävä data
+const data = {
+    name: formData.get('name'),
+    description: formData.get('description'),
+    price: formData.get('price'),
+    category_id: formData.get('category'),
+    specs: formData.get('specs'),
+    stock: formData.get('stock'),          // UUSI
+    pickup_point: formData.get('pickup_point'), // UUSI
+    image: mainImageBase64,
+    images: JSON.stringify(extraImagesArray)
+};
 
-        const res = await fetch('/api/products', {
+        const response = await fetch('/api/products', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(tuoteData),
-            credentials: 'include'
+            body: JSON.stringify(data)
         });
 
-        if (res.ok) {
+        const result = await response.json();
+        if (result.success) {
             alert("Tuote lisätty onnistuneesti!");
-            addProductForm.reset();
-            imagePreview.innerHTML = "";
-            renderProducts(); // Päivitetään poistolista
+            e.target.reset();
+            document.getElementById('imagePreview').innerHTML = "";
         } else {
-            const errorData = await res.json();
-            alert("Lisäys epäonnistui: " + (errorData.message || "Tarkista kirjautuminen"));
+            alert("Virhe: " + result.error);
         }
+
     } catch (err) {
-        console.error("Virhe tallennuksessa:", err);
-        alert("Tallennusvirhe. Tarkista kuvan koko.");
+        console.error("Latausvirhe:", err);
+        alert("Kuvien käsittely epäonnistui.");
     }
+});
+
+// Kuvaesikatselu (vapaaehtoinen lisä)
+document.querySelector('input[name="extraImages"]').addEventListener('change', function(e) {
+    const preview = document.getElementById('imagePreview');
+    preview.innerHTML = "";
+    Array.from(this.files).forEach(file => {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        img.style.height = "50px";
+        img.style.borderRadius = "5px";
+        preview.appendChild(img);
+    });
 });
 
 // ==========================================
@@ -139,3 +165,16 @@ searchBtn.addEventListener("click", () => {
 
 // Alustetaan tuotelista kun sivu latautuu
 renderProducts();
+
+app.post('/api/products', vaadiKirjautuminen, (req, res) => {
+    const { name, description, price, image, category_id, specs, images, stock, pickup_point } = req.body;
+    
+    const sql = `INSERT INTO products 
+        (name, description, price, image, category_id, specs, images, stock, pickup_point) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    
+    db.query(sql, [name, description, price, image, category_id, specs, images, stock, pickup_point], (err, result) => {
+        if (err) return res.status(500).json({ success: false, error: err.message });
+        res.json({ success: true, id: result.insertId });
+    });
+});

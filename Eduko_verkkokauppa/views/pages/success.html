@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <title>Kiitos tilauksesta! - Eduko</title>
+    <link rel="stylesheet" href="/styles/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        .success-wrapper { max-width: 600px; margin: 100px auto; text-align: center; padding: 40px; background: white; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .success-icon { font-size: 80px; color: #28a745; margin-bottom: 20px; }
+        .btn-home { display: inline-block; margin-top: 20px; padding: 12px 25px; background: #b0a078; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="success-wrapper">
+    <i class="fas fa-check-circle success-icon"></i>
+    <h1>Kiitos tilauksestasi!</h1>
+    <p>Maksunne on käsitelty onnistuneesti.</p>
+    <p>Olemme lähettäneet vahvistuksen sähköpostiisi.</p>
+    <a href="/" class="btn-home">Palaa etusivulle</a>
+</div>
+
+<script>
+    // TÄRKEÄÄ: Kun tullaan tälle sivulle, tyhjennetään ostoskori selaimen muistista
+    localStorage.removeItem('eduko_cart');
+    
+    // Jos haluat päivittää yläpalkin numeron heti nollaksi
+    const cartCount = window.parent.document.getElementById('cart-count');
+    if (cartCount) cartCount.innerText = "0";
+</script>
+
+</body>
+</html>
