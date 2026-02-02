@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // --- LISÄÄ TÄMÄ TÄHÄN ---
+    const initialCart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
+    const cartCountElement = document.getElementById('cart-count');
+    if (cartCountElement) cartCountElement.innerText = initialCart.length;
+    // ------------------------
+
     console.log("Eduko etusivu ladattu");
 
     const grid = document.querySelector('.product-grid');

@@ -27,8 +27,8 @@ app.use(session({
 
 // ================= PAYTRAIL CONFIG (Testitunnukset) =================
 const PAYTRAIL_CONFIG = {
-    merchantId: '375917',
-    secret: 'SAIPPUAKAUPPIAS',
+    merchantId: '375917', // Paytraililta saatu ID
+    secret: 'SAIPPUAKAUPPIAS', // Paytraililta saatu avain
     apiEndpoint: 'https://services.paytrail.com'
 };
 
@@ -78,8 +78,8 @@ app.get('/tieto', (req, res) => res.sendFile(path.join(__dirname, 'views/pages/T
 app.get('/kori', (req, res) => res.sendFile(path.join(__dirname, 'views/pages/cart.html')));
 
 // Maksun paluureitit
-app.get('/success', (req, res) => res.send("<h1>Maksu onnistui!</h1><p>Kiitos tilauksestasi. <a href='/'>Palaa etusivulle</a></p>"));
-app.get('/cancel', (req, res) => res.send("<h1>Maksu peruutettu</h1><p>Voit yrittää uudelleen ostoskorista. <a href='/kori'>Palaa koriin</a></p>"));
+app.get('/success', (req, res) => {res.sendFile(path.join(__dirname, 'views/pages/success.html'));});
+app.get('/cancel', (req, res) => {res.redirect('/kori?error=payment_cancelled');});
 
 // ================= API REITIT =================
 

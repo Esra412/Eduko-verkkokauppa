@@ -44,24 +44,32 @@
     const payBtn = document.getElementById('pay-button');
 
     function renderCart() {
-    // TÄMÄN ON OLTAVA SAMA NIMI KUIN YLLÄ
-    let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
-    console.log("Korin sisältö:", cart); // Katso selaimen F12-konsolista näkyykö mitään
+        let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
+        console.log("Korin sisältö:", cart);
 
-    const cartList = document.getElementById('cart-list');
-    if (cart.length === 0) {
-        cartList.innerHTML = "<h3>Ostoskorisi on tyhjä.</h3><p><a href='/'>Palaa ostoksille tästä.</a></p>";
-        return;
-    }
+        cartList.innerHTML = ""; // Tyhjennetään lista
+        let total = 0; // TÄMÄ PUUTTUI - alustetaan nollaksi
+
+        if (cart.length === 0) {
+            cartList.innerHTML = "<h3>Ostoskorisi on tyhjä.</h3><p><a href='/'>Palaa ostoksille tästä.</a></p>";
+            totalElem.innerText = "0.00";
+            payBtn.disabled = true;
+            return;
+        }
+
+        payBtn.disabled = false;
 
         cart.forEach((item, index) => {
-            total += parseFloat(item.price);
+            // Muunnetaan hinta numeroksi (poistetaan mahdolliset välit)
+            const price = parseFloat(item.price.toString().replace(',', '.'));
+            total += price;
+
             cartList.innerHTML += `
                 <div class="cart-item">
                     <img src="${item.image || '/images/no-image.png'}" alt="">
                     <div class="cart-details">
                         <h4>${item.name}</h4>
-                        <p>${item.price} €</p>
+                        <p>${price.toFixed(2)} €</p>
                     </div>
                     <button class="remove-btn" onclick="removeItem(${index})">
                         <i class="fas fa-trash"></i>
@@ -73,21 +81,30 @@
     }
 
     function removeItem(index) {
-        let cart = JSON.parse(localStorage.getItem('eduko_cart'));
+        let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
         cart.splice(index, 1);
         localStorage.setItem('eduko_cart', JSON.stringify(cart));
         renderCart();
+        
+        // Päivitetään myös mahdollinen yläpalkin numero, jos sellainen on tällä sivulla
+        const count = document.getElementById('cart-count');
+        if (count) count.innerText = cart.length;
     }
 
-    payBtn.addEventListener('click', async () => {
+    // Paytrail-nappi (pidetään samana kuin aiemmin)
+payBtn.addEventListener('click', async () => {
         const email = document.getElementById('customer-email').value;
         if (!email) {
-            alert("Ole hyvä ja syötä sähköpostiosoite tilausvahvistusta varten.");
+            alert("Ole hyvä ja syötä sähköpostiosoite.");
             return;
         }
 
         let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
-        const total = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
+        const totalAmount = cart.reduce((sum, item) => sum + parseFloat(item.price.toString().replace(',', '.')), 0);
+
+        console.log("--- Maksutapahtuma aloitettu ---");
+        console.log("Tuotteet:", cart);
+        console.log("Loppusumma:", totalAmount);
 
         payBtn.innerText = "Valmistellaan maksua...";
         payBtn.disabled = true;
@@ -98,26 +115,33 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     items: cart,
-                    amount: total,
+                    amount: totalAmount,
                     customerEmail: email
                 })
             });
 
             const data = await response.json();
+
             if (data.href) {
-                // TÄMÄ OHJAA PAYTRAILIIN
-                window.location.href = data.href;
+                console.log("✅ Maksu luotu onnistuneesti!");
+                console.log("Siirrytään maksusivulle:", data.href);
+                
+                // Pieni viive, jotta ehdit nähdä viestin konsolissa ennen ohjausta
+                setTimeout(() => {
+                    window.location.href = data.href;
+                }, 1000);
             } else {
-                alert("Maksun luominen epäonnistui.");
+                console.error("❌ Palvelin palautti virheen:", data);
+                alert("Maksun luominen epäonnistui: " + (data.error || "Tuntematon virhe"));
+                payBtn.innerText = "Siirry maksamaan";
                 payBtn.disabled = false;
             }
         } catch (err) {
-            console.error(err);
-            alert("Yhteysvirhe palvelimeen.");
+            console.error("❌ Yhteysvirhe palvelimeen:", err);
+            alert("Yhteysvirhe! Tarkista palvelimen tila.");
             payBtn.disabled = false;
         }
     });
-
     renderCart();
 </script>
 
