@@ -2,22 +2,100 @@
 <html lang="fi">
 <head>
     <meta charset="UTF-8">
-    <title>Maksu keskeytettiin - Eduko</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maksu keskeytetty | Eduko</title>
     <link rel="stylesheet" href="/styles/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        .cancel-wrapper { max-width: 600px; margin: 100px auto; text-align: center; padding: 40px; background: white; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .cancel-icon { font-size: 80px; color: #e74c3c; margin-bottom: 20px; }
-        .btn-back { display: inline-block; margin-top: 20px; padding: 12px 25px; background: #333; color: white; text-decoration: none; border-radius: 5px; }
+        body {
+            background-color: #f4f4f4;
+            margin: 0;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .cancel-container {
+            max-width: 550px;
+            width: 90%;
+            margin-top: 60px;
+            padding: 40px;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            /* Eduko-kulta korostus ylhäällä */
+            border-top: 6px solid #b0a078; 
+            text-align: center;
+            animation: slideUp 0.6s ease-out;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .cancel-icon {
+            font-size: 70px;
+            color: #e74c3c; /* Virheen punainen on tässä selkein */
+            margin-bottom: 15px;
+        }
+        .cancel-container h1 {
+            color: #1a1a1a;
+            font-size: 28px;
+            margin-bottom: 15px;
+            font-family: 'Playfair Display', serif; /* Jos käytät tätä muissa otsikoissa */
+        }
+        .info-box {
+            background: #fdfaf3; /* Eduko-beige tausta */
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #666;
+            font-size: 0.95rem;
+        }
+        .btn-retry {
+            display: inline-block;
+            background-color: #b0a078; /* Eduko-kulta */
+            color: white;
+            padding: 14px 40px;
+            text-decoration: none;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .btn-retry:hover {
+            background-color: #8e8161;
+            transform: scale(1.05);
+        }
+        .btn-secondary {
+            display: block;
+            margin-top: 20px;
+            color: #888;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+        .btn-secondary:hover {
+            color: #b0a078;
+        }
     </style>
 </head>
 <body>
-    <div class="cancel-wrapper">
-        <i class="fas fa-times-circle cancel-icon"></i>
-        <h1>Maksu keskeytettiin</h1>
-        <p>Maksuprosessi keskeytyi, eikä tilaustasi voitu vahvistaa.</p>
-        <p>Tuotteet ovat edelleen tallessa ostoskorissasi.</p>
-        <a href="/kori" class="btn-back">Palaa ostoskoriin</a>
+
+    <div class="cancel-container">
+        <i class="fas fa-circle-xmark cancel-icon"></i>
+        <h1>Maksu keskeytyi</h1>
+        
+        <p>Maksuprosessi keskeytettiin, eikä tilauksesi tullut perille.</p>
+        
+        <div class="info-box">
+            <i class="fas fa-shopping-cart" style="color: #b0a078;"></i> 
+            Tuotteet odottavat sinua edelleen ostoskorissasi. Voit yrittää maksua uudelleen alta.
+        </div>
+
+        <a href="/kori" class="btn-retry">Palaa ostoskoriin</a>
+        <a href="/" class="btn-secondary">Jatka selailua</a>
     </div>
+
 </body>
 </html>
