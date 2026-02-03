@@ -178,3 +178,93 @@ app.post('/api/products', vaadiKirjautuminen, (req, res) => {
         res.json({ success: true, id: result.insertId });
     });
 });
+
+// ==========================================
+// 5. TILAUSTEN HALLINTA
+// ==========================================
+/**
+ * ADMIN.JS - Korjattu tilausten hallinta
+ */
+
+async function renderOrders() {
+    const orderList = document.getElementById('orderList');
+    try {
+        const res = await fetch('/api/admin/orders');
+        const orders = await res.json();
+
+        orderList.innerHTML = "";
+        if (orders.length === 0) {
+            orderList.innerHTML = "<li>Ei tilauksia muistissa.</li>";
+            return;
+        }
+
+        orders.forEach(order => {
+            const li = document.createElement("li");
+            const c = order.customer || {};
+            
+            // Rakennetaan nimi turvallisesti
+            const fullName = (c.fname || c.lname) ? `${c.fname || ''} ${c.lname || ''}` : (c.email || "Nimetön");
+
+            li.innerHTML = `
+                <div>
+                    <b>#${order.id}</b> - ${fullName} 
+                    <span style="color: ${order.status === 'Maksettu' ? '#27ae60' : '#f39c12'}; font-weight:bold;">
+                        [${order.status}]
+                    </span>
+                </div>
+                <button onclick="showOrderDetail('${order.id}')">🔍 Näytä tiedot</button>
+            `;
+            // Tärkeää: tallennetaan data elementtiin JSON-muodossa hakuja varten
+            li.setAttribute('data-order-data', JSON.stringify(order));
+            orderList.appendChild(li);
+        });
+    } catch (err) {
+        console.error("Virhe tilauksissa:", err);
+        orderList.innerHTML = "<li>Virhe ladattaessa tilauksia.</li>";
+    }
+}
+
+window.showOrderDetail = function(orderId) {
+    const allLis = Array.from(document.querySelectorAll('#orderList li'));
+    const targetLi = allLis.find(li => {
+        const data = JSON.parse(li.getAttribute('data-order-data'));
+        return data.id === orderId;
+    });
+
+    if (!targetLi) return;
+    const order = JSON.parse(targetLi.getAttribute('data-order-data'));
+    const c = order.customer || {};
+
+    document.getElementById('orderNumber').innerText = order.id;
+    document.getElementById('orderName').innerText = `${c.fname || ''} ${c.lname || ''}`.trim() || 'Ei nimeä';
+    document.getElementById('orderPhone').innerText = c.phone || 'Ei puhelinta';
+    document.getElementById('orderEmail').innerText = c.email || 'Ei sähköpostia';
+    
+    const itemsTable = document.getElementById('orderItems');
+    itemsTable.innerHTML = `
+        <tr style="text-align:left; border-bottom: 2px solid #ddd;">
+            <th style="padding:8px;">Tuote</th>
+            <th style="padding:8px;">Hinta</th>
+        </tr>`;
+
+    order.items.forEach(item => {
+        itemsTable.innerHTML += `
+            <tr>
+                <td style="padding:8px;">${item.name}</td>
+                <td style="padding:8px;">${parseFloat(item.price).toFixed(2)} €</td>
+            </tr>`;
+    });
+
+    itemsTable.innerHTML += `
+        <tr style="font-weight:bold; background:#f9f9f9;">
+            <td style="padding:8px; border-top:2px solid #b0a078;">YHTEENSÄ</td>
+            <td style="padding:8px; border-top:2px solid #b0a078;">${parseFloat(order.amount).toFixed(2)} €</td>
+        </tr>`;
+
+    document.getElementById('orderDetails').classList.remove('hidden');
+    document.getElementById('orderDetails').scrollIntoView({ behavior: 'smooth' });
+};
+
+// Alustetaan tilauslista
+renderOrders();
+

@@ -2,33 +2,108 @@
 <html lang="fi">
 <head>
     <meta charset="UTF-8">
-    <title>Kiitos tilauksesta! - Eduko</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiitos tilauksesta! | Eduko</title>
     <link rel="stylesheet" href="/styles/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        .success-wrapper { max-width: 600px; margin: 100px auto; text-align: center; padding: 40px; background: white; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .success-icon { font-size: 80px; color: #28a745; margin-bottom: 20px; }
-        .btn-home { display: inline-block; margin-top: 20px; padding: 12px 25px; background: #b0a078; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        body {
+            background-color: #f4f4f4;
+            margin: 0;
+            display: flex;
+            align-items: flex-start; /* Nostaa sisällön ylös */
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .success-container {
+            max-width: 550px;
+            width: 90%;
+            margin-top: 60px; /* Säädä tätä, jos haluat vielä ylemmäs tai alemmas */
+            padding: 40px;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border-top: 6px solid #b0a078;
+            text-align: center;
+            animation: slideUp 0.6s ease-out;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .success-icon {
+            font-size: 70px;
+            color: #b0a078;
+            margin-bottom: 10px;
+        }
+        .success-container h1 {
+            color: #1a1a1a;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        .order-id-box {
+            background: #fdfaf3;
+            border: 1px dashed #b0a078;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .order-id-label {
+            font-size: 14px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .order-id-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #b0a078;
+        }
+        .btn-home {
+            display: inline-block;
+            background-color: #b0a078;
+            color: white;
+            padding: 14px 40px;
+            text-decoration: none;
+            border-radius: 30px; /* Pyöreämpi nappi näyttää modernilta */
+            transition: all 0.3s ease;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .btn-home:hover {
+            background-color: #8e8161;
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body>
 
-<div class="success-wrapper">
-    <i class="fas fa-check-circle success-icon"></i>
-    <h1>Kiitos tilauksestasi!</h1>
-    <p>Maksunne on käsitelty onnistuneesti.</p>
-    <p>Olemme lähettäneet vahvistuksen sähköpostiisi.</p>
-    <a href="/" class="btn-home">Palaa etusivulle</a>
-</div>
+    <div class="success-container">
+        <div class="success-icon">✓</div>
+        <h1>Maksu onnistui!</h1>
+        <p>Kiitos tilauksestasi Eduko-verkkokaupasta.</p>
+        
+        <div id="order-info" style="display:none;" class="order-id-box">
+            <div class="order-id-label">Tilausnro</div>
+            <div class="order-id-value" id="display-id"></div>
+        </div>
 
-<script>
-    // TÄRKEÄÄ: Kun tullaan tälle sivulle, tyhjennetään ostoskori selaimen muistista
-    localStorage.removeItem('eduko_cart');
-    
-    // Jos haluat päivittää yläpalkin numeron heti nollaksi
-    const cartCount = window.parent.document.getElementById('cart-count');
-    if (cartCount) cartCount.innerText = "0";
-</script>
+        <p>Vahvistus on lähetetty sähköpostiisi. Voit nyt sulkea tämän sivun tai palata takaisin etusivulle.</p>
+        
+        <a href="/" class="btn-home">Palaa etusivulle</a>
+    </div>
 
+    <script>
+        // Tyhjennetään kori
+        localStorage.removeItem('eduko_cart');
+
+        // Haetaan id URL:sta
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('id');
+        
+        if (orderId) {
+            document.getElementById('order-info').style.display = 'block';
+            document.getElementById('display-id').innerText = orderId;
+        }
+    </script>
 </body>
 </html>

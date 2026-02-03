@@ -2,37 +2,42 @@ const express = require('express');
 const path = require('path');
 const nodemailer = require('nodemailer');
 const session = require('express-session');
-const axios = require('axios'); // Tarvitaan Paytrail-yhteyteen
-const crypto = require('crypto'); // Tarvitaan allekirjoituksiin
+const axios = require('axios');
+const crypto = require('crypto');
 const db = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middlewaret
+/**
+ * TILAUSTEN HALLINTA
+ * Huom: temporaryOrders säilyy vain palvelimen ollessa päällä.
+ * Jos haluat pysyvän tallennuksen, ne tulisi kirjoittaa tietokantaan.
+ */
+let temporaryOrders = {};
+
+// ================= MIDDLEWARET =================
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Istunnon hallinta
 app.use(session({
     secret: 'eduko_salaisuus_2024',
     resave: false,
     saveUninitialized: false,
     cookie: { 
-        maxAge: 3600000,
-        secure: false    
+        maxAge: 3600000, 
+        secure: false 
     }
 }));
 
-// ================= PAYTRAIL CONFIG (Testitunnukset) =================
+// ================= PAYTRAIL CONFIG =================
 const PAYTRAIL_CONFIG = {
-    merchantId: '375917', // Paytraililta saatu ID
-    secret: 'SAIPPUAKAUPPIAS', // Paytraililta saatu avain
+    merchantId: '375917', 
+    secret: 'SAIPPUAKAUPPIAS', 
     apiEndpoint: 'https://services.paytrail.com'
 };
 
-// Apufunktio Paytrail-allekirjoituksen laskemiseen
 function calculateHmac(secret, params, body = '') {
     const hmacPayload = Object.keys(params)
         .sort()
@@ -40,10 +45,7 @@ function calculateHmac(secret, params, body = '') {
         .concat(body ? JSON.stringify(body) : '')
         .join('\n');
 
-    return crypto
-        .createHmac('sha256', secret)
-        .update(hmacPayload)
-        .digest('hex');
+    return crypto.createHmac('sha256', secret).update(hmacPayload).digest('hex');
 }
 
 // ================= EMAIL CONFIG =================
@@ -77,33 +79,71 @@ app.get('/tuote/:id', (req, res) => res.sendFile(path.join(__dirname, 'views/pag
 app.get('/tieto', (req, res) => res.sendFile(path.join(__dirname, 'views/pages/Tietoa_meista.html')));
 app.get('/kori', (req, res) => res.sendFile(path.join(__dirname, 'views/pages/cart.html')));
 
-// Maksun paluureitit
-app.get('/success', (req, res) => {res.sendFile(path.join(__dirname, 'views/pages/success.html'));});
-app.get('/cancel', (req, res) => {res.redirect('/kori?error=payment_cancelled');});
+// ================= MAKSUN PALUUREITIT =================
+
+app.get('/success', async (req, res) => {
+    const orderId = req.query.id;
+    const order = temporaryOrders[orderId];
+
+    if (order) {
+        order.status = 'Maksettu'; // Päivitetään tila
+        order.paymentDate = new Date().toLocaleString('fi-FI');
+
+        const { customer, items, amount } = order;
+        
+        // Sähköpostien lähetys (kuten aiemmin)
+        const tuotteetHtml = items.map(item => `<li>${item.name} - ${item.price} €</li>`).join('');
+        const mailOptions = {
+            from: '"Eduko" <kissakoira773@gmail.com>',
+            to: customer.email,
+            subject: `Tilausvahvistus ${orderId}`,
+            html: `<h1>Kiitos!</h1><p>Tilaus ${orderId} maksettu.</p><ul>${tuotteetHtml}</ul>`
+        };
+
+        try {
+            await lahetin.sendMail(mailOptions);
+        } catch (e) { console.error("Email error", e); }
+    }
+    res.sendFile(path.join(__dirname, 'views/pages/success.html'));
+});
+
+app.get('/cancel', (req, res) => {
+    res.send(`<h1>Maksu keskeytyi</h1><p>Voit yrittää uudelleen ostoskorista.</p><a href="/kori">Palaa ostoskoriin</a>`);
+});
 
 // ================= API REITIT =================
 
-// 🔹 PAYTRAIL: Luo maksu
+// PAYTRAIL: Maksun luominen
 app.post('/api/paytrail/create-payment', async (req, res) => {
-    const { items, amount, customerEmail } = req.body;
-    const stamp = `eduko-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    const { items, amount, customer } = req.body;
+    const mainStamp = `eduko-${Date.now()}`;
+
+    // Tallennetaan tilaus muistiin odottamaan maksua
+    temporaryOrders[mainStamp] = { 
+        id: mainStamp,
+        items, 
+        amount, 
+        customer, 
+        status: 'Odottaa maksua',
+        date: new Date().toLocaleString('fi-FI')
+    };
 
     const body = {
-        stamp: stamp,
-        reference: stamp,
-        amount: Math.round(amount * 100), // Paytrail vaatii sentteinä
+        stamp: mainStamp,
+        reference: mainStamp,
+        amount: Math.round(amount * 100),
         currency: 'EUR',
         language: 'FI',
-        items: items.map(item => ({
+        items: items.map((item, index) => ({
             unitPrice: Math.round(parseFloat(item.price) * 100),
             units: 1,
             vatPercentage: 24,
-            productCode: item.id.toString(),
-            description: item.name
+            productCode: item.id ? item.id.toString() : `prod-${index}`,
+            description: item.name.substring(0, 100)
         })),
-        customer: { email: customerEmail || 'testi@eduko.fi' },
+        customer: { email: customer.email },
         redirectUrls: {
-            success: `http://localhost:${PORT}/success`,
+            success: `http://localhost:${PORT}/success?id=${mainStamp}`,
             cancel: `http://localhost:${PORT}/cancel`
         }
     };
@@ -122,12 +162,45 @@ app.post('/api/paytrail/create-payment', async (req, res) => {
         const response = await axios.post(`${PAYTRAIL_CONFIG.apiEndpoint}/payments`, body, { headers });
         res.json({ href: response.data.href });
     } catch (error) {
-        console.error("Paytrail virhe:", error.response?.data || error.message);
+        console.error("Paytrail API virhe:", error.response?.data || error.message);
         res.status(500).json({ error: "Maksun luominen epäonnistui" });
     }
 });
 
-// 🔹 TUOTTEET: Hae uusimmat
+// ADMIN: Hae tilaukset
+app.get('/api/admin/orders', vaadiKirjautuminen, (req, res) => {
+    const ordersArray = Object.values(temporaryOrders).map(order => ({
+        id: order.id,
+        amount: order.amount,
+        customer: order.customer, // Varmistetaan että customer-objekti on mukana
+        items: order.items,
+        status: order.status,
+        date: order.date
+    })).reverse();
+    res.json(ordersArray);
+});
+
+// ADMIN: Hae tuotteet hallintaa varten
+app.get('/api/admin/products', vaadiKirjautuminen, (req, res) => {
+    db.query("SELECT id, name, price FROM products ORDER BY id DESC", (err, results) => {
+        if (err) return res.status(500).json({ error: "Tietokantavirhe" });
+        res.json(results);
+    });
+});
+
+// TUOTTEET: Julkiset reitit
+app.get('/api/products', (req, res) => {
+    const categoryParam = req.query.category;
+    let sql = !isNaN(categoryParam) 
+        ? "SELECT * FROM products WHERE category_id = ? ORDER BY id DESC" 
+        : "SELECT p.* FROM products p JOIN categories c ON p.category_id = c.id WHERE c.slug = ? ORDER BY p.id DESC";
+
+    db.query(sql, [categoryParam], (err, results) => {
+        if (err) return res.status(500).json({ error: "Tietokantavirhe" });
+        res.json(results);
+    });
+});
+
 app.get('/api/products/latest', (req, res) => {
     db.query("SELECT * FROM products ORDER BY created_at DESC LIMIT 15", (err, results) => {
         if (err) return res.status(500).json({ error: "Tietokantavirhe" });
@@ -135,15 +208,14 @@ app.get('/api/products/latest', (req, res) => {
     });
 });
 
-// 🔹 ADMIN: Hae kaikki
-app.get('/api/admin/products', vaadiKirjautuminen, (req, res) => {
-    db.query("SELECT id, name, price, category_id FROM products ORDER BY created_at DESC", (err, results) => {
-        if (err) return res.status(500).json({ error: "Tietokantavirhe" });
-        res.json(results);
+app.get('/api/products/:id', (req, res) => {
+    db.query("SELECT * FROM products WHERE id = ?", [req.params.id], (err, results) => {
+        if (err || results.length === 0) return res.status(404).json({ error: "Ei löydy" });
+        res.json(results[0]);
     });
 });
 
-// 🔹 TUOTTEET: Lisäys
+// ADMIN: Tuotteen lisäys
 app.post('/api/products', vaadiKirjautuminen, (req, res) => {
     const { name, description, price, image, category_id, specs, images, stock, pickup_point, type } = req.body;
     const sql = `INSERT INTO products (name, description, price, image, category_id, specs, images, stock, pickup_point, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
@@ -154,7 +226,7 @@ app.post('/api/products', vaadiKirjautuminen, (req, res) => {
     });
 });
 
-// 🔹 TUOTTEET: Poisto
+// ADMIN: Tuotteen poisto
 app.delete('/api/products/:id', vaadiKirjautuminen, (req, res) => {
     db.query("DELETE FROM products WHERE id = ?", [req.params.id], (err, result) => {
         if (err) return res.status(500).json({ success: false, error: err.message });
@@ -162,28 +234,7 @@ app.delete('/api/products/:id', vaadiKirjautuminen, (req, res) => {
     });
 });
 
-// 🔹 TUOTTEET: Yksittäinen tuote
-app.get('/api/products/:id', (req, res) => {
-    db.query("SELECT * FROM products WHERE id = ?", [req.params.id], (err, results) => {
-        if (err) return res.status(500).json({ error: "Tietokantavirhe" });
-        if (results.length === 0) return res.status(404).json({ error: "Ei löydy" });
-        res.json(results[0]);
-    });
-});
-
-// 🔹 TUOTTEET: Kategoriahaku
-app.get('/api/products', (req, res) => {
-    const categoryParam = req.query.category;
-    const isNumber = !isNaN(categoryParam);
-    let sql = isNumber ? "SELECT * FROM products WHERE category_id = ? ORDER BY id DESC" : `SELECT p.* FROM products p JOIN categories c ON p.category_id = c.id WHERE c.slug = ? ORDER BY p.id DESC`;
-
-    db.query(sql, [categoryParam], (err, results) => {
-        if (err) return res.status(500).json({ error: "Tietokantavirhe" });
-        res.json(results);
-    });
-});
-
-// ================= KIRJAUTUMINEN (OTP) =================
+// ================= ADMIN KIRJAUTUMINEN (OTP) =================
 
 app.post('/api/login-step1', async (req, res) => {
     const { email, password } = req.body;
@@ -195,7 +246,7 @@ app.post('/api/login-step1', async (req, res) => {
                 from: '"Eduko Admin" <kissakoira773@gmail.com>',
                 to: email,
                 subject: "Vahvistuskoodi - Eduko",
-                html: `<h1>Koodi: ${vahvistuskoodi}</h1>`
+                html: `<div style="padding:20px; border:1px solid #ddd;"><h1>Vahvistuskoodisi: ${vahvistuskoodi}</h1></div>`
             });
             res.json({ success: true });
         } catch (error) {
@@ -216,4 +267,4 @@ app.post('/api/verify-code', (req, res) => {
     }
 });
 
-app.listen(PORT, () => console.log(`✅ Server running: http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`✅ Serveri käynnissä: http://localhost:${PORT}`));

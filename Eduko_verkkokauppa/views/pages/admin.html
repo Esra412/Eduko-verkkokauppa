@@ -205,17 +205,19 @@
     <h2>Tilaukset</h2>
     <ul id="orderList"></ul>
 
-    <div id="orderDetails" class="hidden">
-      <h3>Tilaus #<span id="orderNumber"></span></h3>
-      <p><b>Nimi:</b> <span id="orderName"></span></p>
-      <p><b>Puhelin:</b> <span id="orderPhone"></span></p>
-      <p><b>Sähköposti:</b> <span id="orderEmail"></span></p>
-      <p><b>Aika:</b> <span id="orderDate"></span></p>
-
-      <table>
-        <tbody id="orderItems"></tbody>
-      </table>
+<div id="orderDetails" class="hidden" style="margin-top: 20px; border-top: 2px solid #b0a078; padding-top: 20px;">
+    <h3>Tilaus #<span id="orderNumber"></span></h3>
+    <div style="background: #eee; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+        <p><b>Asiakas:</b> <span id="orderName"></span></p>
+        <p><b>Puhelin:</b> <span id="orderPhone"></span></p>
+        <p><b>Sähköposti:</b> <span id="orderEmail"></span></p>
     </div>
+
+    <table style="width: 100%; border-collapse: collapse;">
+        <tbody id="orderItems"></tbody>
+    </table>
+    <button onclick="document.getElementById('orderDetails').classList.add('hidden')" style="margin-top:15px; background:#333;">Sulje tiedot</button>
+</div>
   </section>
 
   <!-- LISÄÄ TUOTE -->
