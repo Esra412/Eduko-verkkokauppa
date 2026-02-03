@@ -81,31 +81,48 @@ app.get('/kori', (req, res) => res.sendFile(path.join(__dirname, 'views/pages/ca
 
 // ================= MAKSUN PALUUREITIT =================
 
-app.get('/success', async (req, res) => {
+app.get('/success', (req, res) => {
     const orderId = req.query.id;
-    const order = temporaryOrders[orderId];
 
-    if (order) {
-        order.status = 'Maksettu'; // Päivitetään tila
-        order.paymentDate = new Date().toLocaleString('fi-FI');
+    // Päivitä DB
+    db.query(
+        `UPDATE orders SET status = 'Maksettu' WHERE id = ?`,
+        [orderId],
+        (err) => {
+            if (err) console.error(err);
+        }
+    );
 
-        const { customer, items, amount } = order;
-        
-        // Sähköpostien lähetys (kuten aiemmin)
-        const tuotteetHtml = items.map(item => `<li>${item.name} - ${item.price} €</li>`).join('');
-        const mailOptions = {
-            from: '"Eduko" <kissakoira773@gmail.com>',
-            to: customer.email,
-            subject: `Tilausvahvistus ${orderId}`,
-            html: `<h1>Kiitos!</h1><p>Tilaus ${orderId} maksettu.</p><ul>${tuotteetHtml}</ul>`
-        };
+    // Hae tilaus DB:stä sähköpostia varten
+    db.query(
+        `SELECT * FROM orders WHERE id = ?`,
+        [orderId],
+        async (err, results) => {
+            if (!err && results.length > 0) {
+                const order = results[0];
+                const items = JSON.parse(order.items);
 
-        try {
-            await lahetin.sendMail(mailOptions);
-        } catch (e) { console.error("Email error", e); }
-    }
+                const tuotteetHtml = items
+                    .map(i => `<li>${i.name} - ${i.price} €</li>`)
+                    .join('');
+
+                try {
+                    await lahetin.sendMail({
+                        from: '"Eduko" <kissakoira773@gmail.com>',
+                        to: order.customer_email,
+                        subject: `Tilausvahvistus ${orderId}`,
+                        html: `<h1>Kiitos!</h1><p>Tilaus ${orderId} maksettu.</p><ul>${tuotteetHtml}</ul>`
+                    });
+                } catch (e) {
+                    console.error("Email error", e);
+                }
+            }
+        }
+    );
+
     res.sendFile(path.join(__dirname, 'views/pages/success.html'));
 });
+
 
 app.get('/cancel', (req, res) => {
     res.send(`<h1>Maksu keskeytyi</h1><p>Voit yrittää uudelleen ostoskorista.</p><a href="/kori">Palaa ostoskoriin</a>`);
@@ -117,6 +134,7 @@ app.get('/cancel', (req, res) => {
 app.post('/api/paytrail/create-payment', async (req, res) => {
     const { items, amount, customer } = req.body;
     const mainStamp = `eduko-${Date.now()}`;
+    const fullName = `${customer.fname} ${customer.lname}`.trim()
 
     // Tallennetaan tilaus muistiin odottamaan maksua
     temporaryOrders[mainStamp] = { 
@@ -127,6 +145,28 @@ app.post('/api/paytrail/create-payment', async (req, res) => {
         status: 'Odottaa maksua',
         date: new Date().toLocaleString('fi-FI')
     };
+
+db.query(
+  `INSERT INTO orders 
+   (id, customer_email, customer_name, customer_phone, customer_address, customer_postcode, customer_city, items, amount, status)
+   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  [
+    mainStamp,
+    customer.email,
+    fullName,
+    customer.phone || '',
+    customer.address || '',
+    customer.postcode || '',
+    customer.city || '',
+    JSON.stringify(items),
+    amount,
+    'Odottaa maksua'
+  ],
+  (err) => {
+    if (err) console.error("DB tilaus virhe:", err);
+  }
+);
+
 
     const body = {
         stamp: mainStamp,
@@ -169,16 +209,27 @@ app.post('/api/paytrail/create-payment', async (req, res) => {
 
 // ADMIN: Hae tilaukset
 app.get('/api/admin/orders', vaadiKirjautuminen, (req, res) => {
-    const ordersArray = Object.values(temporaryOrders).map(order => ({
-        id: order.id,
-        amount: order.amount,
-        customer: order.customer, // Varmistetaan että customer-objekti on mukana
-        items: order.items,
-        status: order.status,
-        date: order.date
-    })).reverse();
-    res.json(ordersArray);
+    db.query('SELECT * FROM orders ORDER BY created_at DESC', (err, results) => {
+        if (err) return res.status(500).json({ error: 'DB error' });
+
+        const orders = results.map(o => ({
+            id: o.id,
+            amount: o.amount,
+            status: o.status,
+            items: JSON.parse(o.items),
+            customer: {
+                fname: o.customer_name || 'Ei nimeä',
+                email: o.customer_email,
+                phone: o.customer_phone,
+                // Yhdistetään osoitetiedot yhdeksi merkkijonoksi
+                address: `${o.customer_address || ''}, ${o.customer_postcode || ''} ${o.customer_city || ''}`
+            }
+        }));
+        res.json(orders);
+    });
 });
+
+
 
 // ADMIN: Hae tuotteet hallintaa varten
 app.get('/api/admin/products', vaadiKirjautuminen, (req, res) => {

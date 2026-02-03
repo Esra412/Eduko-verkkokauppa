@@ -166,18 +166,7 @@ searchBtn.addEventListener("click", () => {
 // Alustetaan tuotelista kun sivu latautuu
 renderProducts();
 
-app.post('/api/products', vaadiKirjautuminen, (req, res) => {
-    const { name, description, price, image, category_id, specs, images, stock, pickup_point } = req.body;
-    
-    const sql = `INSERT INTO products 
-        (name, description, price, image, category_id, specs, images, stock, pickup_point) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    
-    db.query(sql, [name, description, price, image, category_id, specs, images, stock, pickup_point], (err, result) => {
-        if (err) return res.status(500).json({ success: false, error: err.message });
-        res.json({ success: true, id: result.insertId });
-    });
-});
+
 
 // ==========================================
 // 5. TILAUSTEN HALLINTA
@@ -235,10 +224,11 @@ window.showOrderDetail = function(orderId) {
     const order = JSON.parse(targetLi.getAttribute('data-order-data'));
     const c = order.customer || {};
 
-    document.getElementById('orderNumber').innerText = order.id;
-    document.getElementById('orderName').innerText = `${c.fname || ''} ${c.lname || ''}`.trim() || 'Ei nimeä';
+document.getElementById('orderNumber').innerText = order.id;
+    document.getElementById('orderName').innerText = c.fname; // Tämä on nyt se customer_name
     document.getElementById('orderPhone').innerText = c.phone || 'Ei puhelinta';
     document.getElementById('orderEmail').innerText = c.email || 'Ei sähköpostia';
+    document.getElementById('orderAddress').innerText = c.address || 'Ei osoitetta';
     
     const itemsTable = document.getElementById('orderItems');
     itemsTable.innerHTML = `
