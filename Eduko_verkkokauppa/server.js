@@ -329,12 +329,19 @@ app.get('/api/products/:id', (req, res) => {
 });
 
 // ADMIN: Tuotteen lisäys
+// ADMIN: Tuotteen lisäys (PÄIVITETTY VERSIO)
 app.post('/api/products', vaadiKirjautuminen, (req, res) => {
     const { name, description, price, image, category_id, specs, images, stock, pickup_point, type } = req.body;
-    const sql = `INSERT INTO products (name, description, price, image, category_id, specs, images, stock, pickup_point, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    
+    // SQL-kyselyssä pitää olla nyt kaikki 10 kenttää
+    const sql = `INSERT INTO products (name, description, price, image, category_id, specs, images, stock, pickup_point, type) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
     db.query(sql, [name, description, price, image, category_id, specs, images, stock, pickup_point, type], (err, result) => {
-        if (err) return res.status(500).json({ success: false, error: err.message });
+        if (err) {
+            console.error("Tallennusvirhe tietokantaan:", err);
+            return res.status(500).json({ success: false, error: err.message });
+        }
         res.json({ success: true, id: result.insertId });
     });
 });
