@@ -107,14 +107,76 @@ app.get('/success', (req, res) => {
                     .join('');
 
                 try {
+                    // 1. VIESTI ASIAKKAALLE
+
+                await lahetin.sendMail({
+                    from: '"Eduko Verkkokauppa" <kissakoira773@gmail.com>',
+                    to: order.customer_email,
+                    subject: `Tilausvahvistus - ${orderId}`,
+                    html: `
+                        <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; border-radius: 10px; overflow: hidden;">
+                            <div style="background-color: #b0a078; padding: 20px; text-align: center;">
+                                <h1 style="color: white; margin: 0; letter-spacing: 2px; text-transform: uppercase; font-size: 24px;">Eduko</h1>
+                            </div>
+                            
+                            <div style="padding: 30px; line-height: 1.6; color: #333;">
+                                <h2 style="color: #b0a078; border-bottom: 2px solid #f4f1ea; padding-bottom: 10px;">Kiitos tilauksestasi!</h2>
+                                <p>Hei <strong>${order.customer_name}</strong>,</p>
+                                <p>Olemme vastaanottaneet maksusi. Tilaus on nyt käsittelyssä ja postitetaan sinulle pian.</p>
+                                
+                                <div style="background-color: #fdfaf3; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                                    <p style="margin: 0;"><strong>Tilausnumero:</strong> #${orderId}</p>
+                                    <p style="margin: 0;"><strong>Tilauspäivä:</strong> ${new Date().toLocaleDateString('fi-FI')}</p>
+                                </div>
+
+                                <h3 style="font-size: 16px; text-transform: uppercase; color: #777;">Tilatut tuotteet</h3>
+                                <ul style="list-style: none; padding: 0;">
+                                    ${items.map(i => `
+                                        <li style="padding: 10px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;">
+                                            <span>${i.name}</span>
+                                            <strong style="float: right;">${parseFloat(i.price).toFixed(2)} €</strong>
+                                        </li>
+                                    `).join('')}
+                                </ul>
+
+                                <div style="text-align: right; margin-top: 20px;">
+                                    <p style="font-size: 18px;"><strong>Yhteensä: ${order.amount} €</strong></p>
+                                </div>
+
+                                <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
+                                
+                                <p style="font-size: 12px; color: #888; text-align: center;">
+                                    Tämä on automaattinen viesti, johon ei voi vastata.<br>
+                                    Eduko Verkkokauppa | Kouvola
+                                </p>
+                            </div>
+                        </div>
+                    `
+                });
+
+                    // 2. VIESTI ADMINILLE (Uusi lisäys)
                     await lahetin.sendMail({
-                        from: '"Eduko" <kissakoira773@gmail.com>',
-                        to: order.customer_email,
-                        subject: `Tilausvahvistus ${orderId}`,
-                        html: `<h1>Kiitos!</h1><p>Tilaus ${orderId} maksettu.</p><ul>${tuotteetHtml}</ul>`
+                        from: '"Eduko Järjestelmä" <kissakoira773@gmail.com>',
+                        to: 'esra07bagdat@gmail.com', // Sinun sähköpostisi
+                        subject: `UUSI TILAUS: ${order.customer_name}`,
+                        html: `
+                            <div style="font-family: sans-serif; border: 2px solid #b0a078; padding: 20px;">
+                                <h2 style="color: #b0a078;">Uusi tilaus vastaanotettu!</h2>
+                                <p><strong>Tilausnumero:</strong> ${orderId}</p>
+                                <p><strong>Asiakas:</strong> ${order.customer_name}</p>
+                                <p><strong>Sähköposti:</strong> ${order.customer_email}</p>
+                                <p><strong>Summa:</strong> ${order.amount} €</p>
+                                <hr>
+                                <h3>Tilatut tuotteet:</h3>
+                                <ul>${tuotteetHtml}</ul>
+                                <br>
+                                <a href="http://localhost:${PORT}" style="background: #b0a078; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Hallitse tilauksia</a>
+                            </div>
+                        `
                     });
+
                 } catch (e) {
-                    console.error("Email error", e);
+                    console.error("Sähköpostivirhe:", e);
                 }
             }
         }
@@ -296,8 +358,27 @@ app.post('/api/login-step1', async (req, res) => {
             await lahetin.sendMail({
                 from: '"Eduko Admin" <kissakoira773@gmail.com>',
                 to: email,
-                subject: "Vahvistuskoodi - Eduko",
-                html: `<div style="padding:20px; border:1px solid #ddd;"><h1>Vahvistuskoodisi: ${vahvistuskoodi}</h1></div>`
+                subject: "Kirjautumisen vahvistuskoodi - Eduko",
+                html: `
+                    <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 500px; margin: auto; border: 1px solid #eee; border-radius: 10px; overflow: hidden; text-align: center;">
+                        <div style="background-color: #333; padding: 20px;">
+                            <h1 style="color: #b0a078; margin: 0; letter-spacing: 2px; text-transform: uppercase; font-size: 20px;">Eduko Admin</h1>
+                        </div>
+                        
+                        <div style="padding: 40px; background-color: #fff;">
+                            <p style="color: #666; font-size: 16px;">Käytä alla olevaa koodia kirjautuaksesi hallintapaneeliin:</p>
+                            
+                            <div style="margin: 30px auto; padding: 15px; background-color: #fdfaf3; border: 2px dashed #b0a078; display: inline-block;">
+                                <span style="font-size: 32px; font-weight: bold; letter-spacing: 10px; color: #333;">${vahvistuskoodi}</span>
+                            </div>
+                            
+                            <p style="color: #999; font-size: 12px; margin-top: 30px;">
+                                Jos et yrittänyt kirjautua, voit jättää tämän viestin huomioimatta.<br>
+                                Koodi on voimassa vain kuluvan istunnon ajan.
+                            </p>
+                        </div>
+                    </div>
+                `
             });
             res.json({ success: true });
         } catch (error) {
