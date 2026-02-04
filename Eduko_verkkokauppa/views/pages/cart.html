@@ -138,6 +138,8 @@
         totalElem.innerText = total.toFixed(2);
     }
 
+
+    
     function removeItem(index) {
         let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
         cart.splice(index, 1);
