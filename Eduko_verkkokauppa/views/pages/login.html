@@ -10,79 +10,32 @@
 <body>
 
 <div class="login-card">
-
-    <!-- STEP 1: Sähköposti + salasana -->
-    <form id="login-form">
-        <div id="step1">
-            <h2>Kirjaudu sisään</h2>
-
-            <div class="input-group">
-                <label>Sähköpostiosoite</label>
-                <input type="email" id="email" placeholder="admin@example.com" required>
-            </div>
-
-            <div class="input-group">
-                <label>Salasana</label>
-                <input type="password" id="password" placeholder="********" required>
-            </div>
-
-            <button type="submit">Lähetä vahvistuskoodi</button>
-
-            <div id="error-step1" class="message error"></div>
+    <div id="step1">
+        <h2>Kirjaudu sisään</h2>
+        <div class="input-group">
+            <label>Sähköpostiosoite</label>
+            <input type="email" id="email" placeholder="admin@example.com" required>
         </div>
-    </form>
-
-    <!-- STEP 2: Vahvistuskoodi -->
-    <form id="code-form">
-        <div id="step2" style="display:none;">
-            <h2>Vahvista kirjautuminen</h2>
-
-            <p style="font-size: 0.9rem; color: #666;">
-                Lähetimme 6-numeroisen koodin sähköpostiisi.
-            </p>
-
-            <div class="input-group">
-                <label>Vahvistuskoodi</label>
-                <input
-                    type="text"
-                    id="code"
-                    maxlength="6"
-                    placeholder="123456"
-                    style="text-align:center; font-weight:bold;"
-                >
-            </div>
-
-            <button type="submit">Vahvista ja kirjaudu</button>
-
-            <button type="button"
-                    onclick="location.reload()"
-                    style="background:none; color:#666; font-size:0.8rem;">
-                Palaa takaisin
-            </button>
-
-            <div id="error-step2" class="message error"></div>
+        <div class="input-group">
+            <label>Salasana</label>
+            <input type="password" id="password" placeholder="********" required>
         </div>
-    </form>
+        <button onclick="sendCode()">Lähetä vahvistuskoodi</button>
+        <div id="error-step1" class="message error"></div>
+    </div>
 
+    <div id="step2">
+        <h2>Vahvista kirjautuminen</h2>
+        <p style="font-size: 0.9rem; color: #666;">Lähetimme 6-numeroisen koodin sähköpostiisi.</p>
+        <div class="input-group">
+            <label>Vahvistuskoodi</label>
+            <input type="text" id="code" maxlength="6" placeholder="123456" style="text-align: center; font-weight: bold;">
+        </div>
+        <button onclick="verifyCode()">Vahvista ja kirjaudu</button>
+        <button onclick="location.reload()" style="background: none; color: #666; font-size: 0.8rem;">Palaa takaisin</button>
+        <div id="error-step2" class="message error"></div>
+    </div>
 </div>
-
 <script src="/script/login.js"></script>
-
-<script>
-/* 
-   Tämä varmistaa, että Enter painallus
-   EI reloadaa sivua vaan kutsuu oikeita funktioita
-*/
-document.getElementById("login-form").addEventListener("submit", function (e) {
-    e.preventDefault();
-    sendCode();
-});
-
-document.getElementById("code-form").addEventListener("submit", function (e) {
-    e.preventDefault();
-    verifyCode();
-});
-</script>
-
 </body>
 </html>
