@@ -4,212 +4,233 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ostoskori - Eduko</title>
+
     <link rel="stylesheet" href="/styles/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <style>
-        .cart-wrapper { max-width: 800px; margin: 50px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .cart-item { display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #eee; }
-        .cart-item img { width: 80px; height: 80px; object-fit: cover; border-radius: 5px; }
-        .cart-details { flex: 1; margin-left: 20px; }
-        .remove-btn { color: #e74c3c; cursor: pointer; border: none; background: none; font-size: 1.1rem; }
-        .cart-summary { margin-top: 30px; text-align: right; }
-        
-        /* Lomakkeen tyylit */
-        #checkout-form-container { 
-            display: none; 
-            margin-top: 30px; 
-            padding: 25px; 
-            background: #fdfaf3; 
-            border: 1px solid #b0a078; 
-            border-radius: 8px; 
-            text-align: left;
-            animation: fadeIn 0.5s ease;
+        .cart-wrapper {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; }
-        .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
-        .form-row { display: flex; gap: 10px; }
-        .form-row .form-group { flex: 1; }
-        
-        .empty-cart { text-align: center; padding: 40px; }
-        .back-link { text-decoration: none; color: #b0a078; font-weight: bold; margin-bottom: 20px; display: inline-block; }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .cart-details {
+            flex: 1;
+            margin-left: 20px;
+        }
+
+        .remove-btn {
+            color: #e74c3c;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 1.1rem;
+        }
+
+        .cart-summary {
+            margin-top: 30px;
+            text-align: right;
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .back-link {
+            text-decoration: none;
+            color: #b0a078;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        #checkout-form-container {
+            display: none;
+            margin-top: 30px;
+            padding: 25px;
+            background: #fdfaf3;
+            border: 1px solid #b0a078;
+            border-radius: 8px;
+        }
+
+        input[type="number"] {
+            padding: 6px;
+        }
     </style>
 </head>
 <body>
 
 <div class="cart-wrapper">
-    <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Jatka ostoksia</a>
+    <a href="/" class="back-link">
+        <i class="fas fa-arrow-left"></i> Jatka ostoksia
+    </a>
+
     <h2><i class="fas fa-shopping-cart"></i> Ostoskorisi</h2>
-    
+
     <div id="cart-list"></div>
 
     <div class="cart-summary">
         <h3>Yhteensä: <span id="cart-total">0.00</span> €</h3>
-        <button id="show-form-btn" class="bid-btn" style="padding: 15px 30px; font-size: 1.1rem; margin-top: 10px;">
+
+        <button id="show-form-btn" class="bid-btn" style="padding: 15px 30px; font-size: 1.1rem;">
             Jatka tilaamaan <i class="fas fa-chevron-right"></i>
         </button>
     </div>
 
     <div id="checkout-form-container">
-        <h3 style="border-bottom: 2px solid #b0a078; padding-bottom: 10px; margin-bottom: 20px;">Toimitustiedot</h3>
-        <div class="form-row">
-            <div class="form-group">
-                <label>Etunimi</label>
-                <input type="text" id="fname" placeholder="Matti" required>
-            </div>
-            <div class="form-group">
-                <label>Sukunimi</label>
-                <input type="text" id="lname" placeholder="Meikäläinen" required>
-            </div>
-        </div>
-        <div class="form-group">
-            <label>Sähköposti (vahvistusta varten)</label>
-            <input type="email" id="customer-email" placeholder="matti@esimerkki.fi" required>
-        </div>
-        <div class="form-group">
-            <label>Puhelinnumero</label>
-            <input type="tel" id="phone" placeholder="040 123 4567" required>
-        </div>
-        <div class="form-group">
-            <label>Katuosoite</label>
-            <input type="text" id="address" placeholder="Esimerkkikatu 12" required>
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label>Postinumero</label>
-                <input type="text" id="postcode" placeholder="00100" required>
-            </div>
-            <div class="form-group">
-                <label>Kunta</label>
-                <input type="text" id="city" placeholder="Kouvola" required>
-            </div>
-        </div>
-        <button id="pay-button" class="bid-btn" style="width: 100%; margin-top: 15px; padding: 15px;">
+        <h3>Toimitustiedot</h3>
+
+        <input type="text" id="fname" placeholder="Etunimi"><br><br>
+        <input type="text" id="lname" placeholder="Sukunimi"><br><br>
+        <input type="email" id="customer-email" placeholder="Sähköposti"><br><br>
+
+        <button id="pay-button" class="bid-btn" style="width:100%;">
             Siirry maksamaan <i class="fas fa-credit-card"></i>
         </button>
     </div>
 </div>
 
 <script>
-    const cartList = document.getElementById('cart-list');
-    const totalElem = document.getElementById('cart-total');
-    const showFormBtn = document.getElementById('show-form-btn');
-    const formContainer = document.getElementById('checkout-form-container');
-    const payBtn = document.getElementById('pay-button');
+const cartList = document.getElementById('cart-list');
+const totalElem = document.getElementById('cart-total');
+const showFormBtn = document.getElementById('show-form-btn');
+const formContainer = document.getElementById('checkout-form-container');
+const payBtn = document.getElementById('pay-button');
 
-    function renderCart() {
-        let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
-        cartList.innerHTML = "";
-        let total = 0;
+function renderCart() {
+    let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
+    cartList.innerHTML = "";
+    let total = 0;
 
-        if (cart.length === 0) {
-            cartList.innerHTML = `
-                <div class='empty-cart'>
-                    <h3>Ostoskorisi on tyhjä.</h3>
-                    <p><a href='/' style='color: #b0a078;'>Palaa ostoksille tästä.</a></p>
-                </div>`;
-            totalElem.innerText = "0.00";
-            showFormBtn.style.display = 'none';
-            formContainer.style.display = 'none';
-            return;
-        }
+    if (cart.length === 0) {
+        cartList.innerHTML = `
+            <div class="empty-cart">
+                <h3>Ostoskorisi on tyhjä.</h3>
+                <p><a href="/">Palaa ostoksille</a></p>
+            </div>`;
+        totalElem.innerText = "0.00";
+        showFormBtn.style.display = "none";
+        formContainer.style.display = "none";
+        return;
+    }
 
-        showFormBtn.style.display = 'inline-block';
+    showFormBtn.style.display = "inline-block";
 
-        cart.forEach((item, index) => {
-            const price = parseFloat(item.price.toString().replace(',', '.'));
-            total += price;
+    cart.forEach((item, index) => {
+        const price = parseFloat(item.price.toString().replace(',', '.'));
+        const quantity = item.quantity ?? 1;
 
-            cartList.innerHTML += `
-                <div class="cart-item">
-                    <img src="${item.image || '/images/no-image.png'}" alt="">
-                    <div class="cart-details">
-                        <h4>${item.name}</h4>
-                        <p>${price.toFixed(2)} €</p>
+        total += price * quantity;
+
+        cartList.innerHTML += `
+            <div class="cart-item">
+                <img src="${item.image || '/images/no-image.png'}">
+
+                <div class="cart-details">
+                    <h4>${item.name}</h4>
+                    <p>${price.toFixed(2)} € / kpl</p>
+
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <button onclick="changeQuantity(${index}, -1)">−</button>
+
+                        <input type="number"
+                               min="0"
+                               max="${item.stock}"
+                               value="${quantity}"
+                               onchange="setQuantity(${index}, this.value)"
+                               style="width:60px; text-align:center;">
+
+                        <button onclick="changeQuantity(${index}, 1)">+</button>
+
+                        <span style="font-size:0.85rem; color:#666;">
+                            (varastossa ${item.stock})
+                        </span>
                     </div>
-                    <button class="remove-btn" onclick="removeItem(${index})">
-                        <i class="fas fa-trash"></i>
-                    </button>
+
+                    <strong>${(price * quantity).toFixed(2)} €</strong>
                 </div>
-            `;
-        });
-        totalElem.innerText = total.toFixed(2);
-    }
 
+                <button class="remove-btn" onclick="removeItem(${index})">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        `;
+    });
 
-    
-    function removeItem(index) {
-        let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
+    totalElem.innerText = total.toFixed(2);
+}
+
+function changeQuantity(index, delta) {
+    let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
+    let item = cart[index];
+
+    if (item.quantity === undefined) item.quantity = 1;
+
+    item.quantity += delta;
+
+    if (item.quantity <= 0) {
         cart.splice(index, 1);
-        localStorage.setItem('eduko_cart', JSON.stringify(cart));
-        renderCart();
-        
-        const count = document.getElementById('cart-count');
-        if (count) count.innerText = cart.length;
+    } else if (item.quantity > item.stock) {
+        item.quantity = item.stock;
+        alert("Varastosaldon raja saavutettu.");
     }
 
-    // "Jatka tilaamaan" -painikkeen logiikka
-    showFormBtn.addEventListener('click', () => {
-        formContainer.style.display = 'block';
-        showFormBtn.style.display = 'none';
-        formContainer.scrollIntoView({ behavior: 'smooth' });
-    });
-
-    // Lopullinen maksun luonti
-    payBtn.addEventListener('click', async () => {
-        const customerData = {
-            fname: document.getElementById('fname').value,
-            lname: document.getElementById('lname').value,
-            email: document.getElementById('customer-email').value,
-            phone: document.getElementById('phone').value,
-            address: document.getElementById('address').value,
-            postcode: document.getElementById('postcode').value,
-            city: document.getElementById('city').value
-        };
-
-        // Validaatio
-        if (Object.values(customerData).some(val => val.trim() === "")) {
-            alert("Täytä kaikki osoitetiedot jatkaaksesi.");
-            return;
-        }
-
-        let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
-        const totalAmount = cart.reduce((sum, item) => sum + parseFloat(item.price.toString().replace(',', '.')), 0);
-
-        payBtn.innerText = "Valmistellaan maksua...";
-        payBtn.disabled = true;
-
-        try {
-            const response = await fetch('/api/paytrail/create-payment', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    items: cart,
-                    amount: totalAmount,
-                    customer: customerData
-                })
-            });
-
-            const data = await response.json();
-
-            if (data.href) {
-                window.location.href = data.href;
-            } else {
-                alert("Maksun luominen epäonnistui. Yritä uudelleen.");
-                payBtn.innerText = "Siirry maksamaan";
-                payBtn.disabled = false;
-            }
-        } catch (err) {
-            console.error("Yhteysvirhe:", err);
-            alert("Yhteysvirhe palvelimeen.");
-            payBtn.disabled = false;
-        }
-    });
-
-    // Alustetaan kori heti
+    localStorage.setItem('eduko_cart', JSON.stringify(cart));
     renderCart();
+}
+
+function setQuantity(index, value) {
+    let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
+    let item = cart[index];
+
+    let qty = parseInt(value);
+
+    if (isNaN(qty) || qty <= 0) {
+        cart.splice(index, 1);
+    } else if (qty > item.stock) {
+        alert("Varastosaldon raja saavutettu.");
+        item.quantity = item.stock;
+    } else {
+        item.quantity = qty;
+    }
+
+    localStorage.setItem('eduko_cart', JSON.stringify(cart));
+    renderCart();
+}
+
+function removeItem(index) {
+    let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
+    cart.splice(index, 1);
+    localStorage.setItem('eduko_cart', JSON.stringify(cart));
+    renderCart();
+}
+
+showFormBtn.addEventListener('click', () => {
+    formContainer.style.display = "block";
+    showFormBtn.style.display = "none";
+});
+
+renderCart();
 </script>
 
 </body>
