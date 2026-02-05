@@ -9,6 +9,23 @@ const db = require('./db');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+
+// Vastuuhenkilöiden tiedot kategorioittain (ID on avain)
+const vastuuhenkilot = {
+    "1": { nimi: "Matti Meikäläinen", email: "matti.ajoneuvo@eduko.fi", puh: "040 123 4567" },
+    "2": { nimi: "Sanni Suortuva", email: "sanni.hius@eduko.fi", puh: "040 234 5678" },
+    "3": { nimi: "Kalle Koneistaja", email: "kalle.metalli@eduko.fi", puh: "040 345 6789" },
+    "4": { nimi: "Lauri Lastaus", email: "lauri.logistiikka@eduko.fi", puh: "040 456 7890" },
+    "5": { nimi: "Paula Putki", email: "paula.prosessi@eduko.fi", puh: "040 567 8901" },
+    "6": { nimi: "Teemu Turva", email: "teemu.turva@eduko.fi", puh: "040 678 9012" },
+    "7": { nimi: "Risto Rakentaja", email: "risto.raksa@eduko.fi", puh: "040 789 0123" },
+    "8": { nimi: "Keijo Kokki", email: "keijo.kokki@eduko.fi", puh: "040 890 1234" },
+    "9": { nimi: "Seppo Sähkö", email: "seppo.sahko@eduko.fi", puh: "040 901 2345" },
+    "10": { nimi: "Sari Sote", email: "sari.sote@eduko.fi", puh: "040 012 3456" },
+    "11": { nimi: "Iiro It", email: "iiro.it@eduko.fi", puh: "040 111 2222" }
+};
+const oletusHenkilo = { nimi: "Eduko Asiakaspalvelu", email: "info@eduko.fi", puh: "020 61511" };
+
 /**
  * TILAUSTEN HALLINTA
  * Huom: temporaryOrders säilyy vain palvelimen ollessa päällä.
@@ -84,107 +101,119 @@ app.get('/kori', (req, res) => res.sendFile(path.join(__dirname, 'views/pages/ca
 app.get('/success', (req, res) => {
     const orderId = req.query.id;
 
-    // Päivitä DB
-    db.query(
-        `UPDATE orders SET status = 'Maksettu' WHERE id = ?`,
-        [orderId],
-        (err) => {
-            if (err) console.error(err);
+    // 1. Päivitetään tilauksen tila tietokantaan
+    db.query(`UPDATE orders SET status = 'Maksettu' WHERE id = ?`, [orderId], (err) => {
+        if (err) console.error("Tietokantavirhe (status):", err);
+    });
+
+    // 2. Haetaan tilauksen tiedot tietokannasta
+    db.query(`SELECT * FROM orders WHERE id = ?`, [orderId], async (err, results) => {
+        if (err || results.length === 0) {
+            console.error("Tilausta ei löytynyt ID:llä:", orderId);
+            return res.sendFile(path.join(__dirname, 'views/pages/success.html'));
         }
-    );
 
-    // Hae tilaus DB:stä sähköpostia varten
-    db.query(
-        `SELECT * FROM orders WHERE id = ?`,
-        [orderId],
-        async (err, results) => {
-            if (!err && results.length > 0) {
-                const order = results[0];
-                const items = JSON.parse(order.items);
+        const order = results[0];
+        const items = JSON.parse(order.items);
+        const itemIds = items.map(i => i.id);
 
-                const tuotteetHtml = items
-                    .map(i => `<li>${i.name} - ${i.price} €</li>`)
-                    .join('');
+        // 3. Haetaan tuotteiden kategoriat, jotta saadaan vastuuhenkilöt
+        db.query(`SELECT id, category_id, name FROM products WHERE id IN (?)`, [itemIds], async (pErr, pRes) => {
+            
+            let vastuuhenkiloBlokitHtml = "";
+            let lisatytIdt = new Set();
 
-                try {
-                    // 1. VIESTI ASIAKKAALLE
+            if (!pErr && pRes.length > 0) {
+                pRes.forEach(tuote => {
+                    const catId = String(tuote.category_id);
+                    if (!lisatytIdt.has(catId)) {
+                        const v = vastuuhenkilot[catId] || oletusHenkilo;
+                        vastuuhenkiloBlokitHtml += `
+                            <div style="margin-bottom: 15px; padding: 10px; border-left: 4px solid #b0a078; background: #fafafa;">
+                                <p style="margin: 0; font-weight: bold;">${tuote.name} - alan vastuuhenkilö:</p>
+                                <p style="margin: 5px 0 0 0;">${v.nimi} | ${v.email} | ${v.puh}</p>
+                            </div>`;
+                        lisatytIdt.add(catId);
+                    }
+                });
+            }
 
+            // --- TÄRKEÄÄ: Kaikki sähköpostit lähetetään ENNEN res.sendFile() -komentoa ---
+            try {
+                // VIERTI 1: ASIAKKAALLE
                 await lahetin.sendMail({
                     from: '"Eduko Verkkokauppa" <kissakoira773@gmail.com>',
                     to: order.customer_email,
-                    subject: `Tilausvahvistus - ${orderId}`,
+                    subject: `Tilausvahvistus - Tilausnumero: ${orderId}`, // 1. Tilausnumero otsikossa
                     html: `
-                        <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; border-radius: 10px; overflow: hidden;">
-                            <div style="background-color: #b0a078; padding: 20px; text-align: center;">
-                                <h1 style="color: white; margin: 0; letter-spacing: 2px; text-transform: uppercase; font-size: 24px;">Eduko</h1>
-                            </div>
+                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+                            <div style="background-color: #b0a078; padding: 20px; text-align: center; color: white;">
+                                <h1 style="margin: 0;">EDUKO</h1>
+                                <p style="margin: 5px 0 0 0;">TILAUSNUMERO: ${orderId}</p> </div>
                             
-                            <div style="padding: 30px; line-height: 1.6; color: #333;">
-                                <h2 style="color: #b0a078; border-bottom: 2px solid #f4f1ea; padding-bottom: 10px;">Kiitos tilauksestasi!</h2>
-                                <p>Hei <strong>${order.customer_name}</strong>,</p>
-                                <p>Olemme vastaanottaneet maksusi. Tilaus on nyt käsittelyssä ja postitetaan sinulle pian.</p>
-                                
-                                <div style="background-color: #fdfaf3; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                                    <p style="margin: 0;"><strong>Tilausnumero:</strong> #${orderId}</p>
-                                    <p style="margin: 0;"><strong>Tilauspäivä:</strong> ${new Date().toLocaleDateString('fi-FI')}</p>
-                                </div>
+                            <div style="padding: 25px; color: #333;">
+                                <h2>Kiitos tilauksestasi, ${order.customer_name}!</h2>
+                                <p>Olemme vastaanottaneet maksun ja tilauksesi on nyt käsittelyssä.</p>
 
-                                <h3 style="font-size: 16px; text-transform: uppercase; color: #777;">Tilatut tuotteet</h3>
-                                <ul style="list-style: none; padding: 0;">
+                                <h3 style="border-bottom: 2px solid #f4f1ea; padding-bottom: 8px;">Tilatut tuotteet:</h3>
+                                <table style="width: 100%; border-collapse: collapse;">
                                     ${items.map(i => `
-                                        <li style="padding: 10px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;">
-                                            <span>${i.name}</span>
-                                            <strong style="float: right;">${parseFloat(i.price).toFixed(2)} €</strong>
-                                        </li>
+                                        <tr>
+                                            <td style="padding: 10px 0; border-bottom: 1px solid #eee;">${i.name}</td>
+                                            <td style="padding: 10px 0; border-bottom: 1px solid #eee; text-align: right;"><strong>${parseFloat(i.price).toFixed(2)} €</strong></td>
+                                        </tr>
                                     `).join('')}
-                                </ul>
+                                </table>
+                                <p style="text-align: right; font-size: 18px;"><strong>Yhteensä: ${order.amount} €</strong></p>
 
-                                <div style="text-align: right; margin-top: 20px;">
-                                    <p style="font-size: 18px;"><strong>Yhteensä: ${order.amount} €</strong></p>
+                                <div style="margin-top: 40px; padding: 20px; border: 1px solid #b0a078; border-radius: 5px;">
+                                    <h3 style="margin-top: 0; color: #b0a078;">Nouto-ohjeet ja yhteystiedot</h3>
+                                    <p>Ota yhteyttä alla oleviin vastuuhenkilöihin sopiaksesi tuotteiden noudosta:</p>
+                                    
+                                    ${vastuuhenkiloBlokitHtml} <p style="font-size: 12px; color: #666; margin-top: 15px;">
+                                        Huom: Tuotteet noudetaan Edukon toimipisteistä vastuuhenkilön kanssa sovittuna ajankohtana.
+                                    </p>
                                 </div>
 
-                                <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
-                                
-                                <p style="font-size: 12px; color: #888; text-align: center;">
-                                    Tämä on automaattinen viesti, johon ei voi vastata.<br>
-                                    Eduko Verkkokauppa | Kouvola
-                                </p>
+                                <div style="text-align: center; margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; color: #888; font-size: 12px;">
+                                    <p>Eduko Verkkokauppa | Kouvola</p>
+                                    <p>Tämä on automaattinen vahvistusviesti.</p>
+                                </div>
                             </div>
                         </div>
                     `
                 });
 
-                    // 2. VIESTI ADMINILLE (Uusi lisäys)
-                    await lahetin.sendMail({
-                        from: '"Eduko Järjestelmä" <kissakoira773@gmail.com>',
-                        to: 'esra07bagdat@gmail.com', // Sinun sähköpostisi
-                        subject: `UUSI TILAUS: ${order.customer_name}`,
-                        html: `
-                            <div style="font-family: sans-serif; border: 2px solid #b0a078; padding: 20px;">
-                                <h2 style="color: #b0a078;">Uusi tilaus vastaanotettu!</h2>
-                                <p><strong>Tilausnumero:</strong> ${orderId}</p>
-                                <p><strong>Asiakas:</strong> ${order.customer_name}</p>
-                                <p><strong>Sähköposti:</strong> ${order.customer_email}</p>
-                                <p><strong>Summa:</strong> ${order.amount} €</p>
-                                <hr>
-                                <h3>Tilatut tuotteet:</h3>
-                                <ul>${tuotteetHtml}</ul>
-                                <br>
-                                <a href="http://localhost:${PORT}" style="background: #b0a078; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Hallitse tilauksia</a>
-                            </div>
-                        `
-                    });
+                // VIESTI 2: ADMINILLE (Sinulle)
+                await lahetin.sendMail({
+                    from: '"Eduko Järjestelmä" <kissakoira773@gmail.com>',
+                    to: 'esra07bagdat@gmail.com', 
+                    subject: `UUSI TILAUS #${orderId} - ${order.customer_name}`,
+                    html: `
+                        <div style="font-family: sans-serif; border: 2px solid #b0a078; padding: 20px;">
+                            <h2>Uusi tilaus vastaanotettu!</h2>
+                            <p><strong>Tilausnumero:</strong> #${orderId}</p>
+                            <p><strong>Asiakas:</strong> ${order.customer_name}</p>
+                            <p><strong>Summa:</strong> ${order.amount} €</p>
+                            <hr>
+                            <h3>Tuotteet ja vastuuhenkilöt:</h3>
+                            ${vastuuhenkiloBlokitHtml}
+                            <br>
+                            <a href="http://localhost:${PORT}/admin">Hallitse tilauksia</a>
+                        </div>`
+                });
 
-                } catch (e) {
-                    console.error("Sähköpostivirhe:", e);
-                }
+                console.log("Molemmat sähköpostit lähetetty onnistuneesti!");
+
+            } catch (mailError) {
+                console.error("Sähköpostin lähetys epäonnistui:", mailError);
             }
-        }
-    );
 
-    res.sendFile(path.join(__dirname, 'views/pages/success.html'));
+            // 4. LÄHETETÄÄN VASTAUS SELAIMELLE VASTA NYT
+            res.sendFile(path.join(__dirname, 'views/pages/success.html'));
+        });
+    });
 });
-
 
 app.get('/cancel', (req, res) => {
     res.send(`<h1>Maksu keskeytyi</h1><p>Voit yrittää uudelleen ostoskorista.</p><a href="/kori">Palaa ostoskoriin</a>`);
@@ -305,8 +334,8 @@ app.get('/api/admin/products', vaadiKirjautuminen, (req, res) => {
 app.get('/api/products', (req, res) => {
     const categoryParam = req.query.category;
     let sql = !isNaN(categoryParam) 
-        ? "SELECT * FROM products WHERE category_id = ? ORDER BY id DESC" 
-        : "SELECT p.* FROM products p JOIN categories c ON p.category_id = c.id WHERE c.slug = ? ORDER BY p.id DESC";
+        ? "SELECT p.*, c.slug as category_slug FROM products p LEFT JOIN categories c ON p.category_id = c.id WHERE p.category_id = ? ORDER BY p.id DESC" 
+        : "SELECT p.*, c.slug as category_slug FROM products p JOIN categories c ON p.category_id = c.id WHERE c.slug = ? ORDER BY p.id DESC";
 
     db.query(sql, [categoryParam], (err, results) => {
         if (err) return res.status(500).json({ error: "Tietokantavirhe" });
@@ -315,17 +344,30 @@ app.get('/api/products', (req, res) => {
 });
 
 app.get('/api/products/latest', (req, res) => {
-    db.query("SELECT * FROM products ORDER BY created_at DESC LIMIT 15", (err, results) => {
-        if (err) return res.status(500).json({ error: "Tietokantavirhe" });
-        res.json(results);
-    });
+    db.query(
+        `SELECT p.*, c.slug as category_slug 
+         FROM products p 
+         LEFT JOIN categories c ON p.category_id = c.id 
+         ORDER BY p.created_at DESC LIMIT 15`, 
+        (err, results) => {
+            if (err) return res.status(500).json({ error: "Tietokantavirhe" });
+            res.json(results);
+        }
+    );
 });
 
 app.get('/api/products/:id', (req, res) => {
-    db.query("SELECT * FROM products WHERE id = ?", [req.params.id], (err, results) => {
-        if (err || results.length === 0) return res.status(404).json({ error: "Ei löydy" });
-        res.json(results[0]);
-    });
+    db.query(
+        `SELECT p.*, c.slug as category_slug 
+         FROM products p 
+         LEFT JOIN categories c ON p.category_id = c.id 
+         WHERE p.id = ?`, 
+        [req.params.id], 
+        (err, results) => {
+            if (err || results.length === 0) return res.status(404).json({ error: "Ei löydy" });
+            res.json(results[0]);
+        }
+    );
 });
 
 // ADMIN: Tuotteen lisäys

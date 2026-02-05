@@ -40,8 +40,9 @@ async function renderProducts(filter = "") {
     }
 }
 
-
+// ==========================================
 // 2. TUOTTEEN LISÄÄMINEN
+// ==========================================
 document.getElementById('addProductForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
