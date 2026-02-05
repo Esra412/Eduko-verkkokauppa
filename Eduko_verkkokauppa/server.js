@@ -354,6 +354,22 @@ app.delete('/api/products/:id', vaadiKirjautuminen, (req, res) => {
     });
 });
 
+// Haku API: Etsii tuotteita nimen tai kuvauksen perusteella
+app.get('/api/search', (req, res) => {
+    const term = req.query.q;
+    if (!term) return res.json([]);
+
+    const sql = "SELECT * FROM products WHERE name LIKE ? OR description LIKE ? ORDER BY created_at DESC";
+    const values = [`%${term}%`, `%${term}%` || ''];
+
+    db.query(sql, values, (err, results) => {
+        if (err) {
+            console.error("Hakuvirhe:", err);
+            return res.status(500).json({ error: "Tietokantavirhe haussa" });
+        }
+        res.json(results);
+    });
+});
 // ================= ADMIN KIRJAUTUMINEN (OTP) =================
 
 app.post('/api/login-step1', async (req, res) => {
