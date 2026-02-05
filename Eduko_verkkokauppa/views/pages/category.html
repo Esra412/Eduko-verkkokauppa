@@ -17,10 +17,17 @@
             <small>Kouvolan Ammattiopisto</small>
         </div>
 
-        <div class="search-box">
-            <input type="text" placeholder="Hae tuotteita tai palveluita...">
-            <button><i class="fas fa-search"></i></button>
-        </div>
+        <!-- 🔍 HAKU (form = Enter toimii) -->
+        <form class="search-box" id="search-form">
+            <input
+                type="text"
+                id="search-input"
+                placeholder="Hae tuotteita tai palveluita..."
+            >
+            <button type="submit">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
 
         <div class="auth-buttons">
             <a href="/login" class="btn-primary">Kirjaudu</a>
@@ -66,15 +73,48 @@
     </nav>
 </aside>
 
-    <main class="content">
+<main class="content">
+    <h2 class="section-title">Kategorian kohteet</h2>
+    <div class="product-grid" id="product-grid"></div>
+</main>
 
-        <h2 class="section-title">"Kategorian" kohteet</h2>
-
-        <div class="product-grid" id="product-grid"></div>
-
-
-    </main>
 </div>
+
 <script src="/script/category.js"></script>
+
+<script>
+/*
+    🔍 HAKU:
+    - toimii Enterillä (form submit)
+    - toimii klikkaamalla nappia
+    - suodattaa NIMEN perusteella
+*/
+
+document.getElementById("search-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    filterProducts();
+});
+
+function filterProducts() {
+    const query = document
+        .getElementById("search-input")
+        .value
+        .toLowerCase()
+        .trim();
+
+    // jos hakukenttä tyhjä → näytä kaikki
+    if (!query) {
+        renderProducts(allProducts);
+        return;
+    }
+
+    const filtered = allProducts.filter(product =>
+        product.name.toLowerCase().includes(query)
+    );
+
+    renderProducts(filtered);
+}
+</script>
+
 </body>
 </html>
