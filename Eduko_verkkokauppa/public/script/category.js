@@ -79,21 +79,48 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 4. Ostoskorimekaniikka (Se "juttu") ---
     function aktivoiOstoskoriPainikkeet() {
         document.querySelectorAll('.bid-btn').forEach(button => {
-            button.addEventListener('click', (e) => {
+            button.addEventListener('click', async (e) => {
                 e.preventDefault();
                 e.stopPropagation();
 
                 // Luetaan tiedot napin data-attribuuteista
+                const productId = button.dataset.id;
                 const product = {
-                    id: button.dataset.id,
+                    id: productId,
                     name: button.dataset.name,
                     price: button.dataset.price,
-                    image: button.dataset.image
+                    image: button.dataset.image,
+                    quantity: 1
                 };
+
+                // Haetaan tuotteen varastosaldo
+                let maxStock = 5; // oletus
+                try {
+                    const response = await fetch(`/api/products/${productId}`);
+                    const productData = await response.json();
+                    maxStock = Math.min(productData.stock, 5); // Max 5 tai varastosaldo
+                } catch (err) {
+                    console.error("Virhe varastosaldon haussa:", err);
+                }
 
                 // Tallennus localStorageen
                 let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
-                cart.push(product);
+                
+                // Tarkista, onko tuote jo korissa
+                const existingItem = cart.find(item => item.id == productId);
+                if (existingItem) {
+                    // Jos tuote on jo korissa, kasvata määrää (max maxStock)
+                    if (existingItem.quantity < maxStock) {
+                        existingItem.quantity += 1;
+                    } else {
+                        alert(`Maksimimäärä (${maxStock} kpl) saavutettu!`);
+                        return;
+                    }
+                } else {
+                    // Lisää uusi tuote
+                    cart.push(product);
+                }
+                
                 localStorage.setItem('eduko_cart', JSON.stringify(cart));
                 
                 // Käyttöliittymän päivitys
