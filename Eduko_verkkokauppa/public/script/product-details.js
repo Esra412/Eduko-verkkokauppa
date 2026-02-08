@@ -203,15 +203,42 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 4. OSTOSKORIIN LISÄÄMINEN ---
     const buyBtn = document.querySelector('.buy-now-btn');
     if (buyBtn) {
-        buyBtn.addEventListener('click', () => {
+        buyBtn.addEventListener('click', async () => {
             if (!currentProductData) return;
+
+            // Haetaan tuotteen varastosaldo
+            let maxStock = 5; // oletus
+            try {
+                const response = await fetch(`/api/products/${currentProductData.id}`);
+                const productData = await response.json();
+                maxStock = Math.min(productData.stock, 5); // Max 5 tai varastosaldo
+            } catch (err) {
+                console.error("Virhe varastosaldon haussa:", err);
+            }
+
             let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
-            cart.push({
-                id: currentProductData.id,
-                name: currentProductData.name,
-                price: currentProductData.price,
-                image: currentProductData.image
-            });
+            
+            // Tarkista, onko tuote jo korissa
+            const existingItem = cart.find(item => item.id == currentProductData.id);
+            if (existingItem) {
+                // Jos tuote on jo korissa, kasvata määrää (max maxStock)
+                if (existingItem.quantity < maxStock) {
+                    existingItem.quantity += 1;
+                } else {
+                    alert(`Maksimimäärä (${maxStock} kpl) saavutettu!`);
+                    return;
+                }
+            } else {
+                // Lisää uusi tuote määrällä 1
+                cart.push({
+                    id: currentProductData.id,
+                    name: currentProductData.name,
+                    price: currentProductData.price,
+                    image: currentProductData.image,
+                    quantity: 1
+                });
+            }
+
             localStorage.setItem('eduko_cart', JSON.stringify(cart));
             
             // Päivitä korin lukema

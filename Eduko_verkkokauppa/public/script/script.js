@@ -83,27 +83,55 @@ document.addEventListener('DOMContentLoaded', () => {
     // script.js sisällä
 function ostoskoriLogiikka() {
     document.querySelectorAll('.bid-btn').forEach(button => {
-        button.addEventListener('click', (e) => {
+        button.addEventListener('click', async (e) => {
             e.preventDefault();
             const card = button.closest('.product-card');
+            const productId = card.querySelector('a').href.split('/').pop();
             
+            // Haetaan tuotteen varastosaldo
+            let maxStock = 5; // oletus
+            try {
+                const response = await fetch(`/api/products/${productId}`);
+                const product = await response.json();
+                maxStock = Math.min(product.stock, 5); // Max 5 tai varastosaldo
+            } catch (err) {
+                console.error("Virhe varastosaldon haussa:", err);
+            }
+
             // Luodaan objekti, jossa on kaikki tarvittava
             const product = {
-                id: card.querySelector('a').href.split('/').pop(),
+                id: productId,
                 name: card.querySelector('h3').innerText,
                 price: card.querySelector('.price').innerText.replace(' €', ''), // Pelkkä numero
-                image: card.querySelector('img').src
+                image: card.querySelector('img').src,
+                quantity: 1
             };
 
-            // Haetaan vanhat, lisätään uusi ja tallennetaan
+            // Haetaan vanhat tuotteet
             let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
-            cart.push(product);
+            
+            // Tarkista, onko tuote jo korissa
+            const existingItem = cart.find(item => item.id == productId);
+            if (existingItem) {
+                // Jos tuote on jo korissa, kasvata määrää (max maxStock)
+                if (existingItem.quantity < maxStock) {
+                    existingItem.quantity += 1;
+                    alert(`Tuotteen määrä päivitetty: ${existingItem.quantity} kpl`);
+                } else {
+                    alert(`Maksimimäärä (${maxStock} kpl) saavutettu!`);
+                    return;
+                }
+            } else {
+                // Lisää uusi tuote määrällä 1
+                cart.push(product);
+                alert("Tuote lisätty koriin!");
+            }
+
             localStorage.setItem('eduko_cart', JSON.stringify(cart));
 
-            // Päivitä lukema yläpalkkiin
-            document.getElementById('cart-count').innerText = cart.length;
-            
-            alert("Tuote lisätty koriin!");
+            // Päivitä lukema yläpalkkiin (laske uniikki tuotteiden määrä)
+            const cartCountElement = document.getElementById('cart-count');
+            if (cartCountElement) cartCountElement.innerText = cart.length;
         });
     });
 }
