@@ -1,5 +1,5 @@
 /**
- * ADMIN.JS - Täysi versio tuotteiden lisäykseen ja poistoon
+ * ADMIN.JS – Güncellenmiş Modern CRUD ve Sipariş Yönetimi
  */
 
 const addProductForm = document.getElementById("addProductForm");
@@ -9,251 +9,235 @@ const searchInput = document.getElementById("searchProduct");
 const imagePreview = document.getElementById("imagePreview");
 const mainImageInput = document.querySelector('input[name="mainImage"]');
 
-// ==========================================
-// 1. TUOTTEIDEN LISTAUS JA HAKU
-// ==========================================
+// Yeni UI Elementleri (HTML'inizde bu ID'lerin olduğundan emin olun)
+const formTitle = document.getElementById("formTitle");
+const submitBtn = document.getElementById("submitBtn");
+const cancelBtn = document.getElementById("cancelEditBtn");
+const editBadge = document.getElementById("editModeBadge");
+
+let editingProductId = null;
+
+/* =================================================
+   1. TUOTELISTAUS + HAKU
+================================================= */
 async function renderProducts(filter = "") {
     try {
-        // Haetaan tuotteet admin-reitistä (joka näyttää kaikki tuotteet)
         const res = await fetch('/api/admin/products');
-        if (!res.ok) throw new Error("Haku epäonnistui");
-        
         const products = await res.json();
-
         productList.innerHTML = "";
-        
-        const filteredProducts = products.filter(p => 
-            p.name.toLowerCase().includes(filter.toLowerCase())
-        );
 
-        filteredProducts.forEach((p) => {
-            const li = document.createElement("li");
-            li.innerHTML = `
-                <span><b>${p.name}</b> (${p.price} €)</span>
-                <button class="delete-btn" onclick="deleteProduct(${p.id})">🗑 Poista</button>
-            `;
-            productList.appendChild(li);
-        });
+        products
+            .filter(p => p.name.toLowerCase().includes(filter.toLowerCase()))
+            .forEach(p => {
+                const li = document.createElement("li");
+                li.className = "product-item";
+                li.innerHTML = `
+                    <span><b>${p.name}</b> <small>(${p.price} €)</small></span>
+                    <div class="actions" style="display:flex; gap:8px;">
+                        <button class="edit-btn" onclick="editProduct(${p.id})">✏️ Muokkaa</button>
+                        <button class="delete-btn" onclick="deleteProduct(${p.id})">🗑 Poista</button>
+                    </div>
+                `;
+                productList.appendChild(li);
+            });
     } catch (err) {
-        console.error("Virhe ladattaessa tuotteita:", err);
+        console.error("Latausvirhe:", err);
         productList.innerHTML = "<li>Virhe ladattaessa tuotteita.</li>";
     }
 }
 
-
-// 2. TUOTTEEN LISÄÄMINEN
-document.getElementById('addProductForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const formData = new FormData(e.target);
-    
-    // Apufunktio kuvan muuttamiseksi Base64-muotoon
-    const toBase64 = file => new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-    });
-
+/* =================================================
+   2. MUOKKAUSTILAN AKTIOINTI
+================================================= */
+window.editProduct = async function(id) {
     try {
-        // 1. Käsittele pääkuva
-        const mainImageFile = formData.get('mainImage');
-        const mainImageBase64 = await toBase64(mainImageFile);
+        const res = await fetch(`/api/products/${id}`);
+        if (!res.ok) throw new Error("Tuotetta ei löytynyt");
+        const p = await res.json();
 
-        // 2. Käsittele lisäkuvat (max 5)
-        const extraImageFiles = e.target.extraImages.files;
-        const extraImagesArray = [];
+        editingProductId = id;
+
+        // Formu doldur
+        addProductForm.name.value = p.name;
+        addProductForm.description.value = p.description || "";
+        addProductForm.price.value = p.price;
+        addProductForm.category.value = p.category_id || "";
+        addProductForm.specs.value = p.specs || "";
+        addProductForm.stock.value = p.stock || 0;
+        addProductForm.pickup_point.value = p.pickup_point || "";
+        addProductForm.type.value = p.type;
+
+        // UI Güncellemeleri
+        formTitle.innerText = "Muokkaa tuotetta";
+        submitBtn.innerText = "Tallenna muutokset";
+        submitBtn.style.background = "#2c3e50"; // Daha ciddi bir renk
         
-        // Otetaan vain 5 ensimmäistä kuvaa
-        const count = Math.min(extraImageFiles.length, 5);
-        for (let i = 0; i < count; i++) {
-            const base64 = await toBase64(extraImageFiles[i]);
-            extraImagesArray.push(base64);
-        }
+        if (cancelBtn) cancelBtn.classList.remove("hidden");
+        if (editBadge) editBadge.classList.remove("hidden");
 
-        // 3. Valmistele lähetettävä data
-const data = {
-    name: formData.get('name'),
-    description: formData.get('description'),
-    price: formData.get('price'),
-    category_id: formData.get('category'),
-    specs: formData.get('specs'),
-    stock: formData.get('stock'),          // UUSI
-    pickup_point: formData.get('pickup_point'), // UUSI
-    image: mainImageBase64,
-    images: JSON.stringify(extraImagesArray)
-};
+        // Mevcut resim önizlemesi
+        imagePreview.innerHTML = p.image 
+            ? `<div style="position:relative;">
+                <p style="font-size:10px; margin:0;">Nykyinen kuva:</p>
+                <img src="${p.image}" style="width:120px; border-radius:6px; border:2px solid #b0a078;">
+               </div>` 
+            : "";
 
-        const response = await fetch('/api/products', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
-
-        const result = await response.json();
-        if (result.success) {
-            alert("Tuote lisätty onnistuneesti!");
-            e.target.reset();
-            document.getElementById('imagePreview').innerHTML = "";
-        } else {
-            alert("Virhe: " + result.error);
-        }
+        // Form alanına yumuşak geçiş
+        document.getElementById("add-product").scrollIntoView({ behavior: "smooth" });
 
     } catch (err) {
-        console.error("Latausvirhe:", err);
-        alert("Kuvien käsittely epäonnistui.");
+        alert("Virhe haettaessa tuotteen tietoja.");
+        console.error(err);
     }
-});
+};
 
-// Kuvaesikatselu (vapaaehtoinen lisä)
-document.querySelector('input[name="extraImages"]').addEventListener('change', function(e) {
-    const preview = document.getElementById('imagePreview');
-    preview.innerHTML = "";
-    Array.from(this.files).forEach(file => {
-        const img = document.createElement('img');
-        img.src = URL.createObjectURL(file);
-        img.style.height = "50px";
-        img.style.borderRadius = "5px";
-        preview.appendChild(img);
+/* =================================================
+   3. LOMAKKEEN LÄHETYS (LISÄYS JA PÄIVITYS)
+================================================= */
+addProductForm.addEventListener("submit", async e => {
+    e.preventDefault();
+    
+    submitBtn.disabled = true;
+    const originalBtnText = submitBtn.innerText;
+    submitBtn.innerText = "Tallennetaan...";
+
+    const formData = new FormData(addProductForm);
+
+    const toBase64 = file => new Promise(resolve => {
+        if (!file || !file.size) return resolve(null);
+        const r = new FileReader();
+        r.onload = () => resolve(r.result);
+        r.readAsDataURL(file);
     });
-});
 
-// ==========================================
-// 3. TUOTTEEN POISTAMINEN (AKTIVOITU)
-// ==========================================
-window.deleteProduct = async function(id) {
-    if (!confirm("Haluatko varmasti poistaa tämän tuotteen pysyvästi?")) return;
+    // Resimleri işle
+    const mainImage = await toBase64(formData.get("mainImage"));
+    const extraFiles = addProductForm.extraImages ? addProductForm.extraImages.files : [];
+    const extraImagesArray = [];
+    
+    for (const file of extraFiles) {
+        const base64 = await toBase64(file);
+        if (base64) extraImagesArray.push(base64);
+        if (extraImagesArray.length >= 5) break; 
+    }
+
+    const payload = {
+        name: formData.get("name"),
+        description: formData.get("description"),
+        price: formData.get("price"),
+        category_id: formData.get("category"),
+        specs: formData.get("specs"),
+        stock: formData.get("stock"),
+        pickup_point: formData.get("pickup_point"),
+        type: formData.get("type"),
+        image: mainImage, // null ise backend mevcut resmi korumalı
+        images: JSON.stringify(extraImagesArray)
+    };
+
+    const url = editingProductId ? `/api/products/${editingProductId}` : `/api/products`;
+    const method = editingProductId ? "PUT" : "POST";
 
     try {
-        const res = await fetch(`/api/products/${id}`, { 
-            method: 'DELETE',
-            credentials: 'include' 
+        const res = await fetch(url, {
+            method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
         });
 
-        if (res.ok) {
-            alert("Tuote poistettu!");
-            renderProducts(); // Päivitetään lista heti
+        const result = await res.json();
+
+        if (result.success) {
+            alert(editingProductId ? "Tuote päivitetty!" : "Tuote lisätty!");
+            resetForm();
+            renderProducts();
         } else {
-            alert("Poisto epäonnistui. Oletko edelleen kirjautuneena?");
+            alert("Virhe: " + (result.error || "Tallennus epäonnistui"));
         }
     } catch (err) {
-        console.error("Virhe poistossa:", err);
-        alert("Yhteysvirhe poistettaessa tuotetta.");
+        alert("Yhteysvirhe tallennettaessa.");
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = originalBtnText;
+    }
+});
+
+/* =================================================
+   4. POISTO JA RESET
+================================================= */
+window.deleteProduct = async function(id) {
+    if (!confirm("Poistetaanko tuote pysyvästi?")) return;
+    try {
+        const res = await fetch(`/api/products/${id}`, { method: "DELETE" });
+        if (res.ok) {
+            renderProducts();
+        } else {
+            alert("Poisto epäonnistui");
+        }
+    } catch (err) {
+        console.error(err);
     }
 };
 
-// ==========================================
-// 4. ESIKATSELU JA HAKU-NAPPI
-// ==========================================
-mainImageInput.addEventListener("change", () => {
+function resetForm() {
+    editingProductId = null;
+    addProductForm.reset();
     imagePreview.innerHTML = "";
-    if (mainImageInput.files[0]) {
-        const img = document.createElement("img");
-        img.src = URL.createObjectURL(mainImageInput.files[0]);
-        img.style.width = "120px";
-        img.style.marginTop = "10px";
-        img.style.borderRadius = "5px";
-        img.style.border = "2px solid #b0a078";
-        imagePreview.appendChild(img);
-    }
-});
+    
+    formTitle.innerText = "Lisää uusi tuote";
+    submitBtn.innerText = "Lisää tuote";
+    submitBtn.style.background = "";
+    
+    if (cancelBtn) cancelBtn.classList.add("hidden");
+    if (editBadge) editBadge.classList.add("hidden");
+}
 
-searchBtn.addEventListener("click", () => {
-    renderProducts(searchInput.value);
-});
+if (cancelBtn) cancelBtn.onclick = resetForm;
 
-// Alustetaan tuotelista kun sivu latautuu
-renderProducts();
-
-
-
-// ==========================================
-// 5. TILAUSTEN HALLINTA
-// ==========================================
-/**
- * ADMIN.JS - Korjattu tilausten hallinta
- */
-
+/* =================================================
+   5. TILAUKSET & ALUSTUS
+================================================= */
 async function renderOrders() {
-    const orderList = document.getElementById('orderList');
+    const orderList = document.getElementById("orderList");
+    if(!orderList) return;
+    
     try {
-        const res = await fetch('/api/admin/orders');
+        const res = await fetch("/api/admin/orders");
         const orders = await res.json();
-
         orderList.innerHTML = "";
-        if (orders.length === 0) {
-            orderList.innerHTML = "<li>Ei tilauksia muistissa.</li>";
-            return;
-        }
 
-        orders.forEach(order => {
+        orders.forEach(o => {
             const li = document.createElement("li");
-            const c = order.customer || {};
-            
-            // Rakennetaan nimi turvallisesti
-            const fullName = (c.fname || c.lname) ? `${c.fname || ''} ${c.lname || ''}` : (c.email || "Nimetön");
-
             li.innerHTML = `
-                <div>
-                    <b>#${order.id}</b> - ${fullName} 
-                    <span style="color: ${order.status === 'Maksettu' ? '#27ae60' : '#f39c12'}; font-weight:bold;">
-                        [${order.status}]
-                    </span>
-                </div>
-                <button onclick="showOrderDetail('${order.id}')">🔍 Näytä tiedot</button>
+                <b>#${o.id}</b> - ${o.customer ? o.customer.fname : 'Nimetön'}
+                <button onclick="showOrderDetail('${o.id}')">🔍</button>
             `;
-            // Tärkeää: tallennetaan data elementtiin JSON-muodossa hakuja varten
-            li.setAttribute('data-order-data', JSON.stringify(order));
+            li.dataset.order = JSON.stringify(o);
             orderList.appendChild(li);
         });
     } catch (err) {
-        console.error("Virhe tilauksissa:", err);
-        orderList.innerHTML = "<li>Virhe ladattaessa tilauksia.</li>";
+        console.error("Tilausten latausvirhe:", err);
     }
 }
 
-window.showOrderDetail = function(orderId) {
-    const allLis = Array.from(document.querySelectorAll('#orderList li'));
-    const targetLi = allLis.find(li => {
-        const data = JSON.parse(li.getAttribute('data-order-data'));
-        return data.id === orderId;
-    });
+// Arama butonu tetikleyici
+if (searchBtn) {
+    searchBtn.onclick = () => renderProducts(searchInput.value);
+}
 
-    if (!targetLi) return;
-    const order = JSON.parse(targetLi.getAttribute('data-order-data'));
-    const c = order.customer || {};
+// Resim seçildiğinde anlık önizleme
+if (mainImageInput) {
+    mainImageInput.onchange = () => {
+        if (mainImageInput.files[0]) {
+            const url = URL.createObjectURL(mainImageInput.files[0]);
+            imagePreview.innerHTML = `
+                <p style="font-size:10px; margin:0;">Uusi kuva valittu:</p>
+                <img src="${url}" style="width:120px; border-radius:6px; border:2px solid #2ecc71;">
+            `;
+        }
+    };
+}
 
-document.getElementById('orderNumber').innerText = order.id;
-    document.getElementById('orderName').innerText = c.fname; // Tämä on nyt se customer_name
-    document.getElementById('orderPhone').innerText = c.phone || 'Ei puhelinta';
-    document.getElementById('orderEmail').innerText = c.email || 'Ei sähköpostia';
-    document.getElementById('orderAddress').innerText = c.address || 'Ei osoitetta';
-    
-    const itemsTable = document.getElementById('orderItems');
-    itemsTable.innerHTML = `
-        <tr style="text-align:left; border-bottom: 2px solid #ddd;">
-            <th style="padding:8px;">Tuote</th>
-            <th style="padding:8px;">Hinta</th>
-        </tr>`;
-
-    order.items.forEach(item => {
-        itemsTable.innerHTML += `
-            <tr>
-                <td style="padding:8px;">${item.name}</td>
-                <td style="padding:8px;">${parseFloat(item.price).toFixed(2)} €</td>
-            </tr>`;
-    });
-
-    itemsTable.innerHTML += `
-        <tr style="font-weight:bold; background:#f9f9f9;">
-            <td style="padding:8px; border-top:2px solid #b0a078;">YHTEENSÄ</td>
-            <td style="padding:8px; border-top:2px solid #b0a078;">${parseFloat(order.amount).toFixed(2)} €</td>
-        </tr>`;
-
-    document.getElementById('orderDetails').classList.remove('hidden');
-    document.getElementById('orderDetails').scrollIntoView({ behavior: 'smooth' });
-};
-
-// Alustetaan tilauslista
+// Başlat
+renderProducts();
 renderOrders();
-

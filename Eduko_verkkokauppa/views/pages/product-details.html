@@ -69,12 +69,11 @@
         </section>
 
         <section class="product-info-box">
-            <h1 id="product-name">Tuotteen nimi</h1>
+            <h1 id="product-name">Ladataan...</h1>
             <hr class="divider">
             
             <div class="purchase-section">
                 <div class="price-tag">
-                    <small></small>
                     <h2 id="product-price">0,00 €</h2>
                 </div>
                 <button class="buy-now-btn">OSTA</button>
@@ -85,6 +84,7 @@
                     <button class="tab-btn active" data-target="kuvaus">Kuvaus</button>
                     <button class="tab-btn" data-target="tekniset">Tekniset tiedot</button>
                     <button class="tab-btn" data-target="kuvat">Kuvat</button>
+                    <button class="tab-btn" data-target="vastuuhenkilo-tab">Vastuuhenkilö</button>
                 </div>
 
                 <div id="kuvaus" class="tab-pane active">
@@ -98,6 +98,17 @@
 
                 <div id="kuvat" class="tab-pane">
                     <div class="thumbnail-grid" id="thumbnail-container"></div>
+                </div>
+
+                <div id="vastuuhenkilo-tab" class="tab-pane">
+                    <div class="contact-card">
+                        <i class="fas fa-user-tie fa-3x"></i>
+                        <div class="contact-info">
+                            <p><strong>Nimi:</strong> <span id="contact-name">Ladataan...</span></p>
+                            <p><strong>Sähköposti:</strong> <a href="#" id="email-link"><span id="contact-email">Ladataan...</span></a></p>
+                            <p><strong>Puhelin:</strong> <a href="#" id="phone-link"><span id="contact-phone">Ladataan...</span></a></p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
