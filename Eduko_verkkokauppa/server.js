@@ -389,10 +389,71 @@ app.post('/api/products', vaadiKirjautuminen, (req, res) => {
 });
 
 // ADMIN: Tuotteen poisto
+// TUOTTEEN PÄIVITYS (PUT)
+// --- TUOTTEEN PÄIVITYS (PUT) ---
+app.put('/api/products/:id', vaadiKirjautuminen, (req, res) => {
+    const productId = req.params.id;
+    const { 
+        name, description, price, image, category_id, 
+        specs, images, stock, pickup_point, type 
+    } = req.body;
+
+    // Rakennetaan SQL dynaamisesti: jos kuvaa ei lähetetä, pidetään vanha
+    let sql = `UPDATE products SET 
+                name = ?, description = ?, price = ?, 
+                category_id = ?, specs = ?, stock = ?, 
+                pickup_point = ?, type = ?`;
+    
+    let params = [name, description, price, category_id, specs, stock, pickup_point, type];
+
+    // Jos uusi pääkuva on lähetetty (Base64), lisätään se kyselyyn
+    if (image) {
+        sql += `, image = ?`;
+        params.push(image);
+    }
+
+    // Jos uusia lisäkuvia on lähetetty, päivitetään nekin (tarkistetaan onko validi JSON-lista)
+    try {
+        if (images && JSON.parse(images).length > 0) {
+            sql += `, images = ?`;
+            params.push(images);
+        }
+    } catch (e) {
+        console.warn("Lisäkuvien jäsennysvirhe, ohitetaan päivitys niiltä osin.");
+    }
+
+    sql += ` WHERE id = ?`;
+    params.push(productId);
+
+    db.query(sql, params, (err, result) => {
+        if (err) {
+            console.error("Päivitysvirhe:", err);
+            return res.status(500).json({ success: false, error: err.message });
+        }
+        
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ success: false, error: "Tuotetta ei löytynyt." });
+        }
+
+        res.json({ success: true, message: "Tuote päivitetty onnistuneesti" });
+    });
+});
+
+// --- TUOTTEEN POISTO (DELETE) ---
 app.delete('/api/products/:id', vaadiKirjautuminen, (req, res) => {
-    db.query("DELETE FROM products WHERE id = ?", [req.params.id], (err, result) => {
-        if (err) return res.status(500).json({ success: false, error: err.message });
-        res.json({ success: true });
+    const productId = req.params.id;
+
+    db.query("DELETE FROM products WHERE id = ?", [productId], (err, result) => {
+        if (err) {
+            console.error("Poistovirhe:", err);
+            return res.status(500).json({ success: false, error: err.message });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ success: false, error: "Tuotetta ei löytynyt tai se on jo poistettu." });
+        }
+
+        res.json({ success: true, message: "Tuote poistettu onnistuneesti" });
     });
 });
 

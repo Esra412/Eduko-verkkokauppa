@@ -222,36 +222,35 @@
 </div>
   </section>
 
-  <!-- LISÄÄ TUOTE -->
   <section id="add-product" class="card">
-    <h2>Lisää tuote</h2>
+    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 id="formTitle" style="margin: 0;">Lisää uusi tuote</h2>
+        <span id="editModeBadge" class="hidden" style="background: #b0a078; color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem;">MUOKKAUSTILA</span>
+    </div>
+
     <form id="addProductForm">
-      <input name="name" placeholder="Tuotteen nimi" required />
-      <textarea name="description" placeholder="Kuvaus"></textarea>
-      <input name="price" type="number" step="0.01" placeholder="Hinta" required />
-      <textarea name="specs" placeholder="Tekniset tiedot"></textarea>
+        <input name="name" placeholder="Tuotteen nimi" required />
+        <textarea name="description" placeholder="Kuvaus"></textarea>
+        
+        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <input name="price" type="number" step="0.01" placeholder="Hinta (€)" required />
+            <input name="stock" type="number" placeholder="Varastosaldo (kpl)" required />
+        </div>
 
-      <!-- ANA ÜRÜN GÖRSELİ -->
-<label><b>Tuotteen pääkuva (1 kpl)</b></label>
-<input 
-  type="file" 
-  name="mainImage" 
-  accept="image/*" 
-  required
-/>
+        <textarea name="specs" placeholder="Tekniset tiedot (esim. materiaali, mitat...)"></textarea>
 
-<!-- EK GÖRSELLER -->
-<label><b>Muut kuvat (max 5 kpl)</b></label>
-<input 
-  type="file" 
-  name="extraImages" 
-  accept="image/*" 
-  multiple
-/>
+        <div class="image-section" style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin: 15px 0;">
+            <label><b>Tuotteen pääkuva</b></label>
+            <input type="file" name="mainImage" accept="image/*" id="mainImageInput" />
+            
+            <label style="margin-top: 10px; display: block;"><b>Muut kuvat (max 5 kpl)</b></label>
+            <input type="file" name="extraImages" accept="image/*" multiple id="extraImagesInput" />
+            
+            <div id="imagePreview" style="display:flex; gap:10px; flex-wrap:wrap; margin-top: 10px;"></div>
+        </div>
 
-<div id="imagePreview" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
-
-      <select name="category">
+        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+            <select name="category" required>
         <option value="">Valitse kategoria</option>
         <option value="1">Ajoneuvoala</option>
         <option value="2">Hius- ja kauneudenhoito</option>
@@ -264,30 +263,28 @@
         <option value="9">Sähkö ja automaatio</option>
         <option value="10">Sosiaali- ja terveysala</option>
         <option value="11">Tieto- ja viestintätekniikka</option>
-      </select>
+            </select>
 
-      <select name="type">
-        <option>Opiskelijatyö</option>
-        <option>Palvelu</option>
-        <option>Placeholder käytöstä poistetulle tuotteelle</option>
-      </select>
+            <select name="pickup_point" required>
+                <option value="">Valitse noutopiste</option>
+                <option value="Kouvola, Utinkatu 44">Kouvola, Utinkatu 44</option>
+                <option value="Kouvola, Utinkatu 85">Kouvola, Utinkatu 85</option>
+                <option value="Kouvola, Taitajantie 2">Kouvola, Taitajantie 2</option>
+                <option value="Utti, Kopterikuja 65">Utti, Kopterikuja 65</option>
+            </select>
+        </div>
 
-      <div class="form-row">
-    <input name="stock" type="number" placeholder="Varastosaldo (kpl)" required />
-    
-    <select name="pickup_point" required>
-        <option value="">Valitse noutopiste</option>
-        <option value="Kouvola, Utinkatu 44">Kouvola, Utinkatu 44</option>
-        <option value="Kouvola, Utinkatu 85">Kouvola, Utinkatu 85</option>
-        <option value="Kouvola, Taitajantie 2">Kouvola, Taitajantie 2</option>
-        <option value="Utti, Kopterikuja 65">Utti, Kopterikuja 65</option>
-    </select>
-</div>
+        <select name="type" style="margin-bottom: 20px;">
+            <option>Opiskelijatyö</option>
+            <option>Palvelu</option>
+        </select>
 
-      <button type="submit">Lisää tuote</button>
+        <div style="display: flex; gap: 10px;">
+            <button type="submit" id="submitBtn" style="flex: 3;">Lisää tuote</button>
+            <button type="button" id="cancelEditBtn" class="hidden" style="flex: 1; background: #666;">Peruuta</button>
+        </div>
     </form>
-  </section>
-
+</section> 
   <!-- POISTA TUOTE -->
   <section id="delete-product" class="card">
     <h2>Poista tuote</h2>
