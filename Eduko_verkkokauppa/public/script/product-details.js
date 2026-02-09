@@ -37,7 +37,12 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('product-price').innerText = Number(product.price).toFixed(2) + " €";
             document.getElementById('product-desc').innerText = product.description || "Ei kuvausta.";
             document.getElementById('display-img').src = product.image || "/images/placeholder.jpg";
-
+            // Varastotiedot kuvauksen alle
+            const meta = document.createElement('div');
+            meta.style.marginTop = "15px";
+            meta.innerHTML = `<p><strong>📦 Varastossa:</strong> ${product.stock || 0} kpl</p>
+                              <p><strong>📍 Noutopiste:</strong> ${product.pickup_point || "Päärakennus"}</p>`;
+            document.getElementById('product-desc').appendChild(meta);
             // VASTUUHENKILÖN PÄIVITYS (Käytetään tietokannan category_id:tä)
             const catId = String(product.category_id);
             const henkilo = vastuuhenkilot[catId] || oletusHenkilo;
