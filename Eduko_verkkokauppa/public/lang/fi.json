@@ -1,5 +1,5 @@
 {
-  "COMMETTI": "INDEX.HTML",
+  "COMMENTTI": "INDEX.HTML",
   "search_placeholder": "Hae tuotteita tai palveluita...",
   "login_btn": "Kirjaudu",
   "all_ads": "Kaikki ilmoitukset",
@@ -25,5 +25,33 @@
   "cat_restaurant": "Ravintola ja catering",
   "cat_electric": "Sähkö ja automaatio",
   "cat_health": "Sosiaali- ja terveysala",
-  "cat_ict": "Tieto- ja viestintätekniikka"
+  "cat_ict": "Tieto- ja viestintätekniikka",
+
+
+
+  "COMMENTTI": "LOGIN.HTML",
+  "login_title": "Kirjautuminen | Vahvistuskoodi",
+  "login_header": "Kirjaudu sisään",
+  "email_label": "Sähköpostiosoite",
+  "email_placeholder": "admin@example.com",
+  "password_label": "Salasana",
+  "password_placeholder": "********",
+  "send_code_btn": "Lähetä vahvistuskoodi",
+  "verify_header": "Vahvista kirjautuminen",
+  "verify_info": "Lähetimme 6-numeroisen koodin sähköpostiisi.",
+  "code_label": "Vahvistuskoodi",
+  "code_placeholder": "123456",
+  "login_confirm_btn": "Vahvista ja kirjaudu",
+  "back_btn": "Palaa takaisin",
+  "error_login": "Sähköposti tai salasana on väärin.",
+  "error_code": "Väärä vahvistuskoodi.",
+
+
+
+  "COMMENTTI": "SUCCESS.HTML",
+  "payment_success_header": "Maksu onnistui!",
+  "payment_thanks": "Kiitos tilauksestasi Eduko-verkkokaupasta.",
+  "order_number_label": "Tilausnro",
+  "payment_confirmation_info": "Vahvistus on lähetetty sähköpostiisi. Voit nyt sulkea tämän sivun tai palata takaisin etusivulle.",
+  "back_to_home_btn": "Palaa etusivulle"
 }

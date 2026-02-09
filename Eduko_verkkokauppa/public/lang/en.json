@@ -1,5 +1,5 @@
 {
-  "COMMETTI": "INDEX.HTML",  
+  "COMMENTTI": "INDEX.HTML",  
   "search_placeholder": "Search products or services...",
   "login_btn": "Login",
   "all_ads": "All listings",
@@ -20,8 +20,33 @@
   "cat_restaurant": "Restaurant and Catering",
   "cat_electric": "Electrical and Automation",
   "cat_health": "Social and Health Care",
-  "cat_ict": "ICT and Communications"
+  "cat_ict": "ICT and Communications",
 
 
 
+  "COMMENTTI": "LOGIN.HTML",
+  "login_title": "Login | Verification Code",
+  "login_header": "Log In",
+  "email_label": "Email Address",
+  "email_placeholder": "admin@example.com",
+  "password_label": "Password",
+  "password_placeholder": "********",
+  "send_code_btn": "Send Verification Code",
+  "verify_header": "Verify Login",
+  "verify_info": "We sent a 6-digit code to your email.",
+  "code_label": "Verification Code",
+  "code_placeholder": "123456",
+  "login_confirm_btn": "Confirm and Log In",
+  "back_btn": "Go Back",
+  "error_login": "Invalid email or password.",
+  "error_code": "Incorrect verification code.",
+
+  
+
+  "COMMENTTI": "SUCCESS.HTML",
+  "payment_success_header": "Payment Successful!",
+  "payment_thanks": "Thank you for your order from Eduko Online Store.",
+  "order_number_label": "Order No.",
+  "payment_confirmation_info": "A confirmation has been sent to your email. You can now close this page or return to the home page.",
+  "back_to_home_btn": "Back to Home Page"
 }

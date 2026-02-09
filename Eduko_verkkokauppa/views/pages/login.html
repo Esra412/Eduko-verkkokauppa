@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kirjautuminen | Vahvistuskoodi</title>
+    <title data-i18n="login_title">Kirjautuminen | Vahvistuskoodi</title>
     <link rel="stylesheet" href="/styles/login.css">
     <link rel="icon" href="/images/edukosmall.png" type="image/png">
 </head>
@@ -11,31 +11,33 @@
 
 <div class="login-card">
     <div id="step1">
-        <h2>Kirjaudu sisään</h2>
+        <h2 data-i18n="login_header">Kirjaudu sisään</h2>
         <div class="input-group">
-            <label>Sähköpostiosoite</label>
-            <input type="email" id="email" placeholder="admin@example.com" required>
+            <label data-i18n="email_label">Sähköpostiosoite</label>
+            <input type="email" id="email" data-i18n-placeholder="email_placeholder" placeholder="admin@example.com" required>
         </div>
         <div class="input-group">
-            <label>Salasana</label>
-            <input type="password" id="password" placeholder="********" required>
+            <label data-i18n="password_label">Salasana</label>
+            <input type="password" id="password" data-i18n-placeholder="password_placeholder" placeholder="********" required>
         </div>
-        <button onclick="sendCode()">Lähetä vahvistuskoodi</button>
+        <button onclick="sendCode()" data-i18n="send_code_btn">Lähetä vahvistuskoodi</button>
         <div id="error-step1" class="message error"></div>
     </div>
 
-    <div id="step2">
-        <h2>Vahvista kirjautuminen</h2>
-        <p style="font-size: 0.9rem; color: #666;">Lähetimme 6-numeroisen koodin sähköpostiisi.</p>
+    <div id="step2" style="display:none;">
+        <h2 data-i18n="verify_header">Vahvista kirjautuminen</h2>
+        <p data-i18n="verify_info" style="font-size: 0.9rem; color: #666;">Lähetimme 6-numeroisen koodin sähköpostiisi.</p>
         <div class="input-group">
-            <label>Vahvistuskoodi</label>
-            <input type="text" id="code" maxlength="6" placeholder="123456" style="text-align: center; font-weight: bold;">
+            <label data-i18n="code_label">Vahvistuskoodi</label>
+            <input type="text" id="code" maxlength="6" data-i18n-placeholder="code_placeholder" placeholder="123456" style="text-align: center; font-weight: bold;">
         </div>
-        <button onclick="verifyCode()">Vahvista ja kirjaudu</button>
-        <button onclick="location.reload()" style="background: none; color: #666; font-size: 0.8rem;">Palaa takaisin</button>
+        <button onclick="verifyCode()" data-i18n="login_confirm_btn">Vahvista ja kirjaudu</button>
+        <button onclick="location.reload()" data-i18n="back_btn" style="background: none; color: #666; font-size: 0.8rem;">Palaa takaisin</button>
         <div id="error-step2" class="message error"></div>
     </div>
 </div>
+
+<script src="/script/language.js"></script>
 <script src="/script/login.js"></script>
 </body>
 </html>

@@ -10,33 +10,22 @@
 </head>
 <body>
 
-    <div class="success-container">
-        <div class="success-icon">✓</div>
-        <h1>Maksu onnistui!</h1>
-        <p>Kiitos tilauksestasi Eduko-verkkokaupasta.</p>
-        
-        <div id="order-info" style="display:none;" class="order-id-box">
-            <div class="order-id-label">Tilausnro</div>
-            <div class="order-id-value" id="display-id"></div>
-        </div>
-
-        <p>Vahvistus on lähetetty sähköpostiisi. Voit nyt sulkea tämän sivun tai palata takaisin etusivulle.</p>
-        
-        <a href="/" class="btn-home">Palaa etusivulle</a>
+<div class="success-container">
+    <div class="success-icon">✓</div>
+    <h1 data-i18n="payment_success_header">Maksu onnistui!</h1>
+    <p data-i18n="payment_thanks">Kiitos tilauksestasi Eduko-verkkokaupasta.</p>
+    
+    <div id="order-info" style="display:none;" class="order-id-box">
+        <div class="order-id-label" data-i18n="order_number_label">Tilausnro</div>
+        <div class="order-id-value" id="display-id"></div>
     </div>
 
-    <script>
-        // Tyhjennetään kori
-        localStorage.removeItem('eduko_cart');
+    <p data-i18n="payment_confirmation_info">Vahvistus on lähetetty sähköpostiisi. Voit nyt sulkea tämän sivun tai palata takaisin etusivulle.</p>
+    
+    <a href="/" class="btn-home" data-i18n="back_to_home_btn">Palaa etusivulle</a>
+</div>
 
-        // Haetaan id URL:sta
-        const urlParams = new URLSearchParams(window.location.search);
-        const orderId = urlParams.get('id');
-        
-        if (orderId) {
-            document.getElementById('order-info').style.display = 'block';
-            document.getElementById('display-id').innerText = orderId;
-        }
-    </script>
+<script src="/script/language.js"></script>
+<script src="/script/success.js"></script>
 </body>
 </html>
