@@ -101,48 +101,42 @@ app.get('/kori', (req, res) => res.sendFile(path.join(__dirname, 'views/pages/ca
 app.get('/success', (req, res) => {
     const orderId = req.query.id;
 
-    // 1. Päivitetään tilauksen tila tietokantaan
     db.query(`UPDATE orders SET status = 'Maksettu' WHERE id = ?`, [orderId], (err) => {
         if (err) console.error("Tietokantavirhe (status):", err);
     });
 
-    // 2. Haetaan tilauksen tiedot tietokannasta
     db.query(`SELECT * FROM orders WHERE id = ?`, [orderId], async (err, results) => {
-        if (err || results.length === 0) {
-            console.error("Tilausta ei löytynyt ID:llä:", orderId);
-            return res.sendFile(path.join(__dirname, 'views/pages/success.html'));
-        }
+        if (err || results.length === 0) return res.sendFile(path.join(__dirname, 'views/pages/success.html'));
 
         const order = results[0];
         const items = JSON.parse(order.items);
         const itemIds = items.map(i => i.id);
 
-        // 3. Haetaan tuotteiden kategoriat, jotta saadaan vastuuhenkilöt
         db.query(`SELECT id, category_id, name FROM products WHERE id IN (?)`, [itemIds], async (pErr, pRes) => {
             
             let vastuuhenkiloBlokitHtml = "";
-            let lisatytIdt = new Set();
+            let vastuuhenkiloEmailit = new Set(); // Kerätään tähän sähköpostit (ei duplikaatteja)
 
             if (!pErr && pRes.length > 0) {
                 pRes.forEach(tuote => {
                     const catId = String(tuote.category_id);
-                    if (!lisatytIdt.has(catId)) {
-                        const v = vastuuhenkilot[catId] || oletusHenkilo;
-                        vastuuhenkiloBlokitHtml += `
-                            <div style="margin-bottom: 15px; padding: 10px; border-left: 4px solid #b0a078; background: #fafafa;">
-                                <p style="margin: 0; font-weight: bold;">${tuote.name} - alan vastuuhenkilö:</p>
-                                <p style="margin: 5px 0 0 0;">${v.nimi} | ${v.email} | ${v.puh}</p>
-                            </div>`;
-                        lisatytIdt.add(catId);
-                    }
+                    const v = vastuuhenkilot[catId] || oletusHenkilo;
+                    
+                    // Lisätään henkilön sähköposti listaan
+                    vastuuhenkiloEmailit.add(v.email);
+
+                    vastuuhenkiloBlokitHtml += `
+                        <div style="margin-bottom: 15px; padding: 10px; border-left: 4px solid #b0a078; background: #fafafa;">
+                            <p style="margin: 0; font-weight: bold;">${tuote.name} - vastuuhenkilö:</p>
+                            <p style="margin: 5px 0 0 0;">${v.nimi} | ${v.email} | ${v.puh}</p>
+                        </div>`;
                 });
             }
 
-            // --- TÄRKEÄÄ: Kaikki sähköpostit lähetetään ENNEN res.sendFile() -komentoa ---
             try {
-                // VIERTI 1: ASIAKKAALLE
-                await lahetin.sendMail({
-                    from: '"Eduko Verkkokauppa" <kissakoira773@gmail.com>',
+                // 1. VIESTI ASIAKKAALLE (kuten ennenkin)
+                await lahetin.sendMail({ 
+                                     from: '"Eduko Verkkokauppa" <kissakoira773@gmail.com>',
                     to: order.customer_email,
                     subject: `Tilausvahvistus - Tilausnumero: ${orderId}`, // 1. Tilausnumero otsikossa
                     html: `
@@ -180,40 +174,40 @@ app.get('/success', (req, res) => {
                                     <p>Tämä on automaattinen vahvistusviesti.</p>
                                 </div>
                             </div>
-                        </div>
-                    `
-                });
-
-                // VIESTI 2: ADMINILLE (Sinulle)
-                await lahetin.sendMail({
-                    from: '"Eduko Järjestelmä" <kissakoira773@gmail.com>',
-                    to: 'esra07bagdat@gmail.com', 
-                    subject: `UUSI TILAUS #${orderId} - ${order.customer_name}`,
-                    html: `
-                        <div style="font-family: sans-serif; border: 2px solid #b0a078; padding: 20px;">
-                            <h2>Uusi tilaus vastaanotettu!</h2>
-                            <p><strong>Tilausnumero:</strong> #${orderId}</p>
-                            <p><strong>Asiakas:</strong> ${order.customer_name}</p>
-                            <p><strong>Summa:</strong> ${order.amount} €</p>
-                            <hr>
-                            <h3>Tuotteet ja vastuuhenkilöt:</h3>
-                            ${vastuuhenkiloBlokitHtml}
-                            <br>
-                            <a href="http://localhost:${PORT}/admin">Hallitse tilauksia</a>
                         </div>`
-                });
+                        });
 
-                console.log("Molemmat sähköpostit lähetetty onnistuneesti!");
+                // 2. VIESTI VASTUUKENKILÖILLE
+                // Lähetetään sähköposti kaikille niille, joiden osaston tuotteita ostettiin
+                if (vastuuhenkiloEmailit.size > 0) {
+                    await lahetin.sendMail({
+                        from: '"Eduko Tilausjärjestelmä" <kissakoira773@gmail.com>',
+                        to: Array.from(vastuuhenkiloEmailit).join(', '), // Muuttaa Setin pilkulla erotetuksi listaksi
+                        subject: `UUSI TILAUS #${orderId} - Toimenpiteitä vaaditaan`,
+                        html: `
+                            <div style="font-family: sans-serif; border: 2px solid #b0a078; padding: 20px;">
+                                <h2>Hei, osastoltasi on tilattu tuote!</h2>
+                                <p><strong>Tilausnumero:</strong> #${orderId}</p>
+                                <p><strong>Asiakas:</strong> ${order.customer_name} (${order.customer_email})</p>
+                                <hr>
+                                <h3>Tilauksen sisältö:</h3>
+                                ${vastuuhenkiloBlokitHtml}
+                                <p>Olkaa yhteydessä asiakkaaseen noudon sopimiseksi.</p>
+                            </div>`
+                    });
+                }
+
+                console.log("Sähköpostit lähetetty vastuuhenkilöille:", Array.from(vastuuhenkiloEmailit));
 
             } catch (mailError) {
                 console.error("Sähköpostin lähetys epäonnistui:", mailError);
             }
 
-            // 4. LÄHETETÄÄN VASTAUS SELAIMELLE VASTA NYT
             res.sendFile(path.join(__dirname, 'views/pages/success.html'));
         });
     });
 });
+
 
 app.get('/cancel', (req, res) => {
     res.send(`<h1>Maksu keskeytyi</h1><p>Voit yrittää uudelleen ostoskorista.</p><a href="/kori">Palaa ostoskoriin</a>`);
@@ -475,18 +469,29 @@ app.get('/api/search', (req, res) => {
 });
 // ================= ADMIN KIRJAUTUMINEN (OTP) =================
 
+// Päivitä nämä omiin tarpeisiisi
+const adminKayttajat = {
+    "esra07bagdat@gmail.com": { salasana: "123456" },
+    "katike.kemppainen@gmail.com": { salasana: "123456" },
+    "sanni.admin@eduko.fi": { salasana: "salasana2" }
+};
+
 app.post('/api/login-step1', async (req, res) => {
     const { email, password } = req.body;
-    if (email === "esra07bagdat@gmail.com" && password === "123456") {
+    
+    // Tarkistetaan löytyykö sähköposti ja täsmääkö salasana
+    if (adminKayttajat[email] && adminKayttajat[email].salasana === password) { 
         const vahvistuskoodi = Math.floor(100000 + Math.random() * 900000);
         req.session.pendingOtp = vahvistuskoodi;
+        req.session.pendingEmail = email; // Tallennetaan kuka yrittää kirjautua
+
         try {
             await lahetin.sendMail({
                 from: '"Eduko Admin" <kissakoira773@gmail.com>',
-                to: email,
+                to: email, // Koodi lähtee VAIN sille, joka syötti oikeat tunnukset
                 subject: "Kirjautumisen vahvistuskoodi - Eduko",
                 html: `
-                    <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 500px; margin: auto; border: 1px solid #eee; border-radius: 10px; overflow: hidden; text-align: center;">
+                                    <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 500px; margin: auto; border: 1px solid #eee; border-radius: 10px; overflow: hidden; text-align: center;">
                         <div style="background-color: #333; padding: 20px;">
                             <h1 style="color: #b0a078; margin: 0; letter-spacing: 2px; text-transform: uppercase; font-size: 20px;">Eduko Admin</h1>
                         </div>
@@ -503,8 +508,7 @@ app.post('/api/login-step1', async (req, res) => {
                                 Koodi on voimassa vain kuluvan istunnon ajan.
                             </p>
                         </div>
-                    </div>
-                `
+                    </div>`
             });
             res.json({ success: true });
         } catch (error) {
