@@ -200,7 +200,7 @@
         try {
             const response = await fetch(`/api/products/${item.id}`);
             const product = await response.json();
-            const maxStock = Math.min(product.stock, 5); // Max 5 tai varastosaldo, kumpi pienemmän
+            const maxStock = product.stock; // Käytä varastosaldoa suoraan
 
             // Päivitä määrä
             item.quantity = (item.quantity || 1) + change;
@@ -222,14 +222,14 @@
             renderCart();
         } catch (err) {
             console.error("Virhe tuotteen varastosaldon haussa:", err);
-            // Fallback: käytä kovakoodattua maksimia 5
+            // Fallback: aseta määrä 1
             item.quantity = (item.quantity || 1) + change;
             if (item.quantity <= 0) {
                 removeItem(index);
                 return;
             }
-            if (item.quantity > 5) {
-                item.quantity = 5;
+            if (item.quantity > 1) {
+                item.quantity = 1;
             }
             cart[index] = item;
             localStorage.setItem('eduko_cart', JSON.stringify(cart));

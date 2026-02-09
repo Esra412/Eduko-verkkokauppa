@@ -89,11 +89,11 @@ function ostoskoriLogiikka() {
             const productId = card.querySelector('a').href.split('/').pop();
             
             // Haetaan tuotteen varastosaldo
-            let maxStock = 5; // oletus
+            let maxStock = 1; // oletus
             try {
                 const response = await fetch(`/api/products/${productId}`);
                 const product = await response.json();
-                maxStock = Math.min(product.stock, 5); // Max 5 tai varastosaldo
+                maxStock = product.stock; // Käytä varastosaldoa suoraan
             } catch (err) {
                 console.error("Virhe varastosaldon haussa:", err);
             }

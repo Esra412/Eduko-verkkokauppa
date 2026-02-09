@@ -94,11 +94,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
 
                 // Haetaan tuotteen varastosaldo
-                let maxStock = 5; // oletus
+                let maxStock = 1; // oletus
                 try {
                     const response = await fetch(`/api/products/${productId}`);
                     const productData = await response.json();
-                    maxStock = Math.min(productData.stock, 5); // Max 5 tai varastosaldo
+                    maxStock = productData.stock; // Käytä varastosaldoa suoraan
                 } catch (err) {
                     console.error("Virhe varastosaldon haussa:", err);
                 }
