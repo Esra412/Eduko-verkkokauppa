@@ -454,3 +454,38 @@ body {
 .product-badge:contains("Palvelu") {
     background-color: rgba(44, 62, 80, 0.9);
 }
+
+/*kielet*/
+/* Kielivalikon tyylit */
+.language-selector {
+    position: relative;
+    cursor: pointer;
+    background: #f4f1ea;
+    padding: 8px 12px;
+    border-radius: 5px;
+    margin-left: 10px;
+}
+
+#lang-options {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    z-index: 1000;
+    min-width: 100px;
+}
+
+#lang-options div {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+#lang-options div:hover {
+    background: #f0f0f0;
+}
+
+.select-hide {
+    display: none;
+}
