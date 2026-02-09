@@ -455,7 +455,7 @@ body {
     background-color: rgba(44, 62, 80, 0.9);
 }
 
-/*kielet*/
+
 /* Kielivalikon tyylit */
 .language-selector {
     position: relative;
@@ -464,6 +464,7 @@ body {
     padding: 8px 12px;
     border-radius: 5px;
     margin-left: 10px;
+    z-index: 9999;
 }
 
 #lang-options {
@@ -473,7 +474,7 @@ body {
     background: white;
     border: 1px solid #ddd;
     border-radius: 5px;
-    z-index: 1000;
+    z-index: 9999;
     min-width: 100px;
 }
 

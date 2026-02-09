@@ -1,5 +1,5 @@
 {
-  "COMMETTI": "INDEX.HTML",
+  "COMMENTTI": "INDEX.HTML",
   "search_placeholder": "Sök produkter eller tjänster...",
   "login_btn": "Logga in",
   "all_ads": "Alla annonser",
@@ -20,5 +20,33 @@
   "cat_restaurant": "Restaurang- och cateringbranschen",
   "cat_electric": "El- och automationsbranschen",
   "cat_health": "Social- och hälsovårdsbranschen",
-  "cat_ict": "Data- och kommunikationsteknik"
+  "cat_ict": "Data- och kommunikationsteknik",
+
+
+
+  "COMMENTTI": "LOGIN.HTML",
+  "login_title": "Inloggning | Bekräftelsekod",
+  "login_header": "Logga in",
+  "email_label": "E-postadress",
+  "email_placeholder": "admin@example.com",
+  "password_label": "Lösenord",
+  "password_placeholder": "********",
+  "send_code_btn": "Skicka bekräftelsekod",
+  "verify_header": "Bekräfta inloggning",
+  "verify_info": "Vi har skickat en 6-siffrig kod till din e-post.",
+  "code_label": "Bekräftelsekod",
+  "code_placeholder": "123456",
+  "login_confirm_btn": "Bekräfta och logga in",
+  "back_btn": "Gå tillbaka",
+  "error_login": "Fel e-postadress eller lösenord.",
+  "error_code": "Felaktig bekräftelsekod.",
+
+
+
+  "COMMENTTI": "SUCCESS.HTML",
+  "payment_success_header": "Betalningen lyckades!",
+  "payment_thanks": "Tack för din beställning från Eduko-webbutiken.",
+  "order_number_label": "Ordernummer",
+  "payment_confirmation_info": "En bekräftelse har skickats till din e-post. Du kan nu stänga denna sida eller återvända till startsidan.",
+  "back_to_home_btn": "Tillbaka till startsidan"
 }

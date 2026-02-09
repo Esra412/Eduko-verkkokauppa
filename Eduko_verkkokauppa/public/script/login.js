@@ -1,4 +1,4 @@
- async function sendCode() {
+async function sendCode() {
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         const errorDiv = document.getElementById('error-step1');
