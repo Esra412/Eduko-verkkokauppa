@@ -48,5 +48,57 @@
   "payment_thanks": "Thank you for your order from Eduko Online Store.",
   "order_number_label": "Order No.",
   "payment_confirmation_info": "A confirmation has been sent to your email. You can now close this page or return to the home page.",
-  "back_to_home_btn": "Back to Home Page"
+  "back_to_home_btn": "Back to Home Page",
+
+
+
+  "COMMENTTI": "PRODUCT_DETAILS.HTML",
+  "product_details_title": "Eduko – Product Details",
+  "pickup_only": "Pickup Only",
+  "buy_btn": "BUY NOW",
+  "tab_desc": "Description",
+  "tab_specs": "Technical Specs",
+  "tab_images": "Images",
+  "tab_contact": "Contact Person",
+  "no_return_info": "Note: Pickup products have no right of return.",
+  "contact_name_label": "Name:",
+  "contact_email_label": "Email:",
+  "contact_phone_label": "Phone:",
+  "loading": "Loading...",
+  "stock_label": "📦 In stock:",
+  "pickup_label": "📍 Pickup point:",
+  "no_description": "No description available.",
+  "no_specs": "No technical specifications available.",
+  "cart_added_short": "ADDED! ✓",
+
+
+
+  "COMMENTTI": "CART.HTML",
+  "continue_shopping": "Continue shopping",
+  "your_cart": "Your Cart",
+  "cart_total_label": "Total",
+  "continue_to_order": "Proceed to Checkout",
+  "delivery_info_header": "Delivery Information",
+  "fname_label": "First Name",
+  "fname_placeholder": "John",
+  "lname_label": "Last Name",
+  "lname_placeholder": "Doe",
+  "email_info_label": "Email (for confirmation)",
+  "phone_label": "Phone Number",
+  "phone_placeholder": "040 123 4567",
+  "address_label": "Street Address",
+  "address_placeholder": "Example Street 12",
+  "postcode_label": "Postcode",
+  "postcode_placeholder": "00100",
+  "city_label": "City",
+  "city_placeholder": "Kouvola",
+  "proceed_to_payment": "Proceed to Payment",
+  "empty_cart": "Your cart is empty.",
+
+
+  "COMMENTTI": "CANCEL.HTML",
+  "payment_cancelled_header": "Payment Cancelled",
+  "payment_cancelled_info": "The payment process was interrupted, and your order was not completed.",
+  "cart_waiting_info": "The items are still waiting in your cart. You can try paying again below.",
+  "back_to_cart": "Return to Cart"
 }

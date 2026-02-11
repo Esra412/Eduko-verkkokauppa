@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- 1. VASTUUHENKILÖIDEN TIEDOT (Tietokannan ID:n mukaan) ---
+    // --- 1. VASTUUHENKILÖIDEN TIEDOT ---
+    // Pidetään nimet ja numerot vakiona, mutta otsikot tulevat JSON-tiedostoista
     const vastuuhenkilot = {
         "1": { nimi: "Matti Meikäläinen", email: "matti.ajoneuvo@eduko.fi", puh: "040 123 4567" },
         "2": { nimi: "Sanni Suortuva", email: "sanni.hius@eduko.fi", puh: "040 234 5678" },
@@ -23,6 +24,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentProductData = null;
 
+    // Kuunnellaan kielen vaihtumista (jos käyttäjä vaihtaa kieltä tuotesivulla)
+    document.addEventListener('languageChanged', () => {
+        if (currentProductData) paivitaUI(currentProductData);
+    });
+
     // --- 3. HAE TUOTETIEDOT APISTA ---
     fetch(`/api/products/${productId}`)
         .then(res => {
@@ -31,78 +37,88 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(product => {
             currentProductData = product;
-
-            // Täytetään perustiedot HTML-elementteihin
-            document.getElementById('product-name').innerText = product.name;
-            document.getElementById('product-price').innerText = Number(product.price).toFixed(2) + " €";
-            document.getElementById('product-desc').innerText = product.description || "Ei kuvausta.";
-            document.getElementById('display-img').src = product.image || "/images/placeholder.jpg";
-            // Varastotiedot kuvauksen alle
-            const meta = document.createElement('div');
-            meta.style.marginTop = "15px";
-            meta.innerHTML = `<p><strong>📦 Varastossa:</strong> ${product.stock || 0} kpl</p>
-                              <p><strong>📍 Noutopiste:</strong> ${product.pickup_point || "Päärakennus"}</p>`;
-            document.getElementById('product-desc').appendChild(meta);
-            // VASTUUHENKILÖN PÄIVITYS (Käytetään tietokannan category_id:tä)
-            const catId = String(product.category_id);
-            const henkilo = vastuuhenkilot[catId] || oletusHenkilo;
-
-            document.getElementById('contact-name').innerText = henkilo.nimi;
-            document.getElementById('contact-email').innerText = henkilo.email;
-            document.getElementById('contact-phone').innerText = henkilo.puh;
-            document.getElementById('email-link').href = `mailto:${henkilo.email}`;
-            document.getElementById('phone-link').href = `tel:${henkilo.puh}`;
-
-            // Tekniset tiedot (specs)
-            const specsList = document.getElementById('product-specs');
-            specsList.innerHTML = "";
-            if (product.specs) {
-                product.specs.split(',').forEach(item => {
-                    const li = document.createElement('li');
-                    li.innerText = item.trim();
-                    specsList.appendChild(li);
-                });
-            } else {
-                specsList.innerHTML = "<li>Ei teknisiä tietoja saatavilla</li>";
-            }
-
+            paivitaUI(product);
             setupGallery(product);
         })
         .catch(err => {
             console.error(err);
-            document.querySelector('.product-main').innerHTML = "<h2>Tuotetta ei löytynyt.</h2>";
+            const main = document.querySelector('.product-main');
+            if (main) main.innerHTML = `<h2>${t('load_error')}</h2>`;
         });
 
-    // --- 4. OSTOSKORIIN LISÄÄMINEN - MAKSIMIMÄÄRÄ RAJOITUKSELLA ---
+    function paivitaUI(product) {
+        // Perustiedot
+        document.getElementById('product-name').innerText = product.name;
+        document.getElementById('product-price').innerText = Number(product.price).toFixed(2) + " €";
+        document.getElementById('product-desc').innerText = product.description || t('no_description');
+        document.getElementById('display-img').src = product.image || "/images/placeholder.jpg";
+
+        // Varastotiedot ja noutopiste (Käännettynä)
+        const oldMeta = document.getElementById('product-meta');
+        if (oldMeta) oldMeta.remove();
+
+        const meta = document.createElement('div');
+        meta.id = 'product-meta';
+        meta.style.marginTop = "15px";
+        
+        // Huom: "stock_label" ja "pickup_label" pitää löytyä JSON-tiedostoista
+        const stockLabel = t('stock_label') || "📦 Varastossa:";
+        const pickupLabel = t('pickup_label') || "📍 Noutopiste:";
+
+        meta.innerHTML = `<p><strong>${stockLabel}</strong> ${product.stock || 0} kpl</p>
+                          <p><strong>${pickupLabel}</strong> ${product.pickup_point || "Eduko Kouvola"}</p>`;
+        document.getElementById('product-desc').appendChild(meta);
+
+        // Vastuuhenkilö
+        const catId = String(product.category_id);
+        const henkilo = vastuuhenkilot[catId] || oletusHenkilo;
+
+        document.getElementById('contact-name').innerText = henkilo.nimi;
+        document.getElementById('contact-email').innerText = henkilo.email;
+        document.getElementById('contact-phone').innerText = henkilo.puh;
+        document.getElementById('email-link').href = `mailto:${henkilo.email}`;
+        document.getElementById('phone-link').href = `tel:${henkilo.puh}`;
+
+        // Tekniset tiedot
+        const specsList = document.getElementById('product-specs');
+        specsList.innerHTML = "";
+        if (product.specs) {
+            product.specs.split(',').forEach(item => {
+                const li = document.createElement('li');
+                li.innerText = item.trim();
+                specsList.appendChild(li);
+            });
+        } else {
+            specsList.innerHTML = `<li>${t('no_specs')}</li>`;
+        }
+    }
+
+    // --- 4. OSTOSKORIIN LISÄÄMINEN ---
     const buyBtn = document.querySelector('.buy-now-btn');
     if (buyBtn) {
         buyBtn.addEventListener('click', async () => {
             if (!currentProductData) return;
 
-            // Haetaan tuotteen varastosaldo
-            let maxStock = 1; // oletus
+            let maxStock = 1;
             try {
                 const response = await fetch(`/api/products/${currentProductData.id}`);
                 const productData = await response.json();
-                maxStock = productData.stock; // Käytä varastosaldoa suoraan
+                maxStock = productData.stock;
             } catch (err) {
                 console.error("Virhe varastosaldon haussa:", err);
             }
 
             let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
-            
-            // Tarkista, onko tuote jo korissa
             const existingItem = cart.find(item => item.id == currentProductData.id);
+
             if (existingItem) {
-                // Jos tuote on jo korissa, kasvata määrää (max maxStock)
                 if (existingItem.quantity < maxStock) {
                     existingItem.quantity += 1;
                 } else {
-                    alert(`Maksimimäärä (${maxStock} kpl) saavutettu!`);
+                    alert(`${t('cart_max_limit')} (${maxStock})`);
                     return;
                 }
             } else {
-                // Lisää uusi tuote määrällä 1
                 cart.push({
                     id: currentProductData.id,
                     name: currentProductData.name,
@@ -114,15 +130,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
             localStorage.setItem('eduko_cart', JSON.stringify(cart));
             
-            // Päivitä korin lukema
+            // Päivitä lukema yläpalkissa
             const badge = document.getElementById('cart-count');
             if (badge) badge.innerText = cart.length;
 
-            buyBtn.innerText = "LISÄTTY!";
+            // Visuaalinen palaute
+            const originalText = t('buy_btn');
+            buyBtn.innerText = t('cart_added_short') || "LISÄTTY! ✓";
             buyBtn.style.background = "#28a745";
+            buyBtn.disabled = true;
+
             setTimeout(() => {
-                buyBtn.innerText = "OSTA";
+                buyBtn.innerText = originalText;
                 buyBtn.style.background = "";
+                buyBtn.disabled = false;
             }, 2000);
         });
     }
@@ -146,11 +167,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const thumb = document.createElement('img');
             thumb.src = imgUrl;
             thumb.className = "thumbnail";
-            thumb.onclick = () => mainImg.src = imgUrl;
+            thumb.onclick = () => {
+                mainImg.src = imgUrl;
+                // Korostetaan valittu pikkukuva
+                document.querySelectorAll('.thumbnail').forEach(t => t.style.borderColor = "#ddd");
+                thumb.style.borderColor = "#0056b3";
+            };
             thumbContainer.appendChild(thumb);
         });
     }
 
+    // Välilehtien vaihto
     const tabButtons = document.querySelectorAll('.tab-btn');
     tabButtons.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -158,7 +185,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            document.getElementById(target).classList.add('active');
+            const pane = document.getElementById(target);
+            if (pane) pane.classList.add('active');
         });
     });
 });
