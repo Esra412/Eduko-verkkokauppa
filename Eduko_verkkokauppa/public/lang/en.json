@@ -10,6 +10,8 @@
   "categories_title": "Categories",
   "latest_items": "Latest items",
   "add_to_cart": "Add to cart",
+  "no_products": "No new items available right now.",
+  "load_error": "Could not load products.",
   "cat_auto": "Automotive",
   "cat_beauty": "Hair and Beauty",
   "cat_metal": "Mechanical and Metal",

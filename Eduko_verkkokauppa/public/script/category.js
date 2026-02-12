@@ -141,14 +141,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- Yhdistetty latausfunktio tuotteiden hakemiseksi ---
+    function loadCategoryProducts() {
+        const currentLang = getCurrentLanguage();
+        fetch(`/api/products?category=${categoryId}&lang=${currentLang}`)
+            .then(res => res.json())
+            .then(products => renderProducts(products))
+            .catch(err => {
+                console.error("Virhe:", err);
+                grid.innerHTML = "<p>Tuotteiden haku epäonnistui.</p>";
+            });
+    }
+
     // --- 5. Datan haku palvelimelta ---
-    fetch(`/api/products?category=${categoryId}`)
-        .then(res => res.json())
-        .then(products => renderProducts(products))
-        .catch(err => {
-            console.error("Virhe:", err);
-            grid.innerHTML = "<p>Tuotteiden haku epäonnistui.</p>";
-        });
+    loadCategoryProducts();
 
     // --- 6. Hakutoiminto ---
     const suoritaHaku = () => {
@@ -168,4 +174,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.key === 'Enter') suoritaHaku();
         });
     }
+
+    // --- 7. Kuuntele kielen muutoksia - lataa tuotteet uudelleen ---
+    document.addEventListener('languageChanged', () => {
+        console.log("Kieli muuttui kategorian sivulla - ladataan tuotteet uudelleen");
+        loadCategoryProducts();
+    });
 });
