@@ -4,177 +4,166 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.querySelector('.search-box input');
     const searchBtn = document.querySelector('.search-box button');
 
-    // Tallennetaan tuotteet muistiin, jotta kielen vaihto ei vaadi uutta palvelinhakua
-    let paikallisetTuotteet = [];
-
     // --- 1. Ostoskorin tilan päivitys (Yläpalkin numero) ---
-    const paivitaOstoskorinLukumara = () => {
-        const kori = JSON.parse(localStorage.getItem('eduko_cart')) || [];
-        const koriElementti = document.getElementById('cart-count');
-        if (koriElementti) {
-            koriElementti.innerText = kori.length;
+    const updateCartBadge = () => {
+        const cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
+        const cartCountElement = document.getElementById('cart-count');
+        if (cartCountElement) {
+            cartCountElement.innerText = cart.length;
         }
     };
     
-    // Alustetaan lukumäärä
-    paivitaOstoskorinLukumara();
+    // Ajetaan kerran heti latauksessa
+    updateCartBadge();
 
-    // Kuunnellaan kielen vaihtumista
-    document.addEventListener('languageChanged', () => {
-        paivitaKategorianNimi();
-        renderöiTuotteet(paikallisetTuotteet);
-    });
+    // --- 2. Kategorian tunnistus osoitepalkista ---
+    const pathParts = window.location.pathname.split('/').filter(part => part !== "");
+    const categoryId = pathParts[pathParts.length - 1];
 
-    // --- 2. Kategorian tunnistus ja nimen kääntäminen ---
-    const polunOsat = window.location.pathname.split('/').filter(osa => osa !== "");
-    const kategoriaId = polunOsat[polunOsat.length - 1];
-
-    const paivitaKategorianNimi = () => {
-        // Avaimet vastaavat JSON-tiedostojesi cat_ alkuisia avaimia
-        const kategoriaAvaimet = {
-            "1": "cat_auto", "2": "cat_beauty", "3": "cat_metal",
-            "4": "cat_logistics", "5": "cat_lab", "6": "cat_security",
-            "7": "cat_construction", "8": "cat_restaurant", "9": "cat_electric",
-            "10": "cat_health", "11": "cat_ict"
-        };
-        
-        const avain = kategoriaAvaimet[kategoriaId];
-        if (avain && categoryTitle) {
-            categoryTitle.innerText = t(avain);
-        }
+    const kategoriat = {
+        "1": "Ajoneuvoala", "2": "Hius- ja kauneudenhoito", "3": "Kone- ja metalliala",
+        "4": "Logistiikka", "5": "Prosessi- ja laboratorio", "6": "Turvallisuusala",
+        "7": "Rakennus", "8": "Ravintola", "9": "Sähkö ja automaatio",
+        "10": "Sosiaali- ja terveysala", "11": "IT-ala"
     };
     
-    paivitaKategorianNimi();
+    if (kategoriat[categoryId]) {
+        categoryTitle.innerText = kategoriat[categoryId];
+    }
 
     // --- 3. Tuotteiden piirtäminen sivulle ---
-    function renderöiTuotteet(tuotteet) {
-        if (!grid) return;
+    function renderProducts(products) {
         grid.innerHTML = "";
-        
-        if (tuotteet.length === 0) {
-            grid.innerHTML = `<p>${t('no_products')}</p>`;
+        if (products.length === 0) {
+            grid.innerHTML = `<p>Kategoriassa ei ole vielä tuotteita.</p>`;
             return;
         }
 
-        tuotteet.forEach(tuote => {
-            const kortti = document.createElement('div');
-            kortti.className = 'product-card';
+        products.forEach(product => {
+            const card = document.createElement('div');
+            card.className = 'product-card';
             
-            const sijaintiTeksti = tuote.pickup_point || "Kouvola";
-            const tyyppiTeksti = tuote.type || "Eduko";
+            const locationText = product.pickup_point || "Kouvola";
+            const typeText = product.type || "Opiskelijatyö";
 
-            kortti.innerHTML = `
-                <a href="/tuote/${tuote.id}" class="product-link">
+            // Huom: Käytetään data-attribuutteja tallennusta varten
+            card.innerHTML = `
+                <a href="/tuote/${product.id}" class="product-link">
                     <div class="image-wrapper">
-                        <span class="product-badge">${tyyppiTeksti}</span>
-                        <img src="${tuote.image || '/images/no-image.png'}" alt="${tuote.name}">
+                        <span class="product-badge">${typeText}</span>
+                        <img src="${product.image || '/images/no-image.png'}" alt="${product.name}">
                     </div>
                     <div class="card-content">
-                        <h3>${tuote.name}</h3>
-                        <p class="location"><i class="fas fa-map-marker-alt"></i> ${sijaintiTeksti}</p>
+                        <h3>${product.name}</h3>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> ${locationText}</p>
                     </div>
                 </a>
                 <div class="card-footer">
-                    <span class="price">${Number(tuote.price).toFixed(2)} €</span>
+                    <span class="price">${product.price} €</span>
                     <button class="bid-btn" 
-                        data-id="${tuote.id}" 
-                        data-name="${tuote.name}" 
-                        data-price="${tuote.price}" 
-                        data-image="${tuote.image || '/images/no-image.png'}">
-                        ${t('add_to_cart')}
+                        data-id="${product.id}" 
+                        data-name="${product.name}" 
+                        data-price="${product.price}" 
+                        data-image="${product.image || '/images/no-image.png'}">
+                        Lisää ostoskoriin
                     </button>
                 </div>
             `;
-            grid.appendChild(kortti);
+            grid.appendChild(card);
         });
 
+        // Aktivoidaan napit VASTA kun ne on luotu
         aktivoiOstoskoriPainikkeet();
     }
 
-    // --- 4. Ostoskorimekaniikka ---
+    // --- 4. Ostoskorimekaniikka (Se "juttu") ---
     function aktivoiOstoskoriPainikkeet() {
-        document.querySelectorAll('.bid-btn').forEach(nappi => {
-            nappi.onclick = async (e) => {
+        document.querySelectorAll('.bid-btn').forEach(button => {
+            button.addEventListener('click', async (e) => {
                 e.preventDefault();
+                e.stopPropagation();
 
-                const tuoteId = nappi.dataset.id;
-                const tuote = {
-                    id: tuoteId,
-                    name: nappi.dataset.name,
-                    price: nappi.dataset.price,
-                    image: nappi.dataset.image,
+                // Luetaan tiedot napin data-attribuuteista
+                const productId = button.dataset.id;
+                const product = {
+                    id: productId,
+                    name: button.dataset.name,
+                    price: button.dataset.price,
+                    image: button.dataset.image,
                     quantity: 1
                 };
 
-                // Haetaan varastosaldo API:sta
-                let maxVarasto = 5; 
+                // Haetaan tuotteen varastosaldo
+                let maxStock = 1; // oletus
                 try {
-                    const vastaus = await fetch(`/api/products/${tuoteId}`);
-                    const tuoteData = await vastaus.json();
-                    maxVarasto = Math.min(tuoteData.stock, 5);
+                    const response = await fetch(`/api/products/${productId}`);
+                    const productData = await response.json();
+                    maxStock = productData.stock; // Käytä varastosaldoa suoraan
                 } catch (err) {
                     console.error("Virhe varastosaldon haussa:", err);
                 }
 
-                let kori = JSON.parse(localStorage.getItem('eduko_cart')) || [];
-                const loytyvaTuote = kori.find(item => item.id == tuoteId);
-
-                if (loytyvaTuote) {
-                    if (loytyvaTuote.quantity < maxVarasto) {
-                        loytyvaTuote.quantity += 1;
-                        naytaPalaute(nappi, "✓");
+                // Tallennus localStorageen
+                let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
+                
+                // Tarkista, onko tuote jo korissa
+                const existingItem = cart.find(item => item.id == productId);
+                if (existingItem) {
+                    // Jos tuote on jo korissa, kasvata määrää (max maxStock)
+                    if (existingItem.quantity < maxStock) {
+                        existingItem.quantity += 1;
                     } else {
-                        alert(`${t('cart_max_limit')} (${maxVarasto})`);
+                        alert(`Maksimimäärä (${maxStock} kpl) saavutettu!`);
                         return;
                     }
                 } else {
-                    kori.push(tuote);
-                    naytaPalaute(nappi, "✓");
+                    // Lisää uusi tuote
+                    cart.push(product);
                 }
                 
-                localStorage.setItem('eduko_cart', JSON.stringify(kori));
-                paivitaOstoskorinLukumara();
-            };
+                localStorage.setItem('eduko_cart', JSON.stringify(cart));
+                
+                // Käyttöliittymän päivitys
+                updateCartBadge();
+                
+                // Visuaalinen palaute napissa
+                const alkuperainenTeksti = button.innerText;
+                button.innerText = "Lisätty! ✓";
+                button.style.background = "#28a745";
+                button.disabled = true; // Estetään tuplaklikkaukset heti perään
+
+                setTimeout(() => {
+                    button.innerText = alkuperainenTeksti;
+                    button.style.background = "";
+                    button.disabled = false;
+                }, 1500);
+            });
         });
     }
 
-    // Apufunktio napin visuaaliseen palautteeseen
-    function naytaPalaute(nappi, viesti) {
-        const alkuperainenTeksti = nappi.innerText;
-        nappi.innerText = viesti;
-        nappi.style.background = "#28a745";
-        nappi.disabled = true;
-
-        setTimeout(() => {
-            nappi.innerText = alkuperainenTeksti;
-            nappi.style.background = "";
-            nappi.disabled = false;
-        }, 1000);
+    // --- Yhdistetty latausfunktio tuotteiden hakemiseksi ---
+    function loadCategoryProducts() {
+        const currentLang = getCurrentLanguage();
+        fetch(`/api/products?category=${categoryId}&lang=${currentLang}`)
+            .then(res => res.json())
+            .then(products => renderProducts(products))
+            .catch(err => {
+                console.error("Virhe:", err);
+                grid.innerHTML = "<p>Tuotteiden haku epäonnistui.</p>";
+            });
     }
 
     // --- 5. Datan haku palvelimelta ---
-    fetch(`/api/products?category=${kategoriaId}`)
-        .then(res => res.json())
-        .then(tuotteet => {
-            paikallisetTuotteet = tuotteet;
-            renderöiTuotteet(tuotteet);
-        })
-        .catch(err => {
-            console.error("Virhe:", err);
-            if (grid) grid.innerHTML = `<p>${t('load_error')}</p>`;
-        });
+    loadCategoryProducts();
 
     // --- 6. Hakutoiminto ---
     const suoritaHaku = () => {
-        const hakusana = searchInput.value.trim();
-        if (hakusana.length > 0) {
-            if (categoryTitle) categoryTitle.innerText = `${t('search_results')}: "${hakusana}"`;
-            fetch(`/api/search?q=${encodeURIComponent(hakusana)}`)
+        const term = searchInput.value.trim();
+        if (term.length > 0) {
+            categoryTitle.innerText = `Haun tulokset: "${term}"`;
+            fetch(`/api/search?q=${encodeURIComponent(term)}`)
                 .then(res => res.json())
-                .then(tuotteet => {
-                    paikallisetTuotteet = tuotteet;
-                    renderöiTuotteet(tuotteet);
-                })
+                .then(products => renderProducts(products))
                 .catch(err => console.error("Hakuvirhe:", err));
         }
     };
@@ -185,4 +174,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.key === 'Enter') suoritaHaku();
         });
     }
+
+    // --- 7. Kuuntele kielen muutoksia - lataa tuotteet uudelleen ---
+    document.addEventListener('languageChanged', () => {
+        console.log("Kieli muuttui kategorian sivulla - ladataan tuotteet uudelleen");
+        loadCategoryProducts();
+    });
 });

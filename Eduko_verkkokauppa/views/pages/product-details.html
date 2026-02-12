@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="product_details_title">Eduko – Tuotetiedot</title>
+    <title>Eduko – Tuotetiedot</title>
     <link rel="stylesheet" href="/styles/product-details.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="icon" href="/images/edukosmall.png" type="image/png">
@@ -17,11 +17,11 @@
             <small>Kouvolan Ammattiopisto</small>
         </div>
         <div class="search-box">
-            <input type="text" data-i18n-placeholder="search_placeholder" placeholder="Hae tuotteita...">
+            <input type="text" placeholder="Hae tuotteita tai palveluita...">
             <button><i class="fas fa-search"></i></button>
         </div>
         <div class="auth-buttons">
-            <a href="/login" class="btn-primary" data-i18n="login_btn">Kirjaudu</a>
+            <a href="/login" class="btn-primary">Kirjaudu</a>
         </div>
     </div>
 </header>
@@ -29,11 +29,11 @@
 <nav class="main-nav">
     <div class="nav-container">
         <div class="nav-links">
-            <a href="/" class="active" data-i18n="all_ads">Kaikki ilmoitukset</a>
-            <a href="#" data-i18n="how_to_buy">Miten ostat?</a>
-            <a href="#" data-i18n="sales_services">Myyntipalvelut</a>
-            <a href="/tietoa-meista" data-i18n="about_us">Tietoa meistä</a>
-            <a href="https://www.eduko.fi/eduko/yhteystiedot/" data-i18n="contact">Yhteystiedot</a>
+            <a href="/" class="active">Kaikki ilmoitukset</a>
+            <a href="#">Miten ostat?</a>
+            <a href="#">Myyntipalvelut</a>
+            <a href="/tietoa-meista">Tietoa meistä</a>
+            <a href="https://www.eduko.fi/eduko/yhteystiedot/">Yhteystiedot</a>
         </div>
         <div class="cart-container" id="cart-btn" onclick="window.location.href='/kori'">
             <i class="fas fa-shopping-cart"></i>
@@ -44,19 +44,19 @@
 
 <div class="layout-container">
     <aside class="sidebar">
-        <h3 data-i18n="categories_title">Kategoriat</h3>
+        <h3>Kategoriat</h3>
         <nav class="side-nav">
-            <a href="/kategoria/1"><i class="fas fa-hammer"></i> <span data-i18n="cat_auto">Ajoneuvoala</span></a>
-            <a href="/kategoria/2"><i class="fas fa-magic"></i> <span data-i18n="cat_beauty">Hius- ja kauneudenhoito</span></a>
-            <a href="/kategoria/3"><i class="fas fa-bolt"></i> <span data-i18n="cat_metal">Kone- ja metalliala</span></a>
-            <a href="/kategoria/4"><i class="fas fa-truck"></i> <span data-i18n="cat_logistics">Logistiikka ja varasto</span></a>
-            <a href="/kategoria/5"><i class="fas fa-flask"></i> <span data-i18n="cat_lab">Prosessi- ja laboratorio</span></a>
-            <a href="/kategoria/6"><i class="fas fa-shield-alt"></i> <span data-i18n="cat_security">Turvallisuusala</span></a>
-            <a href="/kategoria/7"><i class="fas fa-paint-roller"></i> <span data-i18n="cat_construction">Rakennus ja pintakäsittely</span></a>
-            <a href="/kategoria/8"><i class="fas fa-utensils"></i> <span data-i18n="cat_restaurant">Ravintola ja catering</span></a>
-            <a href="/kategoria/9"><i class="fas fa-plug"></i> <span data-i18n="cat_electric">Sähkö ja automaatio</span></a>
-            <a href="/kategoria/10"><i class="fas fa-heartbeat"></i> <span data-i18n="cat_health">Sosiaali- ja terveysala</span></a>
-            <a href="/kategoria/11"><i class="fas fa-laptop-code"></i> <span data-i18n="cat_ict">Tieto- ja viestintätekniikka</span></a>
+            <a href="/kategoria/ajoneuvoala"><i class="fas fa-hammer"></i> Ajoneuvoala</a>
+            <a href="/kategoria/hiusala"><i class="fas fa-magic"></i> Hius- ja kauneudenhoito</a>
+            <a href="/kategoria/metalli"><i class="fas fa-bolt"></i> Kone- ja metalliala</a>
+            <a href="/kategoria/logistiikka"><i class="fas fa-truck"></i> Logistiikka ja varasto</a>
+            <a href="/kategoria/prosessi"><i class="fas fa-flask"></i> Prosessi- ja laboratorio</a>
+            <a href="/kategoria/turvallisuus"><i class="fas fa-shield-alt"></i> Turvallisuusala</a>
+            <a href="/kategoria/rakennus"><i class="fas fa-paint-roller"></i> Rakennus ja pintakäsittely</a>
+            <a href="/kategoria/ravintola"><i class="fas fa-utensils"></i> Ravintola ja catering</a>
+            <a href="/kategoria/sahko"><i class="fas fa-plug"></i> Sähkö ja automaatio</a>
+            <a href="/kategoria/sote"><i class="fas fa-heartbeat"></i> Sosiaali- ja terveysala</a>
+            <a href="/kategoria/it"><i class="fas fa-laptop-code"></i> Tieto- ja viestintätekniikka</a>
         </nav>
     </aside>
 
@@ -64,32 +64,33 @@
         <section class="product-gallery">
             <div class="main-image-container">
                 <img id="display-img" src="/images/placeholder.jpg" alt="Tuotteen kuva">
-                <span class="pickup-badge" data-i18n="pickup_only">Vain nouto</span>
+                <span class="pickup-badge">Vain nouto</span>
             </div>
         </section>
 
         <section class="product-info-box">
-            <h1 id="product-name" data-i18n="loading">Ladataan...</h1>
+            <h1 id="product-name">Ladataan...</h1>
             <hr class="divider">
             
             <div class="purchase-section">
                 <div class="price-tag">
                     <h2 id="product-price">0,00 €</h2>
                 </div>
-                <button class="buy-now-btn" data-i18n="buy_btn">OSTA</button>
+                <button class="buy-now-btn">OSTA</button>
             </div>
 
             <div class="info-tabs">
                 <div class="tab-buttons">
-                    <button class="tab-btn active" data-target="kuvaus" data-i18n="tab_desc">Kuvaus</button>
-                    <button class="tab-btn" data-target="tekniset" data-i18n="tab_specs">Tekniset tiedot</button>
-                    <button class="tab-btn" data-target="kuvat" data-i18n="tab_images">Kuvat</button>
-                    <button class="tab-btn" data-target="vastuuhenkilo-tab" data-i18n="tab_contact">Vastuuhenkilö</button>
+                    <button class="tab-btn active" data-target="kuvaus">Kuvaus</button>
+                    <button class="tab-btn" data-target="tekniset">Tekniset tiedot</button>
+                    <button class="tab-btn" data-target="kuvat">Kuvat</button>
+                    <button class="tab-btn" data-target="vastuuhenkilo-tab">Vastuuhenkilö</button>
                 </div>
 
                 <div id="kuvaus" class="tab-pane active">
-                    <p id="product-desc" data-i18n="loading">Tuotetiedot ladataan tästä...</p>
-                    <p class="no-return" data-i18n="no_return_info">Huom: Noutotuotteilla ei ole palautusoikeutta.</p>
+                    <p id="product-desc">Tuotetiedot ladataan tästä...</p>
+                    <div id="product-meta"></div>
+                    <p class="no-return">Huom: Noutotuotteilla ei ole palautusoikeutta.</p>
                 </div>
 
                 <div id="tekniset" class="tab-pane">
@@ -104,9 +105,9 @@
                     <div class="contact-card">
                         <i class="fas fa-user-tie fa-3x"></i>
                         <div class="contact-info">
-                            <p><strong data-i18n="contact_name_label">Nimi:</strong> <span id="contact-name" data-i18n="loading">Ladataan...</span></p>
-                            <p><strong data-i18n="contact_email_label">Sähköposti:</strong> <a href="#" id="email-link"><span id="contact-email">Ladataan...</span></a></p>
-                            <p><strong data-i18n="contact_phone_label">Puhelin:</strong> <a href="#" id="phone-link"><span id="contact-phone">Ladataan...</span></a></p>
+                            <p><strong>Nimi:</strong> <span id="contact-name">Ladataan...</span></p>
+                            <p><strong>Sähköposti:</strong> <a href="#" id="email-link"><span id="contact-email">Ladataan...</span></a></p>
+                            <p><strong>Puhelin:</strong> <a href="#" id="phone-link"><span id="contact-phone">Ladataan...</span></a></p>
                         </div>
                     </div>
                 </div>
@@ -115,7 +116,7 @@
     </main>
 </div>
 
-<script src="/script/language.js"></script>
 <script src="/script/product-details.js"></script>
+<script src="/script/language.js"></script>
 </body>
 </html>

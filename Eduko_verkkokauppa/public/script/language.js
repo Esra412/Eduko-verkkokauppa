@@ -2,6 +2,13 @@
 let translations = {}; 
 
 /**
+ * Hae nykyinen kielivalinta
+ */
+function getCurrentLanguage() {
+    return localStorage.getItem("language") || "fi";
+}
+
+/**
  * Lataa valitun kielen JSON-tiedoston ja päivittää sivun tekstit
  */
 async function applyLanguage(lang) {

@@ -1,24 +1,31 @@
-document.addEventListener('DOMContentLoaded', () => {
+// ===============================
+// 🔄 LATAA JA PÄIVITÄ TUOTTEET
+// ===============================
+function loadProducts() {
     // --- LISÄÄ TÄMÄ TÄHÄN ---
     const initialCart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
     const cartCountElement = document.getElementById('cart-count');
     if (cartCountElement) cartCountElement.innerText = initialCart.length;
     // ------------------------
 
-    console.log("Eduko etusivu ladattu");
-
     const grid = document.querySelector('.product-grid');
+    if (!grid) return;
+
+    // Haetaan käännös napille (oletuksena suomi jos ei ole saatavilla)
+    const addToCartButtonText = t('add_to_cart') || 'Lisää ostoskoriin';
 
     // ===============================
     // 1️⃣ HAE 15 UUSINTA TUOTETTA
     // ===============================
-    fetch('/api/products/latest')
+    const currentLang = getCurrentLanguage();
+    fetch(`/api/products/latest?lang=${currentLang}`)
         .then(res => res.json())
         .then(products => {
             grid.innerHTML = "";
 
             if (products.length === 0) {
-                grid.innerHTML = "<p>Ei uusia kohteita juuri nyt.</p>";
+                const noProductsMsg = t('no_products') || 'Ei uusia kohteita juuri nyt.';
+                grid.innerHTML = `<p>${noProductsMsg}</p>`;
                 return;
             }
 
@@ -45,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </a>
                     <div class="card-footer">
                         <span class="price">${Number(product.price).toFixed(2)} €</span>
-                        <button class="bid-btn">Lisää ostoskoriin</button>
+                        <button class="bid-btn">${addToCartButtonText}</button>
                     </div>
                 `;
 
@@ -58,29 +65,30 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(err => {
             console.error("Virhe tuotteiden haussa:", err);
-            grid.innerHTML = "<p>Tuotteita ei voitu ladata.</p>";
+            const loadErrorMsg = t('load_error') || 'Tuotteita ei voitu ladata.';
+            grid.innerHTML = `<p>${loadErrorMsg}</p>`;
         });
+}
 
-    // ===============================
-    // 2️⃣ LIVE-HAKU (Suodattaa näkyviä kortteja)
-    // ===============================
-    function liveHaku() {
-        const searchInput = document.querySelector('.search-box input');
-        if (!searchInput) return;
+// ===============================
+// 2️⃣ LIVE-HAKU (Suodattaa näkyviä kortteja)
+// ===============================
+function liveHaku() {
+    const searchInput = document.querySelector('.search-box input');
+    if (!searchInput) return;
 
-        searchInput.addEventListener('input', (e) => {
-            const term = e.target.value.toLowerCase();
-            document.querySelectorAll('.product-card').forEach(card => {
-                const title = card.querySelector('h3').innerText.toLowerCase();
-                card.style.display = title.includes(term) ? 'block' : 'none';
-            });
+    searchInput.addEventListener('input', (e) => {
+        const term = e.target.value.toLowerCase();
+        document.querySelectorAll('.product-card').forEach(card => {
+            const title = card.querySelector('h3').innerText.toLowerCase();
+            card.style.display = title.includes(term) ? 'block' : 'none';
         });
-    }
+    });
+}
 
-    // ===============================
-    // 3️⃣ OSTOSKORI
-    // ===============================
-    // script.js sisällä
+// ===============================
+// 3️⃣ OSTOSKORI
+// ===============================
 function ostoskoriLogiikka() {
     document.querySelectorAll('.bid-btn').forEach(button => {
         button.addEventListener('click', async (e) => {
@@ -135,4 +143,15 @@ function ostoskoriLogiikka() {
         });
     });
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("Eduko etusivu ladattu");
+});
+
+// ===============================
+// 🌐 KUUNTELE KIELEN MUUTOKSIA JA LATAA TUOTTEET SILLOIN
+// ===============================
+document.addEventListener('languageChanged', () => {
+    console.log("Kieli valmis - ladataan tuotteet");
+    loadProducts();
 });

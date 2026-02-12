@@ -324,20 +324,49 @@ app.get('/api/admin/products', vaadiKirjautuminen, (req, res) => {
     });
 });
 
+// ================= APUFUNKTIO: KIELEN VALINTA =================
+/**
+ * Valitsee oikean kielisen nimen tuotteelle
+ * @param {Object} product - Tuoteobjekti
+ * @param {String} lang - Kieli (fi, en, sv)
+ * @returns {Object} - Päivitetty tuoteobjekti
+ */
+function applyProductLanguage(product, lang) {
+    if (!product) return product;
+    
+    const langMap = {
+        fi: 'name_fi',
+        en: 'name_en',
+        sv: 'name_sv'
+    };
+    
+    const nameColumn = langMap[lang] || 'name_fi'; // Oletuksena suomi
+    product.name = product[nameColumn] || product.name || 'Nimetön tuote';
+    
+    return product;
+}
+
 // TUOTTEET: Julkiset reitit
 app.get('/api/products', (req, res) => {
     const categoryParam = req.query.category;
+    const lang = req.query.lang || 'fi'; // Oletuksena suomi
+    
     let sql = !isNaN(categoryParam) 
         ? "SELECT p.*, c.slug as category_slug FROM products p LEFT JOIN categories c ON p.category_id = c.id WHERE p.category_id = ? ORDER BY p.id DESC" 
         : "SELECT p.*, c.slug as category_slug FROM products p JOIN categories c ON p.category_id = c.id WHERE c.slug = ? ORDER BY p.id DESC";
 
     db.query(sql, [categoryParam], (err, results) => {
         if (err) return res.status(500).json({ error: "Tietokantavirhe" });
-        res.json(results);
+        
+        // Sovella kielivalinta kaikille tuotteille
+        const localizedResults = results.map(product => applyProductLanguage(product, lang));
+        res.json(localizedResults);
     });
 });
 
 app.get('/api/products/latest', (req, res) => {
+    const lang = req.query.lang || 'fi'; // Oletuksena suomi
+    
     db.query(
         `SELECT p.*, c.slug as category_slug 
          FROM products p 
@@ -345,12 +374,17 @@ app.get('/api/products/latest', (req, res) => {
          ORDER BY p.created_at DESC LIMIT 15`, 
         (err, results) => {
             if (err) return res.status(500).json({ error: "Tietokantavirhe" });
-            res.json(results);
+            
+            // Sovella kielivalinta kaikille tuotteille
+            const localizedResults = results.map(product => applyProductLanguage(product, lang));
+            res.json(localizedResults);
         }
     );
 });
 
 app.get('/api/products/:id', (req, res) => {
+    const lang = req.query.lang || 'fi'; // Oletuksena suomi
+    
     db.query(
         `SELECT p.*, c.slug as category_slug 
          FROM products p 
@@ -359,7 +393,10 @@ app.get('/api/products/:id', (req, res) => {
         [req.params.id], 
         (err, results) => {
             if (err || results.length === 0) return res.status(404).json({ error: "Ei löydy" });
-            res.json(results[0]);
+            
+            // Sovella kielivalinta
+            const localizedProduct = applyProductLanguage(results[0], lang);
+            res.json(localizedProduct);
         }
     );
 });

@@ -10,6 +10,8 @@
   "categories_title": "Kategorier",
   "latest_items": "Senaste objekten",
   "add_to_cart": "Lägg i varukorgen",
+  "no_products": "Inga nya objekt tillgängliga just nu.",
+  "load_error": "Kunde inte ladda produkter.",
   "cat_auto": "Fordonsbranschen",
   "cat_beauty": "Hår- och skönhetsbranschen",
   "cat_metal": "Maskin- och produktionsteknik", 
