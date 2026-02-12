@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eduko – Kiertonet Huutokauppa</title>
+    <title data-i18n="category_page_title">Eduko – Kategoria</title>
 
     <link rel="stylesheet" href="/styles/categoria.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -19,63 +19,58 @@
         </div>
 
         <div class="search-box">
-            <input type="text" placeholder="Hae tuotteita tai palveluita...">
+            <input type="text" data-i18n-placeholder="search_placeholder" placeholder="Hae tuotteita...">
             <button><i class="fas fa-search"></i></button>
         </div>
 
         <div class="auth-buttons">
-            <a href="/login" class="btn-primary">Kirjaudu</a>
+            <a href="/login" class="btn-primary" data-i18n="login_btn">Kirjaudu</a>
         </div>
     </div>
 </header>
 
 <nav class="main-nav">
     <div class="nav-container">
-
         <div class="nav-links">
-            <a href="/" class="active">Kaikki ilmoitukset</a>
-            <a href="#">Miten ostat?</a>
-            <a href="#">Myyntipalvelut</a>
-            <a href="/tieto">Tietoa meistä</a>
-            <a href="https://www.eduko.fi/eduko/yhteystiedot/">Yhteystiedot</a>
+            <a href="/" class="active" data-i18n="all_ads">Kaikki ilmoitukset</a>
+            <a href="#" data-i18n="how_to_buy">Miten ostat?</a>
+            <a href="#" data-i18n="sales_services">Myyntipalvelut</a>
+            <a href="/tieto" data-i18n="about_us">Tietoa meistä</a>
+            <a href="https://www.eduko.fi/eduko/yhteystiedot/" data-i18n="contact">Yhteystiedot</a>
         </div>
 
         <div class="cart-container" id="cart-btn" onclick="window.location.href='/kori'">
             <i class="fas fa-shopping-cart"></i>
             <span id="cart-count">0</span>
         </div>
-
     </div>
 </nav>
 
 <div class="layout-container">
-
-<aside class="sidebar">
-    <h3>Kategoriat</h3>
-    <nav class="side-nav">
-        <a href="/kategoria/1"><i class="fas fa-hammer"></i> Ajoneuvoala</a>
-        <a href="/kategoria/2"><i class="fas fa-magic"></i> Hius- ja kauneudenhoito</a>
-        <a href="/kategoria/3"><i class="fas fa-bolt"></i> Kone- ja metalliala</a>
-        <a href="/kategoria/4"><i class="fas fa-truck"></i> Logistiikka ja varasto</a>
-        <a href="/kategoria/5"><i class="fas fa-flask"></i> Prosessi- ja laboratorio</a>
-        <a href="/kategoria/6"><i class="fas fa-shield-alt"></i> Turvallisuusala</a>
-        <a href="/kategoria/7"><i class="fas fa-paint-roller"></i> Rakennus ja pintakäsittely</a>
-        <a href="/kategoria/8"><i class="fas fa-utensils"></i> Ravintola ja catering</a>
-        <a href="/kategoria/9"><i class="fas fa-plug"></i> Sähkö ja automaatio</a>
-        <a href="/kategoria/10"><i class="fas fa-heartbeat"></i> Sosiaali- ja terveysala</a>
-        <a href="/kategoria/11"><i class="fas fa-laptop-code"></i> Tieto- ja viestintätekniikka</a>
-    </nav>
-</aside>
+    <aside class="sidebar">
+        <h3 data-i18n="categories_title">Kategoriat</h3>
+        <nav class="side-nav">
+            <a href="/kategoria/1"><i class="fas fa-hammer"></i> <span data-i18n="cat_auto">Ajoneuvoala</span></a>
+            <a href="/kategoria/2"><i class="fas fa-magic"></i> <span data-i18n="cat_beauty">Hius- ja kauneudenhoito</span></a>
+            <a href="/kategoria/3"><i class="fas fa-bolt"></i> <span data-i18n="cat_metal">Kone- ja metalliala</span></a>
+            <a href="/kategoria/4"><i class="fas fa-truck"></i> <span data-i18n="cat_logistics">Logistiikka ja varasto</span></a>
+            <a href="/kategoria/5"><i class="fas fa-flask"></i> <span data-i18n="cat_lab">Prosessi- ja laboratorio</span></a>
+            <a href="/kategoria/6"><i class="fas fa-shield-alt"></i> <span data-i18n="cat_security">Turvallisuusala</span></a>
+            <a href="/kategoria/7"><i class="fas fa-paint-roller"></i> <span data-i18n="cat_construction">Rakennus ja pintakäsittely</span></a>
+            <a href="/kategoria/8"><i class="fas fa-utensils"></i> <span data-i18n="cat_restaurant">Ravintola ja catering</span></a>
+            <a href="/kategoria/9"><i class="fas fa-plug"></i> <span data-i18n="cat_electric">Sähkö ja automaatio</span></a>
+            <a href="/kategoria/10"><i class="fas fa-heartbeat"></i> <span data-i18n="cat_health">Sosiaali- ja terveysala</span></a>
+            <a href="/kategoria/11"><i class="fas fa-laptop-code"></i> <span data-i18n="cat_ict">Tieto- ja viestintätekniikka</span></a>
+        </nav>
+    </aside>
 
     <main class="content">
-
-        <h2 class="section-title">"Kategorian" kohteet</h2>
-
+        <h2 class="section-title" data-i18n="category_items_header">Kohteet</h2>
         <div class="product-grid" id="product-grid"></div>
-
-
     </main>
 </div>
+
+<script src="/script/language.js"></script>
 <script src="/script/category.js"></script>
 </body>
 </html>
