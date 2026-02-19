@@ -1,150 +1,142 @@
 <!DOCTYPE html>
 <html lang="fi">
 <head>
-  <meta charset="UTF-8" />
-  <title>Admin</title>
-  <link rel="icon" href="/images/edukosmall.png" type="image/png">
-  <link rel="stylesheet" href="/styles/admin.css" />
+    <meta charset="UTF-8" />
+    <title>Admin - Eduko</title>
+    <link rel="icon" href="/images/edukosmall.png" type="image/png">
+    <link rel="stylesheet" href="/styles/admin.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 
 <header>
-  <div class="header-container">
-    <div class="logo">
-      <span class="eduko-text">edu<span>ko</span></span>
-      <small>Kouvolan Ammattiopisto</small>
+    <div class="header-container">
+        <div class="logo">
+            <span class="eduko-text">edu<span>ko</span></span>
+            <small>Kouvolan Ammattiopisto</small>
+        </div>
+        <h1>Ylläpito</h1>
+        <nav>
+            <button id="BackToMenuBtn">Palaa etusivulle</button>
+        </nav>
     </div>
-    <h1>Admin</h1>
-    <nav>
-      <button id="BackToMenuBtn">Palaa etusivulle</button>
-    </nav>
-  </div>
 </header>
 
-<nav class="main-nav">
-  <div class="nav-container">
-  </div>
-</nav>
-
 <main>
+    <section id="orders" class="card">
+        <h2>Viimeisimmät tilaukset</h2>
+        <p class="instruction-text">Klikkaa hakuikonia nähdäksesi tilauksen sisällön.</p>
+        <ul id="orderList"></ul>
+    </section>
 
-  <!-- TILAUKSET -->
-  <section id="orders" class="card">
-    <h2>Tilaukset</h2>
-    <ul id="orderList"></ul>
-
-<div id="orderDetails" class="hidden" style="margin-top: 20px; border-top: 2px solid #b0a078; padding-top: 20px;">
-    <h3>Tilaus #<span id="orderNumber"></span></h3>
-    <div style="background: #eee; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-        <p><b>Asiakas:</b> <span id="orderName"></span></p>
-        <p><b>Puhelin:</b> <span id="orderPhone"></span></p>
-        <p><b>Sähköposti:</b> <span id="orderEmail"></span></p>
-        <p><b>Osoite:</b> <span id="orderAddress"></span></p>
-    </div>
-
-    <table style="width: 100%; border-collapse: collapse;">
-        <tbody id="orderItems"></tbody>
-    </table>
-    <button onclick="document.getElementById('orderDetails').classList.add('hidden')" style="margin-top:15px; background:#333;">Sulje tiedot</button>
-</div>
-  </section>
-
-  <section id="add-product" class="card">
-    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <div>
-            <h2 id="formTitle" style="margin: 0;">Lisää uusi tuote</h2>
-            <p id="languageInstruction" style="margin: 8px 0 0 0; color: #666; font-size: 0.95rem;"></p>
-        </div>
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <div id="languageSelector" style="display: flex; gap: 8px; align-items: center;">
-                <button type="button" class="lang-flag active" data-lang="fi" title="Suomi" style="background: white; color: #333; border: 2px solid #b0a078; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-size: 0.9rem; font-weight: bold; display: flex; align-items: center; gap: 4px;">🇫🇮 FI</button>
-                <button type="button" class="lang-flag" data-lang="sv" title="Svenska" style="background: white; color: #333; border: 2px solid transparent; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-size: 0.9rem; font-weight: bold; display: flex; align-items: center; gap: 4px;">🇸🇪 SV</button>
-                <button type="button" class="lang-flag" data-lang="en" title="English" style="background: white; color: #333; border: 2px solid transparent; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-size: 0.9rem; font-weight: bold; display: flex; align-items: center; gap: 4px;">🇬🇧 EN</button>
+    <section id="add-product" class="card">
+        <div class="card-header">
+            <div>
+                <h2 id="formTitle">Lisää uusi tuote</h2>
+                <p id="languageInstruction"></p>
             </div>
-            <span id="editModeBadge" class="hidden" style="background: #b0a078; color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem;">MUOKKAUSTILA</span>
-        </div>
-    </div>
-
-    <form id="addProductForm">
-        <input name="name" placeholder="Tuotteen nimi" required />
-        <textarea name="description" placeholder="Kuvaus" required></textarea>
-        
-        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <input name="price" type="number" step="0.01" placeholder="Hinta (€)" required />
-            <input name="stock" type="number" placeholder="Varastosaldo (kpl)" required />
+            <div class="header-tools">
+                <div id="languageSelector">
+                    <button type="button" class="lang-flag active" data-lang="fi">🇫🇮 FI</button>
+                    <button type="button" class="lang-flag" data-lang="sv">🇸🇪 SV</button>
+                    <button type="button" class="lang-flag" data-lang="en">🇬🇧 EN</button>
+                </div>
+                <span id="editModeBadge" class="hidden">MUOKKAUSTILA</span>
+            </div>
         </div>
 
-        <textarea name="specs" placeholder="Tekniset tiedot (esim. materiaali, mitat...)" required></textarea>
-
-        <div class="image-section" style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin: 15px 0;">
-            <label><b>Tuotteen pääkuva</b></label>
-            <input type="file" name="mainImage" accept="image/*" id="mainImageInput" />
+        <form id="addProductForm">
+            <input name="name" id="prodName" placeholder="Tuotteen nimi" required />
+            <textarea name="description" id="prodDesc" placeholder="Kuvaus" required></textarea>
             
-            <label style="margin-top: 10px; display: block;"><b>Muut kuvat (max 5 kpl)</b></label>
-            <input type="file" name="extraImages" accept="image/*" multiple id="extraImagesInput" />
-            
-            <div id="imagePreview" style="display:flex; gap:10px; flex-wrap:wrap; margin-top: 10px;"></div>
-        </div>
+            <div class="form-row">
+                <input name="price" type="number" step="0.01" placeholder="Hinta (€)" required />
+                <input name="stock" type="number" placeholder="Varastosaldo (kpl)" required />
+            </div>
 
-        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
-            <select name="category" required>
-        <option value="">Valitse kategoria</option>
-        <option value="1">Ajoneuvoala</option>
-        <option value="2">Hius- ja kauneudenhoito</option>
-        <option value="3">Kone- ja metalliala</option>
-        <option value="4">Logistiikka ja varasto</option>
-        <option value="5">Prosessi- ja laboratorio</option>
-        <option value="6">Turvallisuusala</option>
-        <option value="7">Rakennus ja pintakäsittely</option>
-        <option value="8">Ravintola ja catering</option>
-        <option value="9">Sähkö ja automaatio</option>
-        <option value="10">Sosiaali- ja terveysala</option>
-        <option value="11">Tieto- ja viestintätekniikka</option>
+            <textarea name="specs" id="prodSpecs" placeholder="Tekniset tiedot (esim. materiaali, mitat...)" required></textarea>
+
+            <div class="image-section">
+                <label class="file-label">
+                    <b>Tuotteen pääkuva</b>
+                    <input type="file" name="mainImage" accept="image/*" id="mainImageInput" />
+                </label>
+                <div id="imagePreview"></div>
+                
+                <label class="file-label" style="margin-top: 15px;">
+                    <b>Muut kuvat (max 5 kpl)</b>
+                    <input type="file" name="extraImages" accept="image/*" multiple id="extraImagesInput" />
+                </label>
+            </div>
+
+            <div class="form-row">
+                <select name="category" required id="prodCategory">
+                    <option value="">Valitse kategoria</option>
+                    <option value="1">Ajoneuvoala</option>
+                    <option value="2">Hius- ja kauneudenhoito</option>
+                    <option value="3">Kone- ja metalliala</option>
+                    <option value="4">Logistiikka ja varasto</option>
+                    <option value="5">Prosessi- ja laboratorio</option>
+                    <option value="6">Turvallisuusala</option>
+                    <option value="7">Rakennus ja pintakäsittely</option>
+                    <option value="8">Ravintola ja catering</option>
+                    <option value="9">Sähkö ja automaatio</option>
+                    <option value="10">Sosiaali- ja terveysala</option>
+                    <option value="11">Tieto- ja viestintätekniikka</option>
+                </select>
+
+                <select name="pickup_point" required id="prodPickup">
+                    <option value="">Valitse noutopiste</option>
+                    <option value="Kouvola, Utinkatu 44">Kouvola, Utinkatu 44</option>
+                    <option value="Kouvola, Utinkatu 85">Kouvola, Utinkatu 85</option>
+                    <option value="Kouvola, Taitajantie 2">Kouvola, Taitajantie 2</option>
+                    <option value="Utti, Kopterikuja 65">Utti, Kopterikuja 65</option>
+                </select>
+            </div>
+
+            <select name="type" id="prodType">
+                <option value="">Valitse tyyppi</option>
+                <option value="Opiskelijatyö">Opiskelijatyö</option>
+                <option value="Palvelu">Palvelu</option>
             </select>
 
-            <select name="pickup_point" required>
-                <option value="">Valitse noutopiste</option>
-                <option value="Kouvola, Utinkatu 44">Kouvola, Utinkatu 44</option>
-                <option value="Kouvola, Utinkatu 85">Kouvola, Utinkatu 85</option>
-                <option value="Kouvola, Taitajantie 2">Kouvola, Taitajantie 2</option>
-                <option value="Utti, Kopterikuja 65">Utti, Kopterikuja 65</option>
-            </select>
+            <div class="form-actions">
+                <button type="submit" id="submitBtn">Tallenna tuote</button>
+                <button type="button" id="cancelEditBtn" class="hidden">Peruuta muokkaus</button>
+            </div>
+        </form>
+    </section>
+
+    <section id="delete-product" class="card">
+        <h2>Tuotteiden hallinta</h2>
+        <div class="search-container">
+            <input id="searchProduct" placeholder="Hae tuotetta nimellä..." />
+            <button type="button" id="searchBtn">Hae</button>
         </div>
-
-        <select name="type" style="margin-bottom: 20px;">
-            <option value="">Valitse tyyppi</option>
-            <option value="Opiskelijatyö">Opiskelijatyö</option>
-            <option value="Palvelu">Palvelu</option>
-        </select>
-
-        <div style="display: flex; gap: 10px;">
-            <button type="submit" id="submitBtn" style="flex: 3;">Lisää tuote</button>
-            <button type="button" id="cancelEditBtn" class="hidden" style="flex: 1; background: #666;">Peruuta</button>
+        <div class="table-container">
+            <ul id="productList"></ul>
         </div>
-    </form>
-</section> 
-  <!-- POISTA TUOTE -->
-  <section id="delete-product" class="card">
-    <h2>Poista tuote</h2>
-
-    <div style="display:flex; gap:1rem; margin-bottom:1rem;">
-      <input id="searchProduct" placeholder="Kirjoita tuotteen nimi" />
-      <button type="button" id="searchBtn">Hae</button>
-    </div>
-
-    <ul id="productList"></ul>
-  </section>
-
+    </section>
 </main>
 
+<div id="orderDetailsModal" class="modal-overlay hidden">
+    <div class="modal-window">
+        <div class="modal-header">
+            <h3>Tilauksen yksityiskohdat</h3>
+            <button onclick="closeOrderModal()" class="close-x">&times;</button>
+        </div>
+        <div id="orderDetailContent" class="modal-body">
+            </div>
+        <div class="modal-footer">
+            <button onclick="closeOrderModal()" class="btn-close-modal">Sulje</button>
+        </div>
+    </div>
+</div>
+
 <script src="/script/admin.js"></script>
-
 <script>
-  // Back-nappi etusivulle
-  document.getElementById("BackToMenuBtn").onclick = function () {
-    window.location.href = "/";
-  };
+    document.getElementById("BackToMenuBtn").onclick = function () { window.location.href = "/"; };
 </script>
-
 </body>
 </html>

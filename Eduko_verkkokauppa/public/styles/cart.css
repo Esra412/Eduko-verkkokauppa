@@ -32,4 +32,16 @@
         
         .empty-cart { text-align: center; padding: 40px; }
         .back-link { text-decoration: none; color: #b0a078; font-weight: bold; margin-bottom: 20px; display: inline-block; }
+
+
+        @media (max-width: 768px) {
+    .product-container {  /*puhelinkrojauksia*/
+        display: block;
+        width: 100%;
+    }
     
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+}

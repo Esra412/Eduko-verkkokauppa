@@ -4,30 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maksu keskeytetty | Eduko</title>
+    <link rel="stylesheet" href="/styles/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="icon" href="/images/edukosmall.png" type="image/png">
     <link rel="stylesheet" href="/styles/cancel.css" />
 </head>
 <body>
 
-<div class="cancel-container">
-    <i class="fas fa-circle-xmark cancel-icon"></i>
-    <h1 data-i18n="payment_cancelled_header">Maksu keskeytyi</h1>
-    
-    <p data-i18n="payment_cancelled_info">Maksuprosessi keskeytettiin, eikä tilauksesi tullut perille.</p>
-    
-    <div class="info-box">
-        <i class="fas fa-shopping-cart" style="color: #b0a078;"></i> 
-        <span data-i18n="cart_waiting_info">Tuotteet odottavat sinua edelleen ostoskorissasi. Voit yrittää maksua uudelleen alta.</span>
-    </div>
+    <div class="cancel-container">
+        <i class="fas fa-circle-xmark cancel-icon"></i>
+        <h1>Maksu keskeytyi</h1>
+        
+        <p>Maksuprosessi keskeytettiin, eikä tilauksesi tullut perille.</p>
+        
+        <div class="info-box">
+            <i class="fas fa-shopping-cart" style="color: #b0a078;"></i> 
+            Tuotteet odottavat sinua edelleen ostoskorissasi. Voit yrittää maksua uudelleen alta.
+        </div>
 
-    <div class="cancel-buttons" style="display: flex; flex-direction: column; gap: 10px; align-items: center; margin-top: 20px;">
-        <a href="/kori" class="btn-retry" data-i18n="back_to_cart">Palaa ostoskoriin</a>
-        <a href="/" class="btn-secondary" data-i18n="back_to_home_btn">Jatka selailua</a>
+        <a href="/kori" class="btn-retry">Palaa ostoskoriin</a>
+        <a href="/" class="btn-secondary">Jatka selailua</a>
     </div>
-</div>
-
-<script src="/script/language.js"></script>
 
 </body>
 </html>
