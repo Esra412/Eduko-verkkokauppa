@@ -12,25 +12,31 @@
 
 <header class="main-header">
     <div class="header-container">
+        <button class="menu-toggle" id="mobile-menu-btn">
+            <span></span><span></span><span></span>
+        </button>
+
         <div class="logo">
             <span class="eduko-text">edu<span>ko</span></span>
             <small>Kouvolan Ammattiopisto</small>
         </div>
 
         <div class="search-box">
-            <input type="text" data-i18n-placeholder="search_placeholder" placeholder="Hae tuotteita...">
+            <input type="text" placeholder="Hae tuotteita...">
             <button><i class="fas fa-search"></i></button>
         </div>
 
-        <div class="header-right">
-            <div class="btn-primary">
-                <a href="/login" class="btn-primary" data-i18n="login_btn">Kirjaudu</a>
+        <div class="header-actions-mobile">
+            <div class="cart-wrapper" id="cart-btn">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="cart-count">0</span>
             </div>
 
+            <div class="header-right">
+                <a href="/login" class="btn-primary">Kirjaudu</a>
+            </div>
 
-        </div>
-
-                    <div class="language-selector">
+            <div class="language-selector">
                 <div id="selected-lang">🇫🇮 FI</div>
                 <div id="lang-options" class="select-hide">
                     <div data-value="fi">🇫🇮 FI</div>
@@ -38,55 +44,61 @@
                     <div data-value="sv">🇸🇪 SV</div>
                 </div>
             </div>
+        </div>
     </div>
 </header>
 
-<nav class="main-nav">
+<nav class="main-nav" id="main-navigation">
     <div class="nav-container">
         <div class="nav-links">
-            <a href="/" class="active" data-i18n="all_ads">Kaikki ilmoitukset</a>
-            <a href="#" data-i18n="how_to_buy">Miten ostat?</a>
-            <a href="#" data-i18n="sales_services">Myyntipalvelut</a>
-            <a href="/tieto" data-i18n="about_us">Tietoa meistä</a>
-            <a href="https://www.eduko.fi/eduko/yhteystiedot/" data-i18n="contact">Yhteystiedot</a>
-        </div>
-
-        <div class="cart-container" id="cart-btn" onclick="window.location.href='/kori'">
-            <i class="fas fa-shopping-cart"></i>
-            <span id="cart-count">0</span>
+            <a href="/" class="active">Kaikki ilmoitukset</a>
+            <a href="#">Miten ostat?</a>
+            <a href="#">Myyntipalvelut</a>
+            <a href="/tieto">Tietoa meistä</a>
+            <a href="https://www.eduko.fi/yhteystiedot/">Yhteystiedot</a>
         </div>
     </div>
 </nav>
 
 <div class="layout-container">
     <aside class="sidebar">
-        <h3 data-i18n="categories_title">Kategoriat</h3>
+        <h3>Kategoriat</h3>
         <nav class="side-nav">
-            <nav class="side-nav">
-                <a href="/kategoria/1"><i class="fas fa-hammer"></i> <span data-i18n="cat_auto">Ajoneuvoala</span></a>
-                <a href="/kategoria/2"><i class="fas fa-magic"></i> <span data-i18n="cat_beauty">Hius- ja kauneudenhoito</span></a>
-                <a href="/kategoria/3"><i class="fas fa-bolt"></i> <span data-i18n="cat_metal">Kone- ja metalliala</span></a>
-                <a href="/kategoria/4"><i class="fas fa-truck"></i> <span data-i18n="cat_logistics">Logistiikka ja varasto</span></a>
-                <a href="/kategoria/5"><i class="fas fa-flask"></i> <span data-i18n="cat_lab">Prosessi- ja laboratorio</span></a>
-                <a href="/kategoria/6"><i class="fas fa-shield-alt"></i> <span data-i18n="cat_security">Turvallisuusala</span></a>
-                <a href="/kategoria/7"><i class="fas fa-paint-roller"></i> <span data-i18n="cat_construction">Rakennus ja pintakäsittely</span></a>
-                <a href="/kategoria/8"><i class="fas fa-utensils"></i> <span data-i18n="cat_restaurant">Ravintola ja catering</span></a>
-                <a href="/kategoria/9"><i class="fas fa-plug"></i> <span data-i18n="cat_electric">Sähkö ja automaatio</span></a>
-                <a href="/kategoria/10"><i class="fas fa-heartbeat"></i> <span data-i18n="cat_health">Sosiaali- ja terveysala</span></a>
-                <a href="/kategoria/11"><i class="fas fa-laptop-code"></i> <span data-i18n="cat_ict">Tieto- ja viestintätekniikka</span></a>
-            </nav>
+            <a href="/kategoria/1"><i class="fas fa-hammer"></i> <span>Ajoneuvoala</span></a>
+            <a href="/kategoria/2"><i class="fas fa-magic"></i> <span>Hius- ja kauneudenhoito</span></a>
+            <a href="/kategoria/3"><i class="fas fa-bolt"></i> <span>Kone- ja metalliala</span></a>
+            <a href="/kategoria/9"><i class="fas fa-plug"></i> <span>Sähkö ja automaatio</span></a>
+            <a href="/kategoria/11"><i class="fas fa-laptop-code"></i> <span>Tieto- ja viestintätekniikka</span></a>
         </nav>
     </aside>
 
     <main class="content">
         <section class="hero-banner">
             <div class="hero-text">
-                <h1 data-i18n="latest_items">Tuoreimmat kohteet</h1>
+                <h1>Tuoreimmat kohteet</h1>
             </div>
         </section>
-        <div class="product-grid">
-            </div>
+        <div class="product-grid"></div>
     </main>
+</div>
+
+<div id="cart-modal" class="cart-modal hidden">
+    <div class="cart-content">
+        <div class="cart-header">
+            <h2>Ostoskori</h2>
+            <button id="close-cart">&times;</button>
+        </div>
+        <div id="cart-items-list">
+            <p class="empty-msg">Korisi on tyhjä.</p>
+        </div>
+        <div class="cart-footer">
+            <div class="total-row">
+                <span>Yhteensä:</span>
+                <span id="cart-total">0.00 €</span>
+            </div>
+            <button class="checkout-btn">Kassalle</button>
+        </div>
+    </div>
 </div>
 
 <script src="/script/language.js"></script>

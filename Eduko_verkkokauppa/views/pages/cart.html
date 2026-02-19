@@ -8,100 +8,242 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="icon" href="/images/edukosmall.png" type="image/png">
     <style>
-        .cart-wrapper { max-width: 800px; margin: 50px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .cart-item { display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #eee; gap: 15px; }
-        .cart-item img { width: 80px; height: 80px; object-fit: cover; border-radius: 5px; flex-shrink: 0; }
-        .cart-details { flex: 1; margin-left: 20px; }
-        .cart-item-price { min-width: 100px; text-align: right; }
-        .quantity-control { display: flex; align-items: center; gap: 8px; border: 1px solid #ddd; border-radius: 4px; padding: 4px; background: #f9f9f9; }
-        .quantity-btn { border: none; background: none; width: 28px; height: 28px; cursor: pointer; font-size: 1rem; font-weight: bold; color: #b0a078; transition: background 0.2s; }
-        .quantity-btn:hover { background: #f0f0f0; border-radius: 3px; }
-        .quantity-display { width: 35px; text-align: center; font-weight: bold; }
-        .remove-btn { color: #e74c3c; cursor: pointer; border: none; background: none; font-size: 1.1rem; transition: color 0.2s; }
-        .remove-btn:hover { color: #c0392b; }
-        .cart-summary { margin-top: 30px; text-align: right; }
-        
-        /* Lomakkeen tyylit */
-        #checkout-form-container { 
-            display: none; 
-            margin-top: 30px; 
-            padding: 25px; 
-            background: #fdfaf3; 
-            border: 1px solid #b0a078; 
-            border-radius: 8px; 
-            text-align: left;
-            animation: fadeIn 0.5s ease;
+        /* TÄMÄ CSS KORJAA KUVASSA NÄKYVÄT VIRHEET */
+        :root {
+            --gold: #b0a078;
+            --dark: #333;
+            --light-bg: #f9f7f2;
         }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; }
-        .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
-        .form-row { display: flex; gap: 10px; }
-        .form-row .form-group { flex: 1; }
-        
-        .empty-cart { text-align: center; padding: 40px; }
-        .back-link { text-decoration: none; color: #b0a078; font-weight: bold; margin-bottom: 20px; display: inline-block; }
+
+        body {
+            background-color: var(--light-bg);
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 10px; /* Pieni tila reunoille mobiilissa */
+        }
+
+        /* Päälaatikko, joka kuvissasi karkaili */
+        .cart-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            min-height: 300px;
+        }
+
+        .back-nav {
+            margin-bottom: 20px;
+        }
+
+        .back-nav a {
+            text-decoration: none;
+            color: var(--gold);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2 {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 2px solid var(--light-bg);
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+
+        /* Tuoterivien asettelu */
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+            gap: 10px;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-info h4 { margin: 0; }
+
+        .qty-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .qty-btn {
+            background: #eee;
+            border: none;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .price-box {
+            text-align: right;
+            font-weight: bold;
+        }
+
+        .remove-link {
+            color: red;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: block;
+            margin-top: 5px;
+        }
+
+        /* Tyhjä kori -näkymä (Korjaa kuvassa olevan sekasotkun) */
+        .empty-state {
+            text-align: center;
+            padding: 40px 10px;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #ccc;
+            margin-bottom: 15px;
+        }
+
+        /* Yhteenveto ja napit */
+        .summary {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .checkout-btn {
+            background: var(--dark);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            width: 100%;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+
+        /* Lomake */
+        #order-form {
+            display: none;
+            margin-top: 20px;
+            border-top: 2px solid var(--gold);
+            padding-top: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
     </style>
 </head>
 <body>
-<div class="cart-wrapper">
-    <a href="/" class="back-link">
-        <i class="fas fa-arrow-left"></i> <span data-i18n="continue_shopping">Jatka ostoksia</span>
-    </a>
-    <h2 style="display: flex; align-items: center; gap: 10px;">
-        <i class="fas fa-shopping-cart"></i> <span data-i18n="your_cart">Ostoskorisi</span>
-    </h2>
-    
-    <div id="cart-list"></div>
 
-    <div class="cart-summary">
-        <h3><span data-i18n="cart_total_label">Yhteensä</span>: <span id="cart-total">0.00</span> €</h3>
-        <button id="show-form-btn" class="bid-btn" style="padding: 15px 30px; font-size: 1.1rem; margin-top: 10px;">
-            <span data-i18n="continue_to_order">Jatka tilaamaan</span> <i class="fas fa-chevron-right"></i>
-        </button>
+<div class="cart-container">
+    <div class="back-nav">
+        <a href="/"><i class="fas fa-arrow-left"></i> Jatka ostoksia</a>
     </div>
 
-    <div id="checkout-form-container">
-        <h3 style="border-bottom: 2px solid #b0a078; padding-bottom: 10px; margin-bottom: 20px;" data-i18n="delivery_info_header">Toimitustiedot</h3>
-        <div class="form-row">
-            <div class="form-group">
-                <label data-i18n="fname_label">Etunimi</label>
-                <input type="text" id="fname" data-i18n-placeholder="fname_placeholder" placeholder="Matti" required>
-            </div>
-            <div class="form-group">
-                <label data-i18n="lname_label">Sukunimi</label>
-                <input type="text" id="lname" data-i18n-placeholder="lname_placeholder" placeholder="Meikäläinen" required>
-            </div>
+    <h2><i class="fas fa-shopping-cart"></i> Ostoskorisi</h2>
+
+    <div id="cart-content">
         </div>
-        <div class="form-group">
-            <label data-i18n="email_info_label">Sähköposti (vahvistusta varten)</label>
-            <input type="email" id="customer-email" data-i18n-placeholder="email_placeholder" placeholder="matti@esimerkki.fi" required>
+
+    <div id="cart-footer" style="display:none;">
+        <div class="summary">
+            <h3>Yhteensä: <span id="total-price">0.00</span> €</h3>
+            <button class="checkout-btn" id="show-form">Jatka tilaamaan</button>
         </div>
-        <div class="form-group">
-            <label data-i18n="phone_label">Puhelinnumero</label>
-            <input type="tel" id="phone" data-i18n-placeholder="phone_placeholder" placeholder="040 123 4567" required>
-        </div>
-        <div class="form-group">
-            <label data-i18n="address_label">Katuosoite</label>
-            <input type="text" id="address" data-i18n-placeholder="address_placeholder" placeholder="Esimerkkikatu 12" required>
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label data-i18n="postcode_label">Postinumero</label>
-                <input type="text" id="postcode" data-i18n-placeholder="postcode_placeholder" placeholder="00100" required>
-            </div>
-            <div class="form-group">
-                <label data-i18n="city_label">Kunta</label>
-                <input type="text" id="city" data-i18n-placeholder="city_placeholder" placeholder="Kouvola" required>
-            </div>
-        </div>
-        <button id="pay-button" class="bid-btn" style="width: 100%; margin-top: 15px; padding: 15px;">
-            <span data-i18n="proceed_to_payment">Siirry maksamaan</span> <i class="fas fa-credit-card"></i>
-        </button>
+    </div>
+
+    <div id="order-form">
+        <h3>Toimitustiedot</h3>
+        <input type="text" id="name" placeholder="Nimi">
+        <input type="email" id="email" placeholder="Sähköposti">
+        <input type="text" id="addr" placeholder="Osoite">
+        <button class="checkout-btn" style="background: var(--gold);">Vahvista ja maksa</button>
     </div>
 </div>
-<script src="/script/cart.js"></script>
-<script src="/script/language.js"></script>
+
+<script>
+    function updateCart() {
+        let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
+        const content = document.getElementById('cart-content');
+        const footer = document.getElementById('cart-footer');
+        let total = 0;
+
+        if (cart.length === 0) {
+            content.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-shopping-basket"></i>
+                    <p><b>Ostoskorisi on tyhjä.</b></p>
+                    <a href="/" style="color:var(--gold)">Palaa tästä kauppaan &raquo;</a>
+                </div>`;
+            footer.style.display = 'none';
+            return;
+        }
+
+        footer.style.display = 'block';
+        content.innerHTML = '';
+
+        cart.forEach((item, i) => {
+            const p = parseFloat(item.price.replace(',', '.'));
+            const q = item.quantity || 1;
+            total += p * q;
+
+            content.innerHTML += `
+                <div class="cart-item">
+                    <div class="item-info">
+                        <h4>${item.name}</h4>
+                        <div class="qty-box">
+                            <button class="qty-btn" onclick="changeQty(${i}, -1)">-</button>
+                            <span>${q}</span>
+                            <button class="qty-btn" onclick="changeQty(${i}, 1)">+</button>
+                        </div>
+                    </div>
+                    <div class="price-box">
+                        ${(p * q).toFixed(2)} €
+                        <span class="remove-link" onclick="remove(${i})">Poista</span>
+                    </div>
+                </div>`;
+        });
+
+        document.getElementById('total-price').innerText = total.toFixed(2);
+    }
+
+    window.changeQty = (i, c) => {
+        let cart = JSON.parse(localStorage.getItem('eduko_cart'));
+        cart[i].quantity = (cart[i].quantity || 1) + c;
+        if (cart[i].quantity < 1) cart.splice(i, 1);
+        localStorage.setItem('eduko_cart', JSON.stringify(cart));
+        updateCart();
+    };
+
+    window.remove = (i) => {
+        let cart = JSON.parse(localStorage.getItem('eduko_cart'));
+        cart.splice(i, 1);
+        localStorage.setItem('eduko_cart', JSON.stringify(cart));
+        updateCart();
+    };
+
+    document.getElementById('show-form').onclick = () => {
+        document.getElementById('order-form').style.display = 'block';
+        document.getElementById('show-form').style.display = 'none';
+    };
+
+    updateCart();
+</script>
+
 </body>
 </html>

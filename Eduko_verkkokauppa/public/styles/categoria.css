@@ -459,3 +459,15 @@ body {
     font-family: 'Font Awesome 6 Free';
     font-weight: 900;
 }
+
+@media (max-width: 768px) {
+    .product-container {  /*puhelinkrojauksia*/
+        display: block;
+        width: 100%;
+    }
+    
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+}

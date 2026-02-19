@@ -42,3 +42,15 @@
         #step2 { display: none; }
         .message { margin-top: 1rem; font-size: 0.85rem; min-height: 1.2rem; }
         .error { color: #e74c3c; }
+
+        @media (max-width: 768px) {
+    .product-container {  /*puhelinkrojauksia*/
+        display: block;
+        width: 100%;
+    }
+    
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+}

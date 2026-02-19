@@ -65,3 +65,15 @@
             background-color: #8e8161;
             transform: scale(1.05);
         }
+
+        @media (max-width: 768px) {
+    .product-container {  /*puhelinkrojauksia*/
+        display: block;
+        width: 100%;
+    }
+    
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+}

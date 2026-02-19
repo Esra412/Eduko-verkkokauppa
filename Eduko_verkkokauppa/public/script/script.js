@@ -1,157 +1,153 @@
-// ===============================
-// 🔄 LATAA JA PÄIVITÄ TUOTTEET
-// ===============================
-function loadProducts() {
-    // --- LISÄÄ TÄMÄ TÄHÄN ---
-    const initialCart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
-    const cartCountElement = document.getElementById('cart-count');
-    if (cartCountElement) cartCountElement.innerText = initialCart.length;
-    // ------------------------
+// Globaali muuttuja ostoskorille
+let cart = [];
 
+document.addEventListener('DOMContentLoaded', () => {
+    // --- 1. MOBIILIVALIKON LOGIIKKA ---
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mainNav = document.getElementById('main-navigation');
+
+    if (mobileMenuBtn && mainNav) {
+        mobileMenuBtn.addEventListener('click', () => {
+            mainNav.classList.toggle('show');
+            mobileMenuBtn.classList.toggle('open');
+        });
+    }
+
+    // --- 2. OSTOSKORIN MODALIN HALLINTA ---
+    const cartBtn = document.getElementById('cart-btn');
+    const cartModal = document.getElementById('cart-modal');
+    const closeCart = document.getElementById('close-cart');
+
+    if (cartBtn && cartModal) {
+        cartBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            cartModal.classList.remove('hidden');
+            renderCart();
+        });
+    }
+
+    if (closeCart) {
+        closeCart.addEventListener('click', () => {
+            cartModal.classList.add('hidden');
+        });
+    }
+
+    // Suljetaan modal, jos klikataan sen ohi (taustaan)
+    window.addEventListener('click', (e) => {
+        if (e.target === cartModal) {
+            cartModal.classList.add('hidden');
+        }
+    });
+
+    // --- 3. TUOTTEIDEN LISÄÄMINEN (Event Delegation) ---
+    const grid = document.querySelector('.product-grid');
+    if (grid) {
+        grid.addEventListener('click', (e) => {
+            if (e.target.classList.contains('bid-btn')) {
+                const card = e.target.closest('.product-card');
+                const name = card.querySelector('h3').innerText;
+                const priceText = card.querySelector('.price').innerText;
+                // Puhdistetaan hinta numeroksi (esim. "15.00 €" -> 15.0)
+                const price = parseFloat(priceText.replace(/[^\d.]/g, ''));
+
+                addToCart(name, price);
+            }
+        });
+    }
+
+    // Ladataan tuotteet palvelimelta (jos fetch käytössä)
+    loadProducts();
+});
+
+// --- FUNKTIOT ---
+
+function addToCart(name, price) {
+    cart.push({ name, price, id: Date.now() }); // Käytetään aikaleimaa ID:nä poistamista varten
+    updateCartUI();
+    
+    // Visuaalinen palaute pallolle
+    const countSpan = document.getElementById('cart-count');
+    if (countSpan) {
+        countSpan.style.transform = "scale(1.5)";
+        setTimeout(() => { countSpan.style.transform = "scale(1)"; }, 200);
+    }
+}
+
+function removeFromCart(id) {
+    cart = cart.filter(item => item.id !== id);
+    updateCartUI();
+    renderCart(); // Päivitetään avoinna oleva lista
+}
+
+function updateCartUI() {
+    const countSpan = document.getElementById('cart-count');
+    if (countSpan) {
+        countSpan.innerText = cart.length;
+    }
+}
+
+function renderCart() {
+    const list = document.getElementById('cart-items-list');
+    const totalEl = document.getElementById('cart-total');
+    
+    if (!list || !totalEl) return;
+
+    list.innerHTML = "";
+    let total = 0;
+
+    if (cart.length === 0) {
+        list.innerHTML = '<p class="empty-msg">Korisi on tyhjä.</p>';
+        totalEl.innerText = "0.00 €";
+        return;
+    }
+
+    cart.forEach(item => {
+        total += item.price;
+        list.innerHTML += `
+            <div class="cart-item">
+                <div class="item-info">
+                    <span class="item-name">${item.name}</span>
+                    <span class="item-price">${item.price.toFixed(2)} €</span>
+                </div>
+                <button onclick="removeFromCart(${item.id})" class="remove-item-btn">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        `;
+    });
+
+    totalEl.innerText = total.toFixed(2) + " €";
+}
+
+function loadProducts() {
     const grid = document.querySelector('.product-grid');
     if (!grid) return;
 
-    // Haetaan käännös napille (oletuksena suomi jos ei ole saatavilla)
-    const addToCartButtonText = t('add_to_cart') || 'Lisää ostoskoriin';
-
-    // ===============================
-    // 1️⃣ HAE 15 UUSINTA TUOTETTA
-    // ===============================
-    const currentLang = getCurrentLanguage();
-    fetch(`/api/products/latest?lang=${currentLang}`)
+    // Huom: Tämä fetch on esimerkkisi mukainen. 
+    // Varmista että backend-polkusi on oikea.
+    fetch('/api/products/latest')
         .then(res => res.json())
         .then(products => {
             grid.innerHTML = "";
-
-            if (products.length === 0) {
-                const noProductsMsg = t('no_products') || 'Ei uusia kohteita juuri nyt.';
-                grid.innerHTML = `<p>${noProductsMsg}</p>`;
-                return;
-            }
-
-            products.forEach(product => {
-                const card = document.createElement('div');
-                card.className = 'product-card';
-
-                // Käytetään tietokannan noutopistettä ja tyyppiä
-                const locationText = product.pickup_point || "Kouvola";
-                const typeBadge = product.type || "Uusi";
-
-                card.innerHTML = `
-                    <a href="/tuote/${product.id}" class="product-link">
+            products.forEach(p => {
+                grid.innerHTML += `
+                    <div class="product-card">
                         <div class="image-wrapper">
-                            <span class="product-badge">${typeBadge}</span>
-                            <img src="${product.image || '/images/no-image.png'}" alt="${product.name}">
+                            <img src="${p.image || '/images/no-image.png'}" alt="${p.name}">
                         </div>
                         <div class="card-content">
-                            <h3>${product.name}</h3>
-                            <p class="location">
-                                <i class="fas fa-map-marker-alt"></i> ${locationText}
-                            </p>
+                            <h3>${p.name}</h3>
+                            <div class="card-footer">
+                                <span class="price">${Number(p.price).toFixed(2)} €</span>
+                                <button class="bid-btn">Lisää koriin</button>
+                            </div>
                         </div>
-                    </a>
-                    <div class="card-footer">
-                        <span class="price">${Number(product.price).toFixed(2)} €</span>
-                        <button class="bid-btn">${addToCartButtonText}</button>
-                    </div>
-                `;
-
-                grid.appendChild(card);
+                    </div>`;
             });
-
-            // Aktivoidaan ostoskori ja haku, kun tuotteet on ladattu
-            ostoskoriLogiikka();
-            liveHaku();
         })
         .catch(err => {
-            console.error("Virhe tuotteiden haussa:", err);
-            const loadErrorMsg = t('load_error') || 'Tuotteita ei voitu ladata.';
-            grid.innerHTML = `<p>${loadErrorMsg}</p>`;
+            console.error("Tuotteiden haku epäonnistui:", err);
+            // Jos API ei ole vielä pystyssä, voit testata tällä:
+            // grid.innerHTML = "<p>Ladataan tuotteita...</p>";
         });
 }
-
-// ===============================
-// 2️⃣ LIVE-HAKU (Suodattaa näkyviä kortteja)
-// ===============================
-function liveHaku() {
-    const searchInput = document.querySelector('.search-box input');
-    if (!searchInput) return;
-
-    searchInput.addEventListener('input', (e) => {
-        const term = e.target.value.toLowerCase();
-        document.querySelectorAll('.product-card').forEach(card => {
-            const title = card.querySelector('h3').innerText.toLowerCase();
-            card.style.display = title.includes(term) ? 'block' : 'none';
-        });
-    });
-}
-
-// ===============================
-// 3️⃣ OSTOSKORI
-// ===============================
-function ostoskoriLogiikka() {
-    document.querySelectorAll('.bid-btn').forEach(button => {
-        button.addEventListener('click', async (e) => {
-            e.preventDefault();
-            const card = button.closest('.product-card');
-            const productId = card.querySelector('a').href.split('/').pop();
-            
-            // Haetaan tuotteen varastosaldo
-            let maxStock = 1; // oletus
-            try {
-                const response = await fetch(`/api/products/${productId}`);
-                const product = await response.json();
-                maxStock = product.stock; // Käytä varastosaldoa suoraan
-            } catch (err) {
-                console.error("Virhe varastosaldon haussa:", err);
-            }
-
-            // Luodaan objekti, jossa on kaikki tarvittava
-            const product = {
-                id: productId,
-                name: card.querySelector('h3').innerText,
-                price: card.querySelector('.price').innerText.replace(' €', ''), // Pelkkä numero
-                image: card.querySelector('img').src,
-                quantity: 1
-            };
-
-            // Haetaan vanhat tuotteet
-            let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
-            
-            // Tarkista, onko tuote jo korissa
-            const existingItem = cart.find(item => item.id == productId);
-            if (existingItem) {
-                // Jos tuote on jo korissa, kasvata määrää (max maxStock)
-                if (existingItem.quantity < maxStock) {
-                    existingItem.quantity += 1;
-                    alert(`Tuotteen määrä päivitetty: ${existingItem.quantity} kpl`);
-                } else {
-                    alert(`Maksimimäärä (${maxStock} kpl) saavutettu!`);
-                    return;
-                }
-            } else {
-                // Lisää uusi tuote määrällä 1
-                cart.push(product);
-                alert("Tuote lisätty koriin!");
-            }
-
-            localStorage.setItem('eduko_cart', JSON.stringify(cart));
-
-            // Päivitä lukema yläpalkkiin (laske uniikki tuotteiden määrä)
-            const cartCountElement = document.getElementById('cart-count');
-            if (cartCountElement) cartCountElement.innerText = cart.length;
-        });
-    });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    console.log("Eduko etusivu ladattu");
-});
-
-// ===============================
-// 🌐 KUUNTELE KIELEN MUUTOKSIA JA LATAA TUOTTEET SILLOIN
-// ===============================
-document.addEventListener('languageChanged', () => {
-    console.log("Kieli valmis - ladataan tuotteet");
-    loadProducts();
-});
