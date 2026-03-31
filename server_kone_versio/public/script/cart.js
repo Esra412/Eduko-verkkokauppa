@@ -226,17 +226,20 @@ const cartList = document.getElementById('cart-list');
 
             const data = await response.json();
 
+            if (!response.ok) {
+                throw new Error(data.error || 'Maksun luominen epäonnistui.');
+            }
+
             if (data.href) {
                 window.location.href = data.href;
-            } else {
-                alert("Maksun luominen epäonnistui. Yritä uudelleen.");
-                payBtn.innerText = "Siirry maksamaan";
-                payBtn.disabled = false;
+                return;
             }
+
+            throw new Error(data.error || 'Maksun luominen epäonnistui.');
         } catch (err) {
-            console.error("Yhteysvirhe:", err);
-            alert("Yhteysvirhe palvelimeen. Yritä uudelleen.");
-            payBtn.innerText = "Siirry maksamaan";
+            console.error('Maksuvirhe:', err);
+            alert(err.message || 'Yhteysvirhe palvelimeen. Yritä uudelleen.');
+            payBtn.innerText = 'Siirry maksamaan';
             payBtn.disabled = false;
         }
     });

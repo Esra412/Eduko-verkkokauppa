@@ -134,7 +134,7 @@ app.get(`/verkkokauppa/kori`, (req, res) => res.sendFile(path.join(__dirname, 'v
 
 // ================= MAKSUN PALUUREITIT =================
 
-app.get(`/success`, (req, res) => {
+async function handleSuccessPage(req, res) {
     const orderId = req.query.id;
 
     db.query(`UPDATE orders SET status = 'Maksettu' WHERE id = ?`, [orderId], (err) => {
@@ -149,16 +149,13 @@ app.get(`/success`, (req, res) => {
         const itemIds = items.map(i => i.id);
 
         db.query(`SELECT id, category_id, name_fi FROM products WHERE id IN (?)`, [itemIds], async (pErr, pRes) => {
-            
             let vastuuhenkiloBlokitHtml = "";
-            let vastuuhenkiloEmailit = new Set(); // Kerätään tähän sähköpostit (ei duplikaatteja)
+            let vastuuhenkiloEmailit = new Set();
 
             if (!pErr && pRes.length > 0) {
                 pRes.forEach(tuote => {
                     const catId = String(tuote.category_id);
                     const v = vastuuhenkilot[catId] || oletusHenkilo;
-                    
-                    // Lisätään henkilön sähköposti listaan
                     vastuuhenkiloEmailit.add(v.email);
 
                     vastuuhenkiloBlokitHtml += `
@@ -170,21 +167,19 @@ app.get(`/success`, (req, res) => {
             }
 
             try {
-                // 1. VIESTI ASIAKKAALLE (kuten ennenkin)
-                await lahetin.sendMail({ 
-                                     from: '"Eduko Verkkokauppa" <kissakoira773@gmail.com>',
+                await lahetin.sendMail({
+                    from: '"Eduko Verkkokauppa" <kissakoira773@gmail.com>',
                     to: order.customer_email,
-                    subject: `Tilausvahvistus - Tilausnumero: ${orderId}`, // 1. Tilausnumero otsikossa
+                    subject: `Tilausvahvistus - Tilausnumero: ${orderId}`,
                     html: `
                         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
                             <div style="background-color: #b0a078; padding: 20px; text-align: center; color: white;">
                                 <h1 style="margin: 0;">EDUKO</h1>
-                                <p style="margin: 5px 0 0 0;">TILAUSNUMERO: ${orderId}</p> </div>
-                            
+                                <p style="margin: 5px 0 0 0;">TILAUSNUMERO: ${orderId}</p>
+                            </div>
                             <div style="padding: 25px; color: #333;">
                                 <h2>Kiitos tilauksestasi, ${order.customer_name}!</h2>
                                 <p>Olemme vastaanottaneet maksun ja tilauksesi on nyt käsittelyssä.</p>
-
                                 <h3 style="border-bottom: 2px solid #f4f1ea; padding-bottom: 8px;">Tilatut tuotteet:</h3>
                                 <table style="width: 100%; border-collapse: collapse;">
                                     ${items.map(i => `
@@ -195,30 +190,26 @@ app.get(`/success`, (req, res) => {
                                     `).join('')}
                                 </table>
                                 <p style="text-align: right; font-size: 18px;"><strong>Yhteensä: ${order.amount} €</strong></p>
-
                                 <div style="margin-top: 40px; padding: 20px; border: 1px solid #b0a078; border-radius: 5px;">
                                     <h3 style="margin-top: 0; color: #b0a078;">Nouto-ohjeet ja yhteystiedot</h3>
                                     <p>Ota yhteyttä alla oleviin vastuuhenkilöihin sopiaksesi tuotteiden noudosta:</p>
-                                    
-                                    ${vastuuhenkiloBlokitHtml} <p style="font-size: 12px; color: #666; margin-top: 15px;">
+                                    ${vastuuhenkiloBlokitHtml}
+                                    <p style="font-size: 12px; color: #666; margin-top: 15px;">
                                         Huom: Tuotteet noudetaan Edukon toimipisteistä vastuuhenkilön kanssa sovittuna ajankohtana.
                                     </p>
                                 </div>
-
                                 <div style="text-align: center; margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; color: #888; font-size: 12px;">
                                     <p>Eduko Verkkokauppa | Kouvola</p>
                                     <p>Tämä on automaattinen vahvistusviesti.</p>
                                 </div>
                             </div>
                         </div>`
-                        });
+                });
 
-                // 2. VIESTI VASTUUKENKILÖILLE
-                // Lähetetään sähköposti kaikille niille, joiden osaston tuotteita ostettiin
                 if (vastuuhenkiloEmailit.size > 0) {
                     await lahetin.sendMail({
                         from: '"Eduko Tilausjärjestelmä" <kissakoira773@gmail.com>',
-                        to: Array.from(vastuuhenkiloEmailit).join(', '), // Muuttaa Setin pilkulla erotetuksi listaksi
+                        to: Array.from(vastuuhenkiloEmailit).join(', '),
                         subject: `UUSI TILAUS #${orderId} - Toimenpiteitä vaaditaan`,
                         html: `
                             <div style="font-family: sans-serif; border: 2px solid #b0a078; padding: 20px;">
@@ -234,7 +225,6 @@ app.get(`/success`, (req, res) => {
                 }
 
                 console.log("Sähköpostit lähetetty vastuuhenkilöille:", Array.from(vastuuhenkiloEmailit));
-
             } catch (mailError) {
                 console.error("Sähköpostin lähetys epäonnistui:", mailError);
             }
@@ -242,206 +232,130 @@ app.get(`/success`, (req, res) => {
             res.sendFile(path.join(__dirname, 'views/pages/success.html'));
         });
     });
-});
+}
 
+app.get(`/success`, handleSuccessPage);
+app.get(`/verkkokauppa/success`, handleSuccessPage);
 
-app.get(`/cancel`, (req, res) => {
-    res.send(`<h1>Maksu keskeytyi</h1><p>Voit yrittää uudelleen ostoskorista.</p><a href="/kori">Palaa ostoskoriin</a>`);
-});
+function handleCancelPage(req, res) {
+    const backUrl = req.path.startsWith('/verkkokauppa') ? '/verkkokauppa/kori' : '/kori';
+    res.send(`<h1>Maksu keskeytyi</h1><p>Voit yrittää uudelleen ostoskorista.</p><a href="${backUrl}">Palaa ostoskoriin</a>`);
+}
+
+app.get(`/cancel`, handleCancelPage);
+app.get(`/verkkokauppa/cancel`, handleCancelPage);
 
 // ================= API REITIT =================
 
 // PAYTRAIL: Maksun luominen
-app.post(`/api/paytrail/create-payment`, async (req, res) => {
-    const { items, amount, customer } = req.body;
-    const mainStamp = `eduko-${Date.now()}`;
-    const fullName = `${customer.fname} ${customer.lname}`.trim()
-
-    // Tallennetaan tilaus muistiin odottamaan maksua
-    temporaryOrders[mainStamp] = { 
-        id: mainStamp,
-        items, 
-        amount, 
-        customer, 
-        status: 'Odottaa maksua',
-        date: new Date().toLocaleString('fi-FI')
-    };
-
-db.query(
-  `INSERT INTO orders 
-   (id, customer_email, customer_name, customer_phone, customer_address, customer_postcode, customer_city, items, amount, status)
-   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-  [
-    mainStamp,
-    customer.email,
-    fullName,
-    customer.phone || '',
-    customer.address || '',
-    customer.postcode || '',
-    customer.city || '',
-    JSON.stringify(items),
-    amount,
-    'Odottaa maksua'
-  ],
-  (err) => {
-    if (err) console.error("DB tilaus virhe:", err);
-  }
-);
-
-
-    const itemsForPaytrail = items.map((item, index) => ({
-        unitPrice: Math.round(parseFloat(item.price) * 100),
-        units: 1,
-        vatPercentage: 24,
-        productCode: item.id ? item.id.toString() : `prod-${index}`,
-        description: item.name.substring(0, 100)
-    }));
-
-    // Laske kokonaissumma sisältäen ALV:n (Paytrailin vaatimus)
-    const totalWithVat = itemsForPaytrail.reduce((sum, item) => {
-        const itemTotal = Math.round(item.unitPrice * item.units * (1 + item.vatPercentage / 100));
-        return sum + itemTotal;
-    }, 0);
-
-    const body = {
-        stamp: mainStamp,
-        reference: mainStamp,
-        amount: totalWithVat,
-        currency: 'EUR',
-        language: 'FI',
-        items: itemsForPaytrail,
-        customer: { email: customer.email },
-        redirectUrls: {
-success: `https://mc.koudata.fi/success?id=${mainStamp}`,
-cancel: `https://mc.koudata.fi/cancel`
-
-        }
-    };
-
-    const headers = {
-        'checkout-account': PAYTRAIL_CONFIG.merchantId,
-        'checkout-algorithm': 'sha256',
-        'checkout-method': 'POST',
-        'checkout-nonce': crypto.randomBytes(16).toString('hex'),
-        'checkout-timestamp': new Date().toISOString()
-    };
-
-    headers['signature'] = calculateHmac(PAYTRAIL_CONFIG.secret, headers, body);
-
-    // DEBUG: Näytä täsmälleen mikä data lähetetään Paytailille
-    console.log("=== PAYTRAIL DEBUG ===");
-    console.log("Asiakkaalta saatu amount:", amount);
-    console.log("Items asiakkaalta:", JSON.stringify(items, null, 2));
-    console.log("Items Paytailille:", JSON.stringify(itemsForPaytrail, null, 2));
-    console.log("Laskettu totalWithVat:", totalWithVat);
-    console.log("Paytrail body:", JSON.stringify(body, null, 2));
-    console.log("==================");
-
+async function createPaytrailPayment(req, res, debugLabel = 'PAYTRAIL DEBUG') {
     try {
+        const { items = [], amount = 0, customer = {} } = req.body || {};
+
+        if (!Array.isArray(items) || items.length === 0) {
+            return res.status(400).json({ error: 'Ostoskorisi on tyhjä.' });
+        }
+
+        if (!customer.email) {
+            return res.status(400).json({ error: 'Asiakkaan sähköposti puuttuu.' });
+        }
+
+        const mainStamp = `eduko-${Date.now()}`;
+        const numericReference = `${Date.now()}`;
+        const fullName = `${customer.fname || ''} ${customer.lname || ''}`.trim();
+
+        temporaryOrders[mainStamp] = {
+            id: mainStamp,
+            items,
+            amount,
+            customer,
+            status: 'Odottaa maksua',
+            date: new Date().toLocaleString('fi-FI')
+        };
+
+        db.query(
+            `INSERT INTO orders 
+             (id, customer_email, customer_name, customer_phone, customer_address, customer_postcode, customer_city, items, amount, status)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+                mainStamp,
+                customer.email,
+                fullName,
+                customer.phone || '',
+                customer.address || '',
+                customer.postcode || '',
+                customer.city || '',
+                JSON.stringify(items),
+                Number(amount) || 0,
+                'Odottaa maksua'
+            ],
+            (err) => {
+                if (err) console.error('DB tilaus virhe:', err);
+            }
+        );
+
+        const itemsForPaytrail = items.map((item, index) => {
+            const parsedPrice = parseFloat((item.price ?? 0).toString().replace(',', '.'));
+            const unitPrice = Math.max(0, Math.round(parsedPrice * 100));
+            const units = Math.max(1, Number(item.quantity) || 1);
+
+            return {
+                unitPrice,
+                units,
+                vatPercentage: 24,
+                productCode: item.id ? item.id.toString() : `prod-${index}`,
+                description: (item.name || `Tuote ${index + 1}`).toString().substring(0, 100)
+            };
+        });
+
+        const totalAmount = itemsForPaytrail.reduce((sum, item) => sum + (item.unitPrice * item.units), 0);
+
+        const body = {
+            stamp: mainStamp,
+            reference: numericReference,
+            amount: totalAmount,
+            currency: 'EUR',
+            language: 'FI',
+            items: itemsForPaytrail,
+            customer: { email: customer.email },
+            redirectUrls: {
+                success: `https://mc.koudata.fi/verkkokauppa/success?id=${mainStamp}`,
+                cancel: `https://mc.koudata.fi/verkkokauppa/cancel`
+            }
+        };
+
+        const headers = {
+            'checkout-account': PAYTRAIL_CONFIG.merchantId,
+            'checkout-algorithm': 'sha256',
+            'checkout-method': 'POST',
+            'checkout-nonce': crypto.randomBytes(16).toString('hex'),
+            'checkout-timestamp': new Date().toISOString()
+        };
+
+        headers.signature = calculateHmac(PAYTRAIL_CONFIG.secret, headers, body);
+
+        console.log(`=== ${debugLabel} ===`);
+        console.log('Asiakkaalta saatu amount:', amount);
+        console.log('Items asiakkaalta:', JSON.stringify(items, null, 2));
+        console.log('Items Paytrailille:', JSON.stringify(itemsForPaytrail, null, 2));
+        console.log('Laskettu totalAmount:', totalAmount);
+        console.log('Paytrail body:', JSON.stringify(body, null, 2));
+        console.log('==================');
+
         const response = await axios.post(`${PAYTRAIL_CONFIG.apiEndpoint}/payments`, body, { headers });
-        res.json({ href: response.data.href });
+        return res.json({ href: response.data.href });
     } catch (error) {
-        console.error("Paytrail API virhe:", error.response?.data || error.message);
-        console.error("Lähetetyn bodyn sisältö:", JSON.stringify(body, null, 2));
-        res.status(500).json({ error: "Maksun luominen epäonnistui" });
+        const paytrailError = error.response?.data || {};
+        const message = paytrailError.message || error.message || 'Maksun luominen epäonnistui';
+        console.error('Paytrail API virhe:', paytrailError || error.message);
+        return res.status(500).json({ error: message });
     }
-});
+}
+
+app.post(`/api/paytrail/create-payment`, (req, res) => createPaytrailPayment(req, res, 'PAYTRAIL DEBUG'));
 
 // PAYTRAIL: Maksun luominen - ALIAS REITTI /verkkokauppa/api/paytrail/create-payment
-app.post(`/verkkokauppa/api/paytrail/create-payment`, async (req, res) => {
-    const { items, amount, customer } = req.body;
-    const mainStamp = `eduko-${Date.now()}`;
-    const fullName = `${customer.fname} ${customer.lname}`.trim()
-
-    // Tallennetaan tilaus muistiin odottamaan maksua
-    temporaryOrders[mainStamp] = { 
-        id: mainStamp,
-        items, 
-        amount, 
-        customer, 
-        status: 'Odottaa maksua',
-        date: new Date().toLocaleString('fi-FI')
-    };
-
-db.query(
-  `INSERT INTO orders 
-   (id, customer_email, customer_name, customer_phone, customer_address, customer_postcode, customer_city, items, amount, status)
-   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-  [
-    mainStamp,
-    customer.email,
-    fullName,
-    customer.phone || '',
-    customer.address || '',
-    customer.postcode || '',
-    customer.city || '',
-    JSON.stringify(items),
-    amount,
-    'Odottaa maksua'
-  ],
-  (err) => {
-    if (err) console.error("DB tilaus virhe:", err);
-  }
-);
-
-
-    const itemsForPaytrail = items.map((item, index) => ({
-        unitPrice: Math.round(parseFloat(item.price) * 100),
-        units: 1,
-        vatPercentage: 24,
-        productCode: item.id ? item.id.toString() : `prod-${index}`,
-        description: item.name.substring(0, 100)
-    }));
-
-    // Laske kokonaissumma sisältäen ALV:n (Paytrailin vaatimus)
-    const totalWithVat = itemsForPaytrail.reduce((sum, item) => {
-        const itemTotal = Math.round(item.unitPrice * item.units * (1 + item.vatPercentage / 100));
-        return sum + itemTotal;
-    }, 0);
-
-    const body = {
-        stamp: mainStamp,
-        reference: mainStamp,
-        amount: totalWithVat,
-        currency: 'EUR',
-        language: 'FI',
-        items: itemsForPaytrail,
-        customer: { email: customer.email },
-        redirectUrls: {
-success: `https://mc.koudata.fi/success?id=${mainStamp}`,
-cancel: `https://mc.koudata.fi/cancel`
-
-        }
-    };
-
-    const headers = {
-        'checkout-account': PAYTRAIL_CONFIG.merchantId,
-        'checkout-algorithm': 'sha256',
-        'checkout-method': 'POST',
-        'checkout-nonce': crypto.randomBytes(16).toString('hex'),
-        'checkout-timestamp': new Date().toISOString()
-    };
-
-    headers['signature'] = calculateHmac(PAYTRAIL_CONFIG.secret, headers, body);
-
-    // DEBUG: Näytä täsmälleen mikä data lähetetään Paytailille
-    console.log("=== PAYTRAIL DEBUG (VERKKOKAUPPA ALIAS) ===");
-    console.log("Asiakkaalta saatu amount:", amount);
-    console.log("Items asiakkaalta:", JSON.stringify(items, null, 2));
-    console.log("Items Paytailille:", JSON.stringify(itemsForPaytrail, null, 2));
-    console.log("Laskettu totalWithVat:", totalWithVat);
-    console.log("Paytrail body:", JSON.stringify(body, null, 2));
-    console.log("==================");
-
-    try {
-        const response = await axios.post(`${PAYTRAIL_CONFIG.apiEndpoint}/payments`, body, { headers });
-        res.json({ href: response.data.href });
-    } catch (error) {
-        console.error("Paytrail API virhe:", error.response?.data || error.message);
-        console.error("Lähetetyn bodyn sisältö:", JSON.stringify(body, null, 2));
-        res.status(500).json({ error: "Maksun luominen epäonnistui" });
-    }
-});
+app.post(`/verkkokauppa/api/paytrail/create-payment`, (req, res) => createPaytrailPayment(req, res, 'PAYTRAIL DEBUG (VERKKOKAUPPA ALIAS)'));
 
 // ADMIN: Hae tilaukset
 app.get(`/api/admin/orders`, vaadiKirjautuminen, (req, res) => {
