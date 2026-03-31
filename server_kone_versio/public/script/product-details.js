@@ -162,6 +162,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // ===============================
     // OSTOSKORI
     // ===============================
+    function updateCartBadge() {
+        const badge = document.getElementById('cart-count');
+        if (!badge) return;
+
+        const cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
+        const totalItems = cart.reduce((sum, item) => sum + Number(item.quantity || 1), 0);
+        badge.innerText = totalItems;
+    }
+
+    updateCartBadge();
+    document.addEventListener('cartUpdated', updateCartBadge);
+    window.addEventListener('storage', updateCartBadge);
+    window.addEventListener('pageshow', updateCartBadge);
+
     const buyBtn = document.querySelector('.buy-now-btn');
 
     if (buyBtn) {
@@ -198,11 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             localStorage.setItem('eduko_cart', JSON.stringify(cart));
 
-            const badge = document.getElementById('cart-count');
-            if (badge) {
-                badge.innerText =
-                    cart.reduce((sum, item) => sum + item.quantity, 0);
-            }
+            updateCartBadge();
 
             // Läheta event että ostoskori päivitettiin
             document.dispatchEvent(new Event('cartUpdated'));

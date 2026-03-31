@@ -49,15 +49,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const grid = document.querySelector('.product-grid');
     if (grid) {
         grid.addEventListener('click', (e) => {
-            if (e.target.classList.contains('bid-btn')) {
-                const card = e.target.closest('.product-card');
+            const addButton = e.target.closest('.bid-btn');
+            if (addButton) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const card = addButton.closest('.product-card');
+                if (!card) return;
+
                 const productId = card.dataset.productId;
                 const name = card.querySelector('h3').innerText;
                 const priceText = card.querySelector('.price').innerText;
-                const price = parseFloat(priceText.replace(/[^\d.]/g, ''));
+                const price = parseFloat(priceText.replace(/[^\d.,]/g, '').replace(',', '.'));
                 const image = card.querySelector('img')?.src || '/images/edukosmall.png';
 
                 addToCart(productId, name, price, image);
+                return;
+            }
+
+            const card = e.target.closest('.product-card');
+            if (card && card.dataset.productId) {
+                window.location.href = `/verkkokauppa/tuote/${card.dataset.productId}`;
             }
         });
     }
@@ -91,15 +103,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     products.forEach(p => {
                         grid.innerHTML += `
-                            <div class="product-card" data-product-id="${p.id}" onclick="window.location.href='/verkkokauppa/tuote/${p.id}'" style="cursor: pointer;">
+                            <div class="product-card" data-product-id="${p.id}" style="cursor: pointer;">
                                 <div class="image-wrapper">
-                                    <img src="${getImageSrc(p.image)}" alt="${p.name}">
+                                    <img src="${getImageSrc(p.image)}" alt="${p.name}" onerror="this.onerror=null; this.src='/images/edukosmall.png';">
                                 </div>
                                 <div class="card-content">
                                     <h3>${p.name}</h3>
                                     <div class="card-footer">
                                         <span class="price">${Number(p.price).toFixed(2)} €</span>
-                                        <button class="bid-btn" onclick="event.stopPropagation();">Lisää koriin</button>
+                                        <button class="bid-btn" type="button">Lisää koriin</button>
                                     </div>
                                 </div>
                             </div>`;
@@ -277,7 +289,7 @@ function loadProducts() {
                 const imageSrc = getImageSrc(p.image);
                 console.log(`Product: ${p.name}, Image: ${p.image}, ImageSrc: ${imageSrc}`);
                 grid.innerHTML += `
-        <div class="product-card" data-product-id="${p.id}" onclick="window.location.href='/verkkokauppa/tuote/${p.id}'" style="cursor: pointer;">
+        <div class="product-card" data-product-id="${p.id}" style="cursor: pointer;">
             <div class="image-wrapper">
                 <img src="${getImageSrc(p.image)}" alt="${p.name}" onerror="this.onerror=null; this.src='/images/edukosmall.png';">
             </div>
@@ -285,7 +297,7 @@ function loadProducts() {
                 <h3>${p.name}</h3>
                 <div class="card-footer">
                     <span class="price">${Number(p.price).toFixed(2)} €</span>
-                    <button class="bid-btn" onclick="event.stopPropagation();">Lisää koriin</button>
+                    <button class="bid-btn" type="button">Lisää koriin</button>
                 </div>
             </div>
         </div>`;

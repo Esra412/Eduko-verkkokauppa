@@ -8,13 +8,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateCartBadge = () => {
         const cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
         const cartCountElement = document.getElementById('cart-count');
+        const totalItems = cart.reduce((sum, item) => sum + Number(item.quantity || 1), 0);
+
         if (cartCountElement) {
-            cartCountElement.innerText = cart.length;
+            cartCountElement.innerText = totalItems;
         }
     };
-    
-    // Ajetaan kerran heti latauksessa
+
+    // Päivitä luku heti sekä sivulle palatessa
     updateCartBadge();
+    document.addEventListener('cartUpdated', updateCartBadge);
+    window.addEventListener('storage', updateCartBadge);
+    window.addEventListener('pageshow', updateCartBadge);
 
     // --- 2. Kategorian tunnistus osoitepalkista ---
     const pathParts = window.location.pathname.split('/').filter(part => part !== "");
@@ -128,9 +133,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 localStorage.setItem('eduko_cart', JSON.stringify(cart));
-                
+
                 // Käyttöliittymän päivitys
                 updateCartBadge();
+                document.dispatchEvent(new Event('cartUpdated'));
                 
                 // Visuaalinen palaute napissa
                 const alkuperainenTeksti = button.innerText;

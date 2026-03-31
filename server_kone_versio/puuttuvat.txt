@@ -1,11 +1,11 @@
 Akuutit
 
--Tuotteiden ostos korille lisääminen (esra)
+-Tuotteiden ostos korille lisääminen VALMIS (esra)
 -kuvat (kati)
 -Kielivalikko  VALMIS (esra)
 -tilaus historia (kati)
 -tuoteen muokaus 
--kasalle asiakas tiedot ei kysy (esra)
+-kasalle asiakas tiedot ei kysy  VALMIS (esra)
 -maksu ei toimi (esra)
 
 
