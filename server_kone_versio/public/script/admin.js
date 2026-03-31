@@ -431,28 +431,13 @@ document.getElementById('addProductForm').onsubmit = async (e) => {
     }
 
     try {
-        console.log("Lähetetään dataa...", Object.fromEntries(formData)); // Debug-tuloste
+        console.log("Lähetetään dataa...", Object.fromEntries(formData.entries())); // Debug-tuloste
+        console.log("Tallennetaan osoitteeseen:", url);
 
-        async function tryEndpoints(endpoints) {
-            for (const u of endpoints) {
-                try {
-                    const r = await fetch(u, {
-                        method,
-                        body: formData
-                    });
-                    if (r.status !== 404) return r; // jos ei 404, käytä tätä tulosta (sis. 200,500,401 ym.)
-                } catch (e) {
-                    // mahdollisesti verkko-/proxy-virhe, yritetään seuraavaa
-                }
-            }
-            throw new Error('Endpointit eivät saatavilla');
-        }
-
-        const endpoints = editingProductId ?
-            [`/api/products/${editingProductId}`, `/verkkokauppa/api/products/${editingProductId}`] :
-            ['/api/products', '/verkkokauppa/api/products'];
-
-        const res = await tryEndpoints(endpoints);
+        const res = await fetch(url, {
+            method,
+            body: formData
+        });
 
         if (res.ok) {
             const result = await res.json();

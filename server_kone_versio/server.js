@@ -867,7 +867,7 @@ app.put('/api/products/:id', vaadiKirjautuminen, upload.fields([
 });
 
 // 2b. PÄIVITÄ OLEMASSA OLEVAA TUOTETTA (PUT) - /verkkokauppa/api/products/:id (alias)
-app.put('/verkkokauppa/api/products/:id', upload.fields([
+app.put('/verkkokauppa/api/products/:id', vaadiKirjautuminen, upload.fields([
     { name: 'mainImage', maxCount: 1 },
     { name: 'extraImages', maxCount: 5 }
 ]), (req, res) => {
