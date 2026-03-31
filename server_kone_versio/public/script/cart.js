@@ -9,6 +9,18 @@ const cartList = document.getElementById('cart-list');
         console.error('Virhe: Ostoskorin DOM-elementit puuttuvat!');
     }
 
+    function getCartImageSrc(image) {
+        const fallback = '/verkkokauppa/images/edukosmall.png';
+        if (!image) return fallback;
+
+        let src = image.toString().trim();
+        if (!src) return fallback;
+        if (src.startsWith('data:image/')) return src;
+        if (src.startsWith('http://') || src.startsWith('https://') || src.startsWith('/verkkokauppa/')) return src;
+        if (src.startsWith('/uploads/') || src.startsWith('/images/')) return '/verkkokauppa' + src;
+        return '/verkkokauppa/uploads/' + src.replace(/^\/+/, '');
+    }
+
     function renderCart() {
         let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
         cartList.innerHTML = "";
@@ -36,7 +48,7 @@ const cartList = document.getElementById('cart-list');
 
             cartList.innerHTML += `
                 <div class="cart-item" data-item-index="${index}">
-                    <img src="${item.image || '/images/edukosmall.png'}" alt="" style="width: 80px; height: 80px; object-fit: cover; border-radius: 5px; margin-right: 10px;">
+                    <img src="${getCartImageSrc(item.image)}" alt="" style="width: 80px; height: 80px; object-fit: cover; border-radius: 5px; margin-right: 10px;">
                     <div class="cart-details" style="flex: 1;">
                         <h4 style="margin: 0 0 5px 0;">${item.name}</h4>
                         <p style="margin: 0; color: #666;">${price.toFixed(2)} €</p>

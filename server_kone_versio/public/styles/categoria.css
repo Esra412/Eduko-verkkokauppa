@@ -247,7 +247,7 @@ body {
 
 .image-wrapper img:not([src]), 
 .image-wrapper img[src=""],
-.image-wrapper img[src="/images/no-image.png"] {
+.image-wrapper img[src="/verkkokauppa/images/edukosmall.png"] {
     width: 80%;
     height: 80%;
     object-fit: contain;

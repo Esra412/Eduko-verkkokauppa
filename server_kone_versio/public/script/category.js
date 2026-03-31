@@ -45,9 +45,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         function getImageSrc(image) {
-            if (!image) return '/images/no-image.png';
-            // Server already normalizes image paths, so just use them directly
-            return image;
+            const fallback = '/verkkokauppa/images/edukosmall.png';
+            if (!image) return fallback;
+
+            let src = image.toString().trim();
+            if (!src) return fallback;
+            if (src.startsWith('data:image/')) return src;
+
+            src = src.replace(/\\/g, '/');
+
+            if (src.startsWith('/verkkokauppa/')) return src;
+            if (src.startsWith('http://') || src.startsWith('https://')) return src;
+            if (src.startsWith('/uploads/') || src.startsWith('/images/')) {
+                return '/verkkokauppa' + src;
+            }
+            if (src.includes('/uploads/')) {
+                return '/verkkokauppa' + src.slice(src.indexOf('/uploads/'));
+            }
+            if (src.includes('/images/')) {
+                return '/verkkokauppa' + src.slice(src.indexOf('/images/'));
+            }
+            if (src.startsWith('uploads/') || src.startsWith('images/')) {
+                return '/verkkokauppa/' + src;
+            }
+            return '/verkkokauppa/uploads/' + src;
         }
 
         products.forEach(product => {
@@ -62,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <a href="/verkkokauppa/tuote/${product.id}" class="product-link">
                     <div class="image-wrapper">
                         <span class="product-badge">${typeText}</span>
-                        <img src="${getImageSrc(product.image)}" alt="${product.name}">
+                        <img src="${getImageSrc(product.image)}" alt="${product.name}" onerror="this.onerror=null; this.src='/verkkokauppa/images/edukosmall.png';">
                     </div>
                     <div class="card-content">
                         <h3>${product.name}</h3>

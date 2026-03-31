@@ -1,4 +1,5 @@
 const express = require('express');
+const fs = require('fs');
 const path = require('path');
 const nodemailer = require('nodemailer');
 const session = require('express-session');
@@ -545,23 +546,35 @@ function applyProductLanguage(product, lang) {
  * Käsittelee: Windows-polut, uploads/ etuliitteet, pelkkiä filenamet ym.
  */
 function normalizeImagePath(image) {
-    if (!image) return '/images/no-image.png';
-    
-    let path = image.toString().trim();
-    
-    // Jos jo oikean muotoinen polku, palauta se
-    if (path.startsWith('/') || path.startsWith('http')) return path;
-    
-    // Windows-polut -> web-polut
-    path = path.replace(/\\/g, '/');
-    
-    // Jos polku alkaa uploads/, lisää /
-    if (path.startsWith('uploads/')) {
-        return `/${path}`;
+    const fallback = '/verkkokauppa/images/edukosmall.png';
+    if (!image) return fallback;
+
+    let normalizedPath = image.toString().trim();
+    if (!normalizedPath) return fallback;
+
+    if (normalizedPath.startsWith('data:image/')) return normalizedPath;
+
+    normalizedPath = normalizedPath.replace(/\\/g, '/');
+
+    if (normalizedPath.startsWith('/verkkokauppa/')) return normalizedPath;
+    if (normalizedPath.startsWith('http://') || normalizedPath.startsWith('https://')) return normalizedPath;
+
+    if (normalizedPath.startsWith('/uploads/') || normalizedPath.startsWith('/images/')) {
+        return `/verkkokauppa${normalizedPath}`;
     }
-    
-    // Pelkkä tiedostonimi -> /uploads/tiedostonimi
-    return `/uploads/${path}`;
+
+    if (normalizedPath.includes('/uploads/')) {
+        return `/verkkokauppa${normalizedPath.slice(normalizedPath.indexOf('/uploads/'))}`;
+    }
+    if (normalizedPath.includes('/images/')) {
+        return `/verkkokauppa${normalizedPath.slice(normalizedPath.indexOf('/images/'))}`;
+    }
+
+    if (normalizedPath.startsWith('uploads/') || normalizedPath.startsWith('images/')) {
+        return `/verkkokauppa/${normalizedPath}`;
+    }
+
+    return `/verkkokauppa/uploads/${normalizedPath}`;
 }
 
 /**
@@ -570,8 +583,7 @@ function normalizeImagePath(image) {
 function normalizeProductImages(product) {
     if (product) {
         product.image = normalizeImagePath(product.image);
-        
-        // Jos images on JSON-merkkijono, parse ja normalisoi
+
         if (product.images && typeof product.images === 'string') {
             try {
                 let images = JSON.parse(product.images);
@@ -585,6 +597,39 @@ function normalizeProductImages(product) {
         }
     }
     return product;
+}
+
+function detectImageMime(filePath) {
+    let fileHandle;
+    try {
+        fileHandle = fs.openSync(filePath, 'r');
+        const buffer = Buffer.alloc(12);
+        fs.readSync(fileHandle, buffer, 0, 12, 0);
+
+        if (buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4E && buffer[3] === 0x47) {
+            return 'image/png';
+        }
+        if (buffer[0] === 0xFF && buffer[1] === 0xD8 && buffer[2] === 0xFF) {
+            return 'image/jpeg';
+        }
+        if (buffer.toString('ascii', 0, 4) === 'GIF8') {
+            return 'image/gif';
+        }
+        if (buffer.toString('ascii', 0, 4) === 'RIFF' && buffer.toString('ascii', 8, 12) === 'WEBP') {
+            return 'image/webp';
+        }
+        if (buffer[0] === 0x42 && buffer[1] === 0x4D) {
+            return 'image/bmp';
+        }
+    } catch (error) {
+        return 'application/octet-stream';
+    } finally {
+        if (fileHandle) {
+            fs.closeSync(fileHandle);
+        }
+    }
+
+    return 'application/octet-stream';
 }
 
 // TUOTTEET: Julkiset reitit
@@ -971,18 +1016,18 @@ function handleProductSave(req, res, isUpdate) {
 }
 
 // ================= STATIC MIDDLEWARE =================
-// Palvelee uploads-kansion kuvat 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// Palvelee public-kansion - skipaa vain /api pyyntöjä
-const staticMiddleware = express.static(path.join(__dirname, 'public'));
-app.use((req, res, next) => {
-    // Skipaa kaikki API pyynnöt (sisältää /api ja /verkkokauppa/api)
-    if (req.path.includes('/api')) {
-        return next();
+const uploadsStaticMiddleware = express.static(path.join(__dirname, 'uploads'), {
+    setHeaders: (res, filePath) => {
+        res.type(detectImageMime(filePath));
     }
-    staticMiddleware(req, res, next);
 });
+
+app.use('/uploads', uploadsStaticMiddleware);
+app.use('/verkkokauppa/uploads', uploadsStaticMiddleware);
+app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
+app.use('/verkkokauppa/images', express.static(path.join(__dirname, 'public', 'images')));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/verkkokauppa', express.static(path.join(__dirname, 'public')));
 
 app.listen(PORT, () => {
     console.log(`✅ Serveri käynnissä: http://localhost:${PORT}`);

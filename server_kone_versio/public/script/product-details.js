@@ -35,9 +35,30 @@ document.addEventListener('DOMContentLoaded', () => {
     // KUVAN URL RATKAISU
     // ===============================
     function resolveImageUrl(image) {
-        if (!image) return null;
-        // Server already normalizes image paths, so just use them directly
-        return image;
+        const fallback = '/verkkokauppa/images/edukosmall.png';
+        if (!image) return fallback;
+
+        let src = image.toString().trim();
+        if (!src) return fallback;
+        if (src.startsWith('data:image/')) return src;
+
+        src = src.replace(/\\/g, '/');
+
+        if (src.startsWith('/verkkokauppa/')) return src;
+        if (src.startsWith('http://') || src.startsWith('https://')) return src;
+        if (src.startsWith('/uploads/') || src.startsWith('/images/')) {
+            return '/verkkokauppa' + src;
+        }
+        if (src.includes('/uploads/')) {
+            return '/verkkokauppa' + src.slice(src.indexOf('/uploads/'));
+        }
+        if (src.includes('/images/')) {
+            return '/verkkokauppa' + src.slice(src.indexOf('/images/'));
+        }
+        if (src.startsWith('uploads/') || src.startsWith('images/')) {
+            return '/verkkokauppa/' + src;
+        }
+        return '/verkkokauppa/uploads/' + src;
     }
 
     // ===============================
@@ -73,9 +94,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        if (allImages.length > 0) {
-            mainImg.src = allImages[0];
-        }
+        mainImg.onerror = () => {
+            mainImg.onerror = null;
+            mainImg.src = '/verkkokauppa/images/edukosmall.png';
+        };
+        mainImg.src = allImages.find(Boolean) || '/verkkokauppa/images/edukosmall.png';
 
         allImages
             .filter(img => img)
@@ -83,6 +106,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const thumb = document.createElement('img');
                 thumb.src = imgUrl;
                 thumb.className = "thumbnail";
+                thumb.onerror = () => {
+                    thumb.onerror = null;
+                    thumb.src = '/verkkokauppa/images/edukosmall.png';
+                };
                 thumb.addEventListener('click', () => {
                     mainImg.src = imgUrl;
                 });

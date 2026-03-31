@@ -226,12 +226,38 @@ async function renderProducts(search = "") {
             products = products.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
         }
 
+        const getImageSrc = (image) => {
+            const fallback = '/verkkokauppa/images/edukosmall.png';
+            if (!image) return fallback;
+
+            let src = image.toString().trim();
+            if (!src) return fallback;
+            if (src.startsWith('data:image/')) return src;
+
+            src = src.replace(/\\/g, '/');
+
+            if (src.startsWith('/verkkokauppa/')) return src;
+            if (src.startsWith('http://') || src.startsWith('https://')) return src;
+            if (src.startsWith('/uploads/') || src.startsWith('/images/')) {
+                return '/verkkokauppa' + src;
+            }
+            if (src.includes('/uploads/')) {
+                return '/verkkokauppa' + src.slice(src.indexOf('/uploads/'));
+            }
+            if (src.includes('/images/')) {
+                return '/verkkokauppa' + src.slice(src.indexOf('/images/'));
+            }
+            if (src.startsWith('uploads/') || src.startsWith('images/')) {
+                return '/verkkokauppa/' + src;
+            }
+            return '/verkkokauppa/uploads/' + src;
+        };
+
         list.innerHTML = products.map(p => {
-            // Server already normalizes image paths
-            const imgSrc = p.image || '/images/no-image.png';
+            const imgSrc = getImageSrc(p.image);
             return `
             <li style="display: flex; gap: 12px; align-items: center;">
-                <img src="${imgSrc}" alt="${p.name}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
+                <img src="${imgSrc}" alt="${p.name}" onerror="this.onerror=null; this.src='/verkkokauppa/images/edukosmall.png';" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
                 <div class="product-basic-info" style="flex: 1;">
                     <strong>${p.name}</strong>
                     <span style="font-size: 0.85rem; color: #666;">Hinta: ${p.price} € | Varasto: ${p.stock} kpl</span>

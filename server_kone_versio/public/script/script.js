@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const name = card.querySelector('h3').innerText;
                 const priceText = card.querySelector('.price').innerText;
                 const price = parseFloat(priceText.replace(/[^\d.,]/g, '').replace(',', '.'));
-                const image = card.querySelector('img')?.src || '/images/edukosmall.png';
+                const image = card.querySelector('img')?.src || '/verkkokauppa/images/edukosmall.png';
 
                 addToCart(productId, name, price, image);
                 return;
@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         grid.innerHTML += `
                             <div class="product-card" data-product-id="${p.id}" style="cursor: pointer;">
                                 <div class="image-wrapper">
-                                    <img src="${getImageSrc(p.image)}" alt="${p.name}" onerror="this.onerror=null; this.src='/images/edukosmall.png';">
+                                    <img src="${getImageSrc(p.image)}" alt="${p.name}" onerror="this.onerror=null; this.src='/verkkokauppa/images/edukosmall.png';">
                                 </div>
                                 <div class="card-content">
                                     <h3>${p.name}</h3>
@@ -136,19 +136,30 @@ document.addEventListener('DOMContentLoaded', () => {
 // --- FUNKTIOT ---
 
 function getImageSrc(image) {
-    const fallback = '/images/edukosmall.png';
+    const fallback = '/verkkokauppa/images/edukosmall.png';
     if (!image) return fallback;
 
     let src = image.toString().trim();
-    if (src.startsWith('/verkkokauppa/')) return src;
+    if (!src) return fallback;
     if (src.startsWith('data:image/')) return src;
-    if (src.startsWith('/uploads/') || src.startsWith('/images/') || src.startsWith('http://') || src.startsWith('https://')) {
-        return src;
+
+    src = src.replace(/\\/g, '/');
+
+    if (src.startsWith('/verkkokauppa/')) return src;
+    if (src.startsWith('http://') || src.startsWith('https://')) return src;
+    if (src.startsWith('/uploads/') || src.startsWith('/images/')) {
+        return '/verkkokauppa' + src;
     }
-    if (!src.startsWith('/')) {
-        src = '/uploads/' + src;
+    if (src.includes('/uploads/')) {
+        return '/verkkokauppa' + src.slice(src.indexOf('/uploads/'));
     }
-    return src;
+    if (src.includes('/images/')) {
+        return '/verkkokauppa' + src.slice(src.indexOf('/images/'));
+    }
+    if (src.startsWith('uploads/') || src.startsWith('images/')) {
+        return '/verkkokauppa/' + src;
+    }
+    return '/verkkokauppa/uploads/' + src;
 }
 
 function getCartItemCount() {
@@ -243,7 +254,7 @@ function renderCart() {
 
         list.innerHTML += `
             <div class="cart-item">
-                <img src="${item.image || '/images/edukosmall.png'}" alt="${item.name}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
+                <img src="${getImageSrc(item.image)}" alt="${item.name}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
                 <div class="item-info">
                     <span class="item-name">${item.name}</span>
                     <span class="item-price">${price.toFixed(2)} €</span>
