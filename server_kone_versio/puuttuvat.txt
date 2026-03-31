@@ -1,0 +1,15 @@
+Akuutit
+
+-Tuotteiden ostos korille lisääminen (esra)
+-kuvat (kati)
+-Kielivalikko  VALMIS (esra)
+-tilaus historia (kati)
+-tuoteen muokaus 
+-kasalle asiakas tiedot ei kysy (esra)
+-maksu ei toimi (esra)
+
+
+Lisäjutut jos haluu
+
+-Kirjautumisnäkymässä ei voi jatkaa eteenpäin ilman enteriä, täytyy painaa hiirellä
+-mini css vikat (ihan viimiseksi)

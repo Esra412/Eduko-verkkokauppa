@@ -1,0 +1,270 @@
+/* --- MUUTTUJAT JA PERUSASETUKSET --- */
+:root {
+    --eduko-gold: #b0a078;
+    --eduko-dark: #333333;
+    --eduko-bg: #f9f7f2;
+    --white: #ffffff;
+    --text-main: #2c3e50;
+    --shadow: 0 4px 15px rgba(0,0,0,0.08);
+    --danger: #d9534f;
+    --success: #28a745;
+    --border: #e0ddd5;
+}
+
+* {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--eduko-bg);
+    color: var(--text-main);
+    line-height: 1.6;
+}
+
+/* --- HEADER --- */
+.main-header {
+    background: var(--white);
+    padding: 15px 0;
+    border-bottom: 2px solid var(--eduko-gold);
+    position: relative;
+    z-index: 1100;
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+}
+
+.logo { display: flex; flex-direction: column; text-decoration: none; }
+.eduko-text { font-size: 32px; font-weight: 900; letter-spacing: -1px; color: var(--eduko-dark); }
+.eduko-text span { color: var(--eduko-gold); }
+.logo small { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-top: -5px; color: var(--eduko-dark); }
+
+.search-box { display: flex; flex: 1; max-width: 500px; margin: 0 40px; }
+.search-box input { width: 100%; padding: 10px 15px; border: 1px solid #ddd; border-radius: 4px 0 0 4px; outline: none; }
+.search-box button { background: var(--eduko-gold); border: none; color: white; padding: 0 20px; border-radius: 0 4px 4px 0; cursor: pointer; }
+
+/* --- HEADER ACTIONS & CART ICON --- */
+.header-actions-mobile { display: flex; align-items: center; gap: 15px; }
+
+.cart-wrapper {
+    position: relative;
+    cursor: pointer;
+    font-size: 22px;
+    color: var(--eduko-dark);
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+}
+
+#cart-count {
+    position: absolute;
+    top: -8px;
+    right: -12px;
+    background: var(--danger);
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    border-radius: 50%;
+    padding: 2px 6px;
+    min-width: 18px;
+    text-align: center;
+    border: 2px solid white;
+    transition: transform 0.2s ease;
+}
+
+.btn-primary { background: var(--eduko-gold); color: white; padding: 10px 22px; border-radius: 4px; text-decoration: none; font-weight: bold; }
+
+/* --- OSTOSKORIN MODAL (UUSI) --- */
+.cart-modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 2000;
+    display: flex;
+    justify-content: flex-end;
+    transition: opacity 0.3s;
+}
+
+.cart-modal.hidden { display: none; opacity: 0; }
+
+.cart-content {
+    background: white;
+    width: 100%;
+    max-width: 400px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+}
+
+.cart-header {
+    padding: 20px;
+    border-bottom: 2px solid var(--eduko-gold);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#close-cart { background: none; border: none; font-size: 30px; cursor: pointer; color: var(--eduko-dark); }
+
+#cart-items-list { flex: 1; overflow-y: auto; padding: 20px; }
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.cart-footer { padding: 20px; background: #f9f7f2; border-top: 1px solid #ddd; }
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+}
+
+.checkout-btn {
+    width: 100%;
+    background: var(--eduko-gold);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: filter 0.2s;
+}
+.checkout-btn:hover { filter: brightness(1.1); }
+
+/* --- NAVIGOINTI --- */
+.main-nav { 
+    background: var(--eduko-dark); 
+    width: 100%; 
+    position: sticky; 
+    top: 0; 
+    z-index: 1000;
+    transition: max-height 0.4s ease-in-out; 
+}
+.nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
+.nav-links { display: flex; list-style: none; }
+.nav-links a { display: inline-block; color: var(--white); text-decoration: none; padding: 18px 20px; font-size: 14px; font-weight: 600; text-transform: uppercase; transition: 0.3s; }
+.nav-links a:hover, .nav-links a.active { background: var(--eduko-gold); color: var(--eduko-dark); }
+
+/* --- TUOTEKORTIT & LAYOUT --- */
+.layout-container { max-width: 1200px; margin: 30px auto; display: grid; grid-template-columns: 280px 1fr; gap: 30px; padding: 0 20px; }
+.side-nav a { display: block; padding: 12px 15px; color: var(--eduko-dark); text-decoration: none; background: white; margin-bottom: 5px; border-radius: 4px; transition: 0.2s; font-size: 14px; border-left: 3px solid transparent; }
+.side-nav a:hover { background: #fdfcf9; border-left: 3px solid var(--eduko-gold); color: var(--eduko-gold); }
+
+.product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+.product-card { background: white; border-radius: 8px; overflow: hidden; box-shadow: var(--shadow); transition: 0.3s; display: flex; flex-direction: column; }
+.product-card:hover { transform: translateY(-5px); box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
+
+.image-wrapper { position: relative; height: 200px; }
+.image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+.card-content { padding: 20px; flex-grow: 1; }
+.card-footer { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #fff; border-top: 1px solid #f0f0f0; }
+.price { font-weight: 800; font-size: 1.25rem; color: #2c3e50; }
+.bid-btn { background: var(--eduko-gold); color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+.bid-btn:hover { filter: brightness(1.1); }
+
+/* --- ADMIN-PUOLEN KORJAUKSET (Tilausnumerot) --- */
+ul { list-style: none; }
+li {
+    background: #fff;
+    margin-bottom: 12px;
+    padding: 1rem;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    min-width: 0; 
+}
+li b, li span, li div {
+    min-width: 0;
+    flex: 1;
+    word-break: break-all;
+    overflow-wrap: break-word;
+}
+
+/* Kielivalikko */
+.language-selector { position: relative; cursor: pointer; background: #f4f1ea; padding: 8px 12px; border-radius: 5px; z-index: 999; }
+#lang-options { position: absolute; top: 100%; right: 0; background: white; border: 1px solid #ddd; border-radius: 5px; min-width: 100px; }
+.select-hide { display: none; }
+
+/* --- RESPONSIVE / MOBIILI --- */
+@media screen and (max-width: 768px) {
+    .header-container { flex-direction: column; gap: 15px; padding-top: 60px; }
+    
+    .header-actions-mobile {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .search-box { margin: 10px 0; max-width: 100%; width: 100%; order: 3; }
+
+    .menu-toggle {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 30px;
+        height: 21px;
+        background: none;
+        border: none;
+        position: absolute;
+        top: 25px;
+        left: 20px;
+        cursor: pointer;
+        z-index: 1200;
+    }
+    .menu-toggle span { width: 100%; height: 3px; background: var(--eduko-dark); border-radius: 2px; transition: 0.3s; }
+    .menu-toggle.open span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+    .menu-toggle.open span:nth-child(2) { opacity: 0; }
+    .menu-toggle.open span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+    .main-nav { 
+        display: block; 
+        max-height: 0; 
+        overflow: hidden; 
+        position: relative; 
+        background: var(--eduko-dark);
+    }
+    .main-nav.show { 
+        max-height: 500px; 
+        border-bottom: 3px solid var(--eduko-gold);
+    }
+    
+    .nav-container { flex-direction: column; padding: 15px 0; }
+    .nav-links { flex-direction: column; width: 100%; text-align: center; }
+    .nav-links a { display: block; padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); width: 100%; }
+
+    .layout-container { grid-template-columns: 1fr; margin-top: 15px; }
+    .sidebar { display: none; }
+    .product-grid { grid-template-columns: 1fr; gap: 20px; }
+    .eduko-text { font-size: 26px; }
+
+    .cart-content { max-width: 100%; } /* Ostoskori täyttää koko ruudun mobiilissa */
+    
+    /* Admin mobiili */
+    li { flex-direction: column; align-items: stretch; }
+    li button { align-self: flex-end; }
+}

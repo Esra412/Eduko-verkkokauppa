@@ -1,0 +1,363 @@
+/* --- MUUTTUJAT JA PERUSASETUKSET --- */
+:root {
+    --eduko-gold: #b0a078;
+    --eduko-dark: #333333;
+    --eduko-bg: #f9f7f2;
+    --white: #ffffff;
+    --shadow: 0 4px 12px rgba(0,0,0,0.1);
+    --border: #e0ddd5;
+    --danger: #e74c3c;
+    --success: #2ecc71;
+    --info: #3498db;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--eduko-bg);
+    color: var(--eduko-dark);
+    line-height: 1.6;
+}
+
+/* --- HEADER --- */
+header {
+    background: var(--white);
+    padding: 1rem 2rem;
+    border-bottom: 3px solid var(--eduko-gold);
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.eduko-text {
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: -1px;
+}
+
+.eduko-text span { color: var(--eduko-gold); }
+
+.logo small {
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #777;
+    margin-top: -5px;
+}
+
+#BackToMenuBtn {
+    background: var(--eduko-gold);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#BackToMenuBtn:hover { background: #968763; }
+
+/* --- PÄÄALUE --- */
+main {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.card {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+
+h2 {
+    margin-bottom: 20px;
+    border-left: 5px solid var(--eduko-gold);
+    padding-left: 15px;
+    font-size: 1.5rem;
+}
+
+.instruction-text {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+/* --- KIELIVALIKKO JA HEADER-TOOLS --- */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.header-tools {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+#languageSelector { display: flex; gap: 8px; }
+
+.lang-flag {
+    background: white;
+    border: 2px solid #eee;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.lang-flag.active {
+    border-color: var(--eduko-gold);
+    background: #fdfaf0;
+}
+
+#editModeBadge {
+    background: var(--eduko-gold);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+/* --- LOMAKE --- */
+form { display: flex; flex-direction: column; gap: 15px; }
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+input, textarea, select {
+    width: 100%;
+    padding: 12px;
+    border: 1.5px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: 0.3s;
+}
+
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--eduko-gold);
+    box-shadow: 0 0 0 3px rgba(176, 160, 120, 0.1);
+}
+
+textarea { min-height: 100px; resize: vertical; }
+
+.image-section {
+    background: #fcfcfc;
+    padding: 15px;
+    border: 1px dashed #ccc;
+    border-radius: 8px;
+}
+
+.file-label { display: block; margin-bottom: 5px; cursor: pointer; }
+
+#imagePreview {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+#imagePreview img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+}
+
+.form-actions { display: flex; gap: 15px; margin-top: 10px; }
+
+#submitBtn {
+    flex: 2;
+    background: var(--eduko-dark);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#submitBtn:hover { background: #000; }
+
+#cancelEditBtn {
+    flex: 1;
+    background: #666;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* --- LISTAT (TILaukset JA TUOTTEET) --- */
+#orderList, #productList {
+    list-style: none;
+}
+
+li {
+    background: #fff;
+    padding: 1.2rem;
+    border-radius: 10px;
+    border: 1px solid #eee;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: 0.2s;
+}
+
+li:hover {
+    border-color: var(--eduko-gold);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.order-basic-info, .product-basic-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.order-id-text { color: var(--eduko-gold); font-size: 0.9rem; }
+.customer-name { font-weight: bold; font-size: 1.1rem; }
+
+/* NAPIT LISTOISSA */
+.action-buttons { display: flex; gap: 10px; }
+
+.search-icon-btn, .edit-btn, .delete-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    transition: 0.2s;
+}
+
+.search-icon-btn { background: var(--eduko-gold); }
+.edit-btn { background: var(--info); }
+.delete-btn { background: var(--danger); }
+
+/* --- MODAL --- */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-window {
+    background: white;
+    width: 550px;
+    max-width: 95%;
+    max-height: 90vh;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-header {
+    padding: 20px;
+    background: #f8f8f8;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close-x {
+    background: none; border: none;
+    font-size: 1.8rem; cursor: pointer; color: #888;
+}
+
+.modal-body {
+    padding: 25px;
+    overflow-y: auto;
+}
+
+.modal-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-close-modal {
+    padding: 10px 25px;
+    background: var(--eduko-dark);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* MODAL SISÄLTÖTYYLIT */
+.order-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.modal-item-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+/* --- APULUOKAT --- */
+.hidden { display: none !important; }
+
+/* --- MOBIILIRESPO --- */
+@media (max-width: 768px) {
+    .header-container { flex-direction: column; gap: 15px; }
+    .form-row { grid-template-columns: 1fr; }
+    .card-header { flex-direction: column; align-items: center; text-align: center; }
+    .header-tools { align-items: center; }
+    .order-info-grid { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eduko – Tuotetiedot</title>
+    <link rel="stylesheet" href="/verkkokauppa/styles/product-details.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="icon" href="/verkkokauppa/images/edukosmall.png" type="image/png">
+</head>
+<style>
+    /* Responsiiviset korjaukset mobiilille */
+    @media (max-width: 600px) {
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden !important;
+            background: #fff;
+            position: relative;
+            touch-action: pan-y;
+        }
+        .main-header, .main-nav, .layout-container, .product-main, .product-info-box, .sidebar, .product-gallery, .tab-pane, .tab-buttons {
+            box-sizing: border-box;
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+        .layout-container {
+            display: block !important;
+            padding: 0 !important;
+        }
+        .sidebar {
+            display: none !important;
+        }
+        .product-main {
+            width: 100% !important;
+            padding: 0 0 60px 0 !important;
+            margin: 0 !important;
+        }
+        .product-info-box {
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 10px 8px 60px 8px !important;
+            box-sizing: border-box;
+        }
+        .main-image-container img {
+            width: 100% !important;
+            max-width: 100% !important;
+            height: auto !important;
+            display: block;
+            margin: 0 auto;
+        }
+        .tab-pane, .tab-buttons {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 8px !important;
+            box-sizing: border-box;
+        }
+        .mobile-buy-bar {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            border-top: 1px solid #eee;
+            z-index: 1000;
+            padding: 10px 16px;
+            box-sizing: border-box;
+        }
+        .mobile-price {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .mobile-buy-btn {
+            font-size: 1em;
+            padding: 10px 18px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .contact-card {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 8px !important;
+            box-sizing: border-box;
+        }
+        .thumbnail-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 8px !important;
+            padding: 0 8px !important;
+        }
+        .header-container {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0;
+            width: 100%;
+            max-width: 100%;
+        }
+        .logo {
+            order: 1;
+            margin-bottom: 8px;
+        }
+        .search-box {
+            order: 2;
+            width: 100%;
+            margin: 8px 0 8px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 6px;
+        }
+        .auth-buttons {
+            order: 3;
+            width: 100%;
+            display: flex;
+            justify-content: flex-start;
+        }
+        .search-box input {
+            width: 100%;
+            min-width: 0;
+            display: block;
+            box-sizing: border-box;
+            margin-bottom: 4px;
+        }
+        .search-box button {
+            width: 100%;
+            min-width: 40px;
+            height: 40px;
+            margin: 0;
+        }
+        .nav-container, .nav-links {
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow-x: auto;
+            box-sizing: border-box;
+        }
+        .nav-links a {
+            white-space: nowrap;
+        }
+    }
+</style>
+</head>
+<body>
+
+<header class="main-header">
+    <div class="header-container">
+        <div class="logo">
+            <span class="eduko-text">edu<span>ko</span></span>
+            <small>Kouvolan Ammattiopisto</small>
+        </div>
+        <div class="search-box">
+            <input type="text" placeholder="Hae tuotteita tai palveluita..." data-i18n-placeholder="search_placeholder">
+            <button><i class="fas fa-search"></i></button>
+        </div>
+        <div class="header-actions-mobile">
+            <div class="header-right">
+                <a href="/verkkokauppa/login" class="btn-primary" data-i18n="login_btn">Kirjaudu</a>
+            </div>
+            <div class="language-selector">
+                <div id="selected-lang">🇫🇮 FI</div>
+                <div id="lang-options" class="select-hide">
+                    <div data-value="fi">🇫🇮 FI</div>
+                    <div data-value="en">🇬🇧 EN</div>
+                    <div data-value="sv">🇸🇪 SV</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<nav class="main-nav">
+    <div class="nav-container">
+        <div class="nav-links">
+            <a href="/verkkokauppa/" class="active" data-i18n="all_ads">Kaikki ilmoitukset</a>
+            <a href="#" data-i18n="how_to_buy">Miten ostat?</a>
+            <a href="#" data-i18n="sales_services">Myyntipalvelut</a>
+            <a href="/verkkokauppa/tieto" data-i18n="about_us">Tietoa meistä</a>
+            <a href="https://www.eduko.fi/eduko/yhteystiedot/" data-i18n="contact">Yhteystiedot</a>
+        </div>
+        <div class="cart-container" id="cart-btn" onclick="window.location.href='/verkkokauppa/kori'">
+            <i class="fas fa-shopping-cart"></i>
+            <span id="cart-count">0</span>
+        </div>
+    </div>
+</nav>
+
+<div class="layout-container">
+    <aside class="sidebar">
+        <h3 data-i18n="categories_title">Kategoriat</h3>
+        <nav class="side-nav">
+            <a href="/verkkokauppa/kategoria/1"><i class="fas fa-hammer"></i> <span data-i18n="cat_auto">Ajoneuvoala</span></a>
+            <a href="/verkkokauppa/kategoria/2"><i class="fas fa-magic"></i> <span data-i18n="cat_beauty">Hius- ja kauneudenhoito</span></a>
+            <a href="/verkkokauppa/kategoria/3"><i class="fas fa-bolt"></i> <span data-i18n="cat_metal">Kone- ja metalliala</span></a>
+            <a href="/verkkokauppa/kategoria/4"><i class="fas fa-truck"></i> <span data-i18n="cat_logistics">Logistiikka ja varasto</span></a>
+            <a href="/verkkokauppa/kategoria/5"><i class="fas fa-flask"></i> <span data-i18n="cat_lab">Prosessi- ja laboratorio</span></a>
+            <a href="/verkkokauppa/kategoria/6"><i class="fas fa-shield-alt"></i> <span data-i18n="cat_security">Turvallisuusala</span></a>
+            <a href="/verkkokauppa/kategoria/7"><i class="fas fa-paint-roller"></i> <span data-i18n="cat_construction">Rakennus ja pintakäsittely</span></a>
+            <a href="/verkkokauppa/kategoria/8"><i class="fas fa-utensils"></i> <span data-i18n="cat_restaurant">Ravintola ja catering</span></a>
+            <a href="/verkkokauppa/kategoria/9"><i class="fas fa-plug"></i> <span data-i18n="cat_electric">Sähkö ja automaatio</span></a>
+            <a href="/verkkokauppa/kategoria/10"><i class="fas fa-heartbeat"></i> <span data-i18n="cat_health">Sosiaali- ja terveysala</span></a>
+            <a href="/verkkokauppa/kategoria/11"><i class="fas fa-laptop-code"></i> <span data-i18n="cat_ict">Tieto- ja viestintätekniikka</span></a>
+        </nav>
+    </aside>
+
+    <main class="product-main">
+        <section class="product-gallery">
+            <div class="main-image-container">
+                <img id="display-img" src="/images/edukosmall.png" alt="Tuotteen kuva" onerror="this.onerror=null; this.src='/images/edukosmall.png';">
+                <span class="pickup-badge">Vain nouto</span>
+            </div>
+        </section>
+
+        <section class="product-info-box">
+            <h1 id="product-name">Ladataan...</h1>
+            <hr class="divider">
+            
+            <div class="purchase-section">
+                <div class="price-tag">
+                    <h2 id="product-price">0,00 €</h2>
+                </div>
+                <button class="buy-now-btn">OSTA</button>
+            </div>
+
+            <div class="info-tabs">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" data-target="kuvaus">Kuvaus</button>
+                    <button class="tab-btn" data-target="tekniset">Tekniset tiedot</button>
+                    <button class="tab-btn" data-target="kuvat">Kuvat</button>
+                    <button class="tab-btn" data-target="vastuuhenkilo-tab">Vastuuhenkilö</button>
+                </div>
+
+                <div id="kuvaus" class="tab-pane active">
+                    <p id="product-desc">Tuotetiedot ladataan tästä...</p>
+                    <div id="product-meta"></div>
+                    <p class="no-return">Huom: Noutotuotteilla ei ole palautusoikeutta.</p>
+                </div>
+
+                <div id="tekniset" class="tab-pane">
+                    <ul id="product-specs" class="specs-list"></ul>
+                </div>
+
+                <div id="kuvat" class="tab-pane">
+                    <div class="thumbnail-grid" id="thumbnail-container"></div>
+                </div>
+
+                <div id="vastuuhenkilo-tab" class="tab-pane">
+                    <div class="contact-card">
+                        <i class="fas fa-user-tie fa-3x"></i>
+                        <div class="contact-info">
+                            <p><strong>Nimi:</strong> <span id="contact-name">Ladataan...</span></p>
+                            <p><strong>Sähköposti:</strong> <a href="#" id="email-link"><span id="contact-email">Ladataan...</span></a></p>
+                            <p><strong>Puhelin:</strong> <a href="#" id="phone-link"><span id="contact-phone">Ladataan...</span></a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+<!-- Mobiiliin kiinnittyvä osto-/koripalkki -->
+<div class="mobile-buy-bar" aria-hidden="true">
+    <div class="mobile-price">0,00 €</div>
+    <button class="mobile-buy-btn">Lisää koriin</button>
+</div>
+
+<script src="/verkkokauppa/script/product-details.js"></script>
+<script src="/verkkokauppa/script/language.js"></script>
+</body>
+</html>

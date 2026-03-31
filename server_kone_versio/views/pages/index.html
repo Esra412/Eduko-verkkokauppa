@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eduko – verkkokauppa</title>
+    <link rel="stylesheet" href="/verkkokauppa/styles/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="icon" href="/verkkokauppa/images/edukosmall.png" type="image/png">
+</head>
+<body>
+
+<header class="main-header">
+    <div class="header-container">
+        <button class="menu-toggle" id="mobile-menu-btn">
+            <span></span><span></span><span></span>
+        </button>
+
+        <div class="logo">
+            <span class="eduko-text">edu<span>ko</span></span>
+            <small>Kouvolan Ammattiopisto</small>
+        </div>
+
+        <div class="search-box">
+            <input type="text" placeholder="Hae tuotteita...">
+            <button><i class="fas fa-search"></i></button>
+        </div>
+
+        <div class="header-actions-mobile">
+            <div class="cart-wrapper" id="cart-btn">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="cart-count">0</span>
+            </div>
+
+            <div class="header-right">
+                <a href="/verkkokauppa/login" class="btn-primary">Kirjaudu</a>
+            </div>
+
+            <div class="language-selector">
+                <div id="selected-lang">🇫🇮 FI</div>
+                <div id="lang-options" class="select-hide">
+                    <div data-value="fi">🇫🇮 FI</div>
+                    <div data-value="en">🇬🇧 EN</div>
+                    <div data-value="sv">🇸🇪 SV</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<nav class="main-nav" id="main-navigation">
+    <div class="nav-container">
+        <div class="nav-links">
+            <a href="/verkkokauppa/" class="active">Kaikki ilmoitukset</a>
+            <a href="#">Miten ostat?</a>
+            <a href="#">Myyntipalvelut</a>
+            <a href="/verkkokauppa/tieto">Tietoa meistä</a>
+            <a href="https://www.eduko.fi/yhteystiedot/">Yhteystiedot</a>
+        </div>
+    </div>
+</nav>
+
+<div class="layout-container">
+    <aside class="sidebar">
+        <h3>Kategoriat</h3>
+            <nav class="side-nav">
+                <a href="/verkkokauppa/kategoria/1"><i class="fas fa-hammer"></i> <span data-i18n="cat_auto">Ajoneuvoala</span></a>
+                <a href="/verkkokauppa/kategoria/2"><i class="fas fa-magic"></i> <span data-i18n="cat_beauty">Hius- ja kauneudenhoito</span></a>
+                <a href="/verkkokauppa/kategoria/3"><i class="fas fa-bolt"></i> <span data-i18n="cat_metal">Kone- ja metalliala</span></a>
+                <a href="/verkkokauppa/kategoria/4"><i class="fas fa-truck"></i> <span data-i18n="cat_logistics">Logistiikka ja varasto</span></a>
+                <a href="/verkkokauppa/kategoria/5"><i class="fas fa-flask"></i> <span data-i18n="cat_lab">Prosessi- ja laboratorio</span></a>
+                <a href="/verkkokauppa/kategoria/6"><i class="fas fa-shield-alt"></i> <span data-i18n="cat_security">Turvallisuusala</span></a>
+                <a href="/verkkokauppa/kategoria/7"><i class="fas fa-paint-roller"></i> <span data-i18n="cat_construction">Rakennus ja pintakäsittely</span></a>
+                <a href="/verkkokauppa/kategoria/8"><i class="fas fa-utensils"></i> <span data-i18n="cat_restaurant">Ravintola ja catering</span></a>
+                <a href="/verkkokauppa/kategoria/9"><i class="fas fa-plug"></i> <span data-i18n="cat_electric">Sähkö ja automaatio</span></a>
+                <a href="/verkkokauppa/kategoria/10"><i class="fas fa-heartbeat"></i> <span data-i18n="cat_health">Sosiaali- ja terveysala</span></a>
+                <a href="/verkkokauppa/kategoria/11"><i class="fas fa-laptop-code"></i> <span data-i18n="cat_ict">Tieto- ja viestintätekniikka</span></a>
+            </nav>
+    </aside>
+
+    <main class="content">
+        <section class="hero-banner">
+            <div class="hero-text">
+                <h1>Tuoreimmat kohteet</h1>
+            </div>
+        </section>
+        <div class="product-grid"></div>
+    </main>
+</div>
+
+<div id="cart-modal" class="cart-modal hidden">
+    <div class="cart-content">
+        <div class="cart-header">
+            <h2>Ostoskori</h2>
+            <button id="close-cart">&times;</button>
+        </div>
+        <div id="cart-items-list">
+            <p class="empty-msg">Korisi on tyhjä.</p>
+        </div>
+        <div class="cart-footer">
+            <div class="total-row">
+                <span>Yhteensä:</span>
+                <span id="cart-total">0.00 €</span>
+            </div>
+            <button class="checkout-btn" id="go-to-checkout">Kassalle</button>
+        </div>
+    </div>
+</div>
+
+<script src="/verkkokauppa/script/language.js"></script>
+<script src="/verkkokauppa/script/script.js"></script>
+</body>
+</html>

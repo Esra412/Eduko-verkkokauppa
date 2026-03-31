@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ostoskori - Eduko</title>
+    <link rel="stylesheet" href="/verkkokauppa/styles/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="icon" href="/verkkokauppa/images/edukosmall.png" type="image/png">
+    <style>
+        /* TÄMÄ CSS KORJAA KUVASSA NÄKYVÄT VIRHEET */
+        :root {
+            --gold: #b0a078;
+            --dark: #333;
+            --light-bg: #f9f7f2;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 10px; /* Pieni tila reunoille mobiilissa */
+        }
+
+        /* Päälaatikko, joka kuvissasi karkaili */
+        .cart-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            min-height: 300px;
+        }
+
+        .back-nav {
+            margin-bottom: 20px;
+        }
+
+        .back-nav a {
+            text-decoration: none;
+            color: var(--gold);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2 {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 2px solid var(--light-bg);
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+
+        /* Tuoterivien asettelu */
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+            gap: 15px;
+        }
+
+        .cart-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+            flex-shrink: 0;
+        }
+
+        .cart-details {
+            flex: 1;
+        }
+
+        .cart-details h4 {
+            margin: 0 0 5px 0;
+            font-size: 1rem;
+        }
+
+        .cart-details p {
+            margin: 0;
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .quantity-btn {
+            background: #eee;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: background 0.2s;
+        }
+
+        .quantity-btn:hover {
+            background: var(--gold);
+        }
+
+        .quantity-display {
+            min-width: 30px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .cart-item-price {
+            text-align: right;
+            min-width: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        .cart-item-price p {
+            font-weight: bold;
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .remove-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .remove-btn:hover {
+            background: #cc0000;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-info h4 { 
+            margin: 0; 
+        }
+
+        .qty-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .qty-btn {
+            background: #eee;
+            border: none;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .price-box {
+            text-align: right;
+            font-weight: bold;
+        }
+
+        .remove-link {
+            color: red;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: block;
+            margin-top: 5px;
+        }
+
+        /* Tyhjä kori -näkymä (Korjaa kuvassa olevan sekasotkun) */
+        .empty-state {
+            text-align: center;
+            padding: 40px 10px;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #ccc;
+            margin-bottom: 15px;
+        }
+
+        /* Yhteenveto ja napit */
+        .summary {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .checkout-btn {
+            background: var(--dark);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            width: 100%;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-top: 15px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s ease;
+        }
+
+        .checkout-btn:hover {
+            background: var(--gold);
+            color: var(--dark);
+        }
+
+        .checkout-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Lomake */
+        #checkout-form-container {
+            margin-top: 30px;
+            border-top: 2px solid var(--gold);
+            padding-top: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+
+<div class="cart-container">
+    <div class="back-nav">
+        <a href="/verkkokauppa/"><i class="fas fa-arrow-left"></i> Jatka ostoksia</a>
+    </div>
+
+    <h2><i class="fas fa-shopping-cart"></i> Ostoskorisi</h2>
+
+    <!-- Kori sisältö -->
+    <div id="cart-list"></div>
+
+    <!-- Yhteenveto ja nappi -->
+    <div style="margin-top: 20px; text-align: right;">
+        <h3>Yhteensä: <span id="cart-total">0.00</span> €</h3>
+        <button class="checkout-btn" id="show-form-btn">Jatka tilaamaan</button>
+    </div>
+
+    <!-- Tilauslomake -->
+    <div id="checkout-form-container" style="display: none; margin-top: 30px; border-top: 2px solid var(--gold); padding-top: 20px;">
+        <h3>Toimitustiedot</h3>
+        <input type="text" id="fname" placeholder="Etunimi" required>
+        <input type="text" id="lname" placeholder="Sukunimi" required>
+        <input type="email" id="customer-email" placeholder="Sähköposti" required>
+        <input type="tel" id="phone" placeholder="Puhelinnumero" required>
+        <input type="text" id="address" placeholder="Osoite" required>
+        <input type="text" id="postcode" placeholder="Postinumero" required>
+        <input type="text" id="city" placeholder="Kaupunki" required>
+        <button class="checkout-btn" id="pay-button" style="background: var(--gold);">Siirry maksamaan</button>
+    </div>
+</div>
+
+<script src="/verkkokauppa/script/cart.js"></script>
+
+</body>
+</html>

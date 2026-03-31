@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="login_title">Kirjautuminen | Vahvistuskoodi</title>
+    <link rel="stylesheet" href="/verkkokauppa/styles/login.css">
+    <link rel="icon" href="/verkkokauppa/images/edukosmall.png" type="image/png">
+</head>
+<body>
+<div class="login-card">
+    <div id="step1">
+        <h2 data-i18n="login_header">Kirjaudu sisään</h2>
+        <div class="input-group">
+            <label data-i18n="email_label">Sähköpostiosoite</label>
+            <input type="email" id="email" data-i18n-placeholder="email_placeholder" placeholder="admin@example.com" required>
+        </div>
+        <div class="input-group">
+            <label data-i18n="password_label">Salasana</label>
+            <input type="password" id="password" data-i18n-placeholder="password_placeholder" placeholder="********" required>
+        </div>
+        <button onclick="sendCode()" data-i18n="send_code_btn">Lähetä vahvistuskoodi</button>
+        <div id="error-step1" class="message error"></div>
+    </div>
+
+    <div id="step2" style="display:none;">
+        <h2 data-i18n="verify_header">Vahvista kirjautuminen</h2>
+        <p data-i18n="verify_info" style="font-size: 0.9rem; color: #666;">Lähetimme 6-numeroisen koodin sähköpostiisi.</p>
+        <div class="input-group">
+            <label data-i18n="code_label">Vahvistuskoodi</label>
+            <input type="text" id="code" maxlength="6" data-i18n-placeholder="code_placeholder" placeholder="123456" style="text-align: center; font-weight: bold;">
+        </div>
+        <button onclick="verifyCode()" data-i18n="login_confirm_btn">Vahvista ja kirjaudu</button>
+        <button onclick="location.reload()" data-i18n="back_btn" style="background: none; color: #666; font-size: 0.8rem;">Palaa takaisin</button>
+        <div id="error-step2" class="message error"></div>
+    </div>
+    </div>
+</div>
+
+<script src="/verkkokauppa/script/language.js"></script>
+<script src="/verkkokauppa/script/login.js"></script>
+</body>
+</html>

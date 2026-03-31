@@ -1,0 +1,83 @@
+        body {
+            background-color: #f4f4f4;
+            margin: 0;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .cancel-container {
+            max-width: 550px;
+            width: 90%;
+            margin-top: 60px;
+            padding: 40px;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            /* Eduko-kulta korostus ylhäällä */
+            border-top: 6px solid #b0a078; 
+            text-align: center;
+            animation: slideUp 0.6s ease-out;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .cancel-icon {
+            font-size: 70px;
+            color: #e74c3c; /* Virheen punainen on tässä selkein */
+            margin-bottom: 15px;
+        }
+        .cancel-container h1 {
+            color: #1a1a1a;
+            font-size: 28px;
+            margin-bottom: 15px;
+            font-family: 'Playfair Display', serif; /* Jos käytät tätä muissa otsikoissa */
+        }
+        .info-box {
+            background: #fdfaf3; /* Eduko-beige tausta */
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #666;
+            font-size: 0.95rem;
+        }
+        .btn-retry {
+            display: inline-block;
+            background-color: #b0a078; /* Eduko-kulta */
+            color: white;
+            padding: 14px 40px;
+            text-decoration: none;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .btn-retry:hover {
+            background-color: #8e8161;
+            transform: scale(1.05);
+        }
+        .btn-secondary {
+            display: block;
+            margin-top: 20px;
+            color: #888;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+        .btn-secondary:hover {
+            color: #b0a078;
+        }
+
+        @media (max-width: 768px) {
+    .product-container {  /*puhelinkrojauksia*/
+        display: block;
+        width: 100%;
+    }
+    
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+}
