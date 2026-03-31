@@ -358,49 +358,71 @@ app.post(`/api/paytrail/create-payment`, (req, res) => createPaytrailPayment(req
 app.post(`/verkkokauppa/api/paytrail/create-payment`, (req, res) => createPaytrailPayment(req, res, 'PAYTRAIL DEBUG (VERKKOKAUPPA ALIAS)'));
 
 // ADMIN: Hae tilaukset
-app.get(`/api/admin/orders`, vaadiKirjautuminen, (req, res) => {
-    db.query('SELECT * FROM orders ORDER BY created_at DESC', (err, results) => {
-        if (err) return res.status(500).json({ error: 'DB error' });
+function mapOrderForAdmin(orderRow) {
+    const fullName = (orderRow.customer_name || '').trim();
+    const nameParts = fullName ? fullName.split(/\s+/) : [];
+    const fname = nameParts.shift() || 'Ei nimeä';
+    const lname = nameParts.join(' ');
 
-        const orders = results.map(o => ({
-            id: o.id,
-            amount: o.amount,
-            status: o.status,
-            items: JSON.parse(o.items),
-            customer: {
-                fname: o.customer_name || 'Ei nimeä',
-                email: o.customer_email,
-                phone: o.customer_phone,
-                // Yhdistetään osoitetiedot yhdeksi merkkijonoksi
-                address: `${o.customer_address || ''}, ${o.customer_postcode || ''} ${o.customer_city || ''}`
+    let items = [];
+    try {
+        items = JSON.parse(orderRow.items || '[]');
+    } catch (error) {
+        items = [];
+    }
+
+    const cityLine = [orderRow.customer_postcode || '', orderRow.customer_city || '']
+        .join(' ')
+        .trim();
+    const address = [orderRow.customer_address || '', cityLine]
+        .filter(Boolean)
+        .join(', ');
+
+    return {
+        id: orderRow.id,
+        amount: Number(orderRow.amount) || 0,
+        total_price: Number(orderRow.amount) || 0,
+        status: orderRow.status,
+        created_at: orderRow.created_at,
+        items,
+        customer: {
+            fname,
+            lname,
+            fullName: fullName || 'Ei nimeä',
+            email: orderRow.customer_email || '',
+            phone: orderRow.customer_phone || '',
+            address: address || 'Ei osoitetta'
+        }
+    };
+}
+
+function fetchAdminOrders(req, res, singleOrder = false) {
+    const sql = singleOrder
+        ? 'SELECT * FROM orders WHERE id = ? LIMIT 1'
+        : 'SELECT * FROM orders ORDER BY created_at DESC';
+    const params = singleOrder ? [req.params.id] : [];
+
+    db.query(sql, params, (err, results) => {
+        if (err) {
+            console.error('Tilausten hakuvirhe:', err);
+            return res.status(500).json({ error: 'DB error' });
+        }
+
+        if (singleOrder) {
+            if (!results || results.length === 0) {
+                return res.status(404).json({ error: 'Tilausta ei löytynyt.' });
             }
-        }));
-        res.json(orders);
+            return res.json(mapOrderForAdmin(results[0]));
+        }
+
+        return res.json((results || []).map(mapOrderForAdmin));
     });
-});
+}
 
-// ADMIN: Hae tilaukset - ALIAS REITTI /verkkokauppa/api/admin/orders
-app.get(`/verkkokauppa/api/admin/orders`, vaadiKirjautuminen, (req, res) => {
-    db.query('SELECT * FROM orders ORDER BY created_at DESC', (err, results) => {
-        if (err) return res.status(500).json({ error: 'DB error' });
-
-        const orders = results.map(o => ({
-            id: o.id,
-            amount: o.amount,
-            status: o.status,
-            items: JSON.parse(o.items),
-            customer: {
-                fname: o.customer_name || 'Ei nimeä',
-                email: o.customer_email,
-                phone: o.customer_phone,
-                // Yhdistetään osoitetiedot yhdeksi merkkijonoksi
-                address: `${o.customer_address || ''}, ${o.customer_postcode || ''} ${o.customer_city || ''}`
-            }
-        }));
-        res.json(orders);
-    });
-});
-
+app.get(`/api/admin/orders`, vaadiKirjautuminen, (req, res) => fetchAdminOrders(req, res));
+app.get(`/verkkokauppa/api/admin/orders`, vaadiKirjautuminen, (req, res) => fetchAdminOrders(req, res));
+app.get(`/api/admin/orders/:id`, vaadiKirjautuminen, (req, res) => fetchAdminOrders(req, res, true));
+app.get(`/verkkokauppa/api/admin/orders/:id`, vaadiKirjautuminen, (req, res) => fetchAdminOrders(req, res, true));
 
 
 // ADMIN: Hae tuotteet hallintaa varten

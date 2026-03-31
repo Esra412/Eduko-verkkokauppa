@@ -3,7 +3,7 @@ Akuutit
 -Tuotteiden ostos korille lisääminen VALMIS 
 -kuvat VALMIS 
 -Kielivalikko  VALMIS 
--tilaus historia (kati)
+-tilaus historia VALMIS
 -tuoteen muokaus 
 -kasalle asiakas tiedot ei kysy  VALMIS 
 -maksu ei toimi VALMIS
@@ -13,3 +13,4 @@ Lisäjutut jos haluu
 
 -Kirjautumisnäkymässä ei voi jatkaa eteenpäin ilman enteriä, täytyy painaa hiirellä
 -mini css vikat (ihan viimiseksi)
+-koodien siistiminen

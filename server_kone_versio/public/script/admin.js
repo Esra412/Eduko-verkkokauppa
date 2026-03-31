@@ -159,17 +159,20 @@ async function renderOrders() {
             return;
         }
 
-        list.innerHTML = orders.map(o => `
+        list.innerHTML = orders.map(o => {
+            const customerName = o.customer?.fullName || [o.customer?.fname, o.customer?.lname].filter(Boolean).join(' ') || 'Nimetön';
+
+            return `
             <li>
                 <div class="order-basic-info">
                     <span class="order-id-text">Tilaus #${o.id}</span>
-                    <span class="customer-name">${o.customer ? o.customer.fname + ' ' + o.customer.lname : 'Nimetön'}</span>
+                    <span class="customer-name">${customerName}</span>
                 </div>
                 <button class="search-icon-btn" onclick="showOrderDetail('${o.id}')">
                     <i class="fas fa-search"></i>
                 </button>
             </li>
-        `).join('');
+        `}).join('');
     } catch (err) {
         console.error("Virhe tilausten latauksessa:", err);
     }
@@ -177,32 +180,40 @@ async function renderOrders() {
 
 window.showOrderDetail = async (id) => {
     try {
-        const res = await fetch(`api/admin/orders/${id}`);
+        const res = await fetch(`/verkkokauppa/api/admin/orders/${id}`);
+        if (!res.ok) {
+            throw new Error(`Tilauksen haku epäonnistui (${res.status})`);
+        }
+
         const o = await res.json();
         const content = document.getElementById('orderDetailContent');
+        const customerName = o.customer?.fullName || [o.customer?.fname, o.customer?.lname].filter(Boolean).join(' ') || 'Nimetön';
+        const createdAt = o.created_at ? new Date(o.created_at).toLocaleDateString('fi-FI') : '-';
+        const totalPrice = Number(o.total_price ?? o.amount ?? 0).toFixed(2);
 
         content.innerHTML = `
             <div class="order-info-grid">
-                <div><strong>Päivämäärä:</strong><br>${new Date(o.created_at).toLocaleDateString('fi-FI')}</div>
+                <div><strong>Päivämäärä:</strong><br>${createdAt}</div>
                 <div><strong>Tilaus-ID:</strong><br>#${o.id}</div>
-                <div><strong>Asiakas:</strong><br>${o.customer?.fname} ${o.customer?.lname}</div>
-                <div><strong>Puhelin:</strong><br>${o.customer?.phone}</div>
-                <div style="grid-column: span 2;"><strong>Sähköposti:</strong><br>${o.customer?.email}</div>
+                <div><strong>Asiakas:</strong><br>${customerName}</div>
+                <div><strong>Puhelin:</strong><br>${o.customer?.phone || '-'}</div>
+                <div style="grid-column: span 2;"><strong>Sähköposti:</strong><br>${o.customer?.email || '-'}</div>
                 <div style="grid-column: span 2;"><strong>Osoite:</strong><br>${o.customer?.address || 'Ei osoitetta'}</div>
             </div>
             <h4 style="margin: 15px 0 10px 0; border-top: 1px solid #eee; padding-top: 15px;">Tilattu sisältö:</h4>
-            ${o.items.map(item => `
+            ${(o.items || []).map(item => `
                 <div class="modal-item-row">
-                    <span>${item.name}</span>
-                    <b>${Number(item.price).toFixed(2)} €</b>
+                    <span>${item.name}${item.quantity ? ` (${item.quantity} kpl)` : ''}</span>
+                    <b>${Number(item.price || 0).toFixed(2)} €</b>
                 </div>
             `).join('')}
             <div style="text-align:right; margin-top:20px; font-size:1.3rem;">
-                <strong>Yhteensä: ${Number(o.total_price).toFixed(2)} €</strong>
+                <strong>Yhteensä: ${totalPrice} €</strong>
             </div>
         `;
         document.getElementById('orderDetailsModal').classList.remove('hidden');
     } catch (err) {
+        console.error('Tilauksen tietojen haku epäonnistui:', err);
         alert("Tilauksen tietojen haku epäonnistui.");
     }
 };
