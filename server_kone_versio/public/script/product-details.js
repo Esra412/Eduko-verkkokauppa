@@ -70,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!thumbContainer || !mainImg) return;
 
         thumbContainer.innerHTML = "";
+        document.querySelector('.thumbnail-limit-note')?.remove();
 
         let allImages = [];
 
@@ -94,27 +95,37 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        const uniqueImages = [...new Set(allImages.filter(Boolean))];
+        const limitedImages = uniqueImages.slice(0, 8);
+
         mainImg.onerror = () => {
             mainImg.onerror = null;
             mainImg.src = '/verkkokauppa/images/edukosmall.png';
         };
-        mainImg.src = allImages.find(Boolean) || '/verkkokauppa/images/edukosmall.png';
+        mainImg.src = limitedImages[0] || '/verkkokauppa/images/edukosmall.png';
 
-        allImages
-            .filter(img => img)
-            .forEach(imgUrl => {
-                const thumb = document.createElement('img');
-                thumb.src = imgUrl;
-                thumb.className = "thumbnail";
-                thumb.onerror = () => {
-                    thumb.onerror = null;
-                    thumb.src = '/verkkokauppa/images/edukosmall.png';
-                };
-                thumb.addEventListener('click', () => {
-                    mainImg.src = imgUrl;
-                });
-                thumbContainer.appendChild(thumb);
+        limitedImages.forEach((imgUrl, index) => {
+            const thumb = document.createElement('img');
+            thumb.src = imgUrl;
+            thumb.className = index === 0 ? 'thumbnail active' : 'thumbnail';
+            thumb.onerror = () => {
+                thumb.onerror = null;
+                thumb.src = '/verkkokauppa/images/edukosmall.png';
+            };
+            thumb.addEventListener('click', () => {
+                mainImg.src = imgUrl;
+                thumbContainer.querySelectorAll('.thumbnail').forEach(img => img.classList.remove('active'));
+                thumb.classList.add('active');
             });
+            thumbContainer.appendChild(thumb);
+        });
+
+        if (uniqueImages.length > limitedImages.length) {
+            const note = document.createElement('p');
+            note.className = 'thumbnail-limit-note';
+            note.innerText = `Näytetään enintään ${limitedImages.length} kuvaa kerralla.`;
+            thumbContainer.parentElement?.appendChild(note);
+        }
     }
 
     // ===============================
