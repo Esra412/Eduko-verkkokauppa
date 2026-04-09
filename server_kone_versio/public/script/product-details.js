@@ -243,6 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     name: currentProductData.name,
                     price: currentProductData.price,
                     image: (typeof resolveImageUrl === 'function') ? resolveImageUrl(currentProductData.image) : currentProductData.image,
+                    stock: maxStock,
                     quantity: 1
                 });
                 alert("Tuote lisätty koriin!");
@@ -261,6 +262,73 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 buyBtn.innerText = "OSTA";
                 buyBtn.style.background = "";
+            }, 2000);
+        });
+    }
+
+    // ===============================
+    // MOBIILI OSO-PALKKI
+    // ===============================
+    const mobileBuyBtn = document.querySelector('.mobile-buy-btn');
+    const mobilePrice = document.querySelector('.mobile-price');
+
+    // Päivitä mobiili hinnan näyttö kun tuote ladataan
+    const observer = new MutationObserver(() => {
+        if (currentProductData && mobilePrice) {
+            mobilePrice.innerText = Number(currentProductData.price).toFixed(2) + " €";
+        }
+    });
+
+    // Observoi product-price elementin muutoksia
+    const productPriceElem = document.getElementById('product-price');
+    if (productPriceElem) {
+        observer.observe(productPriceElem, { childList: true, subtree: true, characterData: true });
+    }
+
+    if (mobileBuyBtn) {
+        mobileBuyBtn.addEventListener('click', () => {
+            if (!currentProductData) return;
+
+            const maxStock = currentProductData.stock || 1;
+
+            let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
+
+            const existingItem = cart.find(item => item.id == currentProductData.id);
+
+            if (existingItem) {
+                if (existingItem.quantity < maxStock) {
+                    existingItem.quantity += 1;
+                    alert(`Määrä päivitetty: ${existingItem.quantity} kpl`);
+                } else {
+                    alert(`Maksimimäärä (${maxStock} kpl) saavutettu!`);
+                    return;
+                }
+            } else {
+                if (maxStock <= 0) {
+                    alert("Tuote ei ole saatavilla!");
+                    return;
+                }
+                cart.push({
+                    id: currentProductData.id,
+                    name: currentProductData.name,
+                    price: currentProductData.price,
+                    image: (typeof resolveImageUrl === 'function') ? resolveImageUrl(currentProductData.image) : currentProductData.image,
+                    stock: maxStock,
+                    quantity: 1
+                });
+                alert("Tuote lisätty koriin!");
+            }
+
+            localStorage.setItem('eduko_cart', JSON.stringify(cart));
+            updateCartBadge();
+            document.dispatchEvent(new Event('cartUpdated'));
+
+            mobileBuyBtn.innerText = "✓ LISÄTTY!";
+            mobileBuyBtn.style.background = "#28a745";
+
+            setTimeout(() => {
+                mobileBuyBtn.innerText = "Lisää koriin";
+                mobileBuyBtn.style.background = "";
             }, 2000);
         });
     }

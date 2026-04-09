@@ -1,4 +1,25 @@
 console.log("Login script loaded");
+
+// Lisää Enter-näppäimen tuki ensimmäiseen vaiheeseen (email ja salasana)
+document.getElementById('email').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        sendCode();
+    }
+});
+
+document.getElementById('password').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        sendCode();
+    }
+});
+
+// Lisää Enter-näppäimen tuki toiseen vaiheeseen (koodi)
+document.getElementById('code').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        verifyCode();
+    }
+});
+
     async function sendCode() {
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;

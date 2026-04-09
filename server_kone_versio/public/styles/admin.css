@@ -35,8 +35,10 @@ header {
     max-width: 1200px;
     margin: 0 auto;
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    justify-content: flex-start;
     align-items: center;
+    gap: 18px;
 }
 
 .eduko-text {
@@ -55,15 +57,23 @@ header {
     margin-top: -5px;
 }
 
-#BackToMenuBtn {
+#BackToMenuBtn, .back-button {
     background: var(--eduko-gold);
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
+    padding: 10px 18px;
+    border-radius: 8px;
     font-weight: bold;
     cursor: pointer;
-    transition: 0.3s;
+    transition: 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#BackToMenuBtn:hover, .back-button:hover {
+    background: #968763;
 }
 
 #BackToMenuBtn:hover { background: #968763; }

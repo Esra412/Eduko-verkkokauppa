@@ -116,54 +116,46 @@ const cartList = document.getElementById('cart-list');
 
         if (!item) return;
 
-        // Ensin haetaan varastosaldo kannasta
-        try {
-            const response = await fetch(`/verkkokauppa/api/products/${item.id}`);
-            const product = await response.json();
-            const maxStock = product.stock; // Käytä varastosaldoa suoraan
+        // Käytä ensin tallenettua varastosaldoa. Jos sitä ei ole, hae API:sta.
+        let maxStock = item.stock;
 
-            // Päivitä määrä
-            item.quantity = (item.quantity || 1) + change;
-
-            // Jos määrä menee 0 tai alle, poista tuote automaattisesti
-            if (item.quantity <= 0) {
-                removeItem(index);
-                alert("Tuote poistettu ostoskorista.");
+        if (!maxStock) {
+            try {
+                const response = await fetch(`/verkkokauppa/api/products/${item.id}`);
+                const product = await response.json();
+                maxStock = product.stock || 0;
+                item.stock = maxStock; // Tallenna tulevaa käyttöä varten
+            } catch (err) {
+                console.error("Virhe tuotteen varastosaldon haussa:", err);
+                alert("Virhe tuotteen tietojen haussa. Yritä uudelleen.");
                 return;
             }
-
-            // Tarkista maksimi varastosaldon perusteella
-            if (item.quantity > maxStock) {
-                alert(`Maksimissaan ${maxStock} kpl saatavilla.`);
-                item.quantity = maxStock;
-            }
-
-            // Tallenna muutokset
-            cart[index] = item;
-            localStorage.setItem('eduko_cart', JSON.stringify(cart));
-            renderCart();
-            document.dispatchEvent(new Event('cartUpdated'));
-        } catch (err) {
-            console.error("Virhe tuotteen varastosaldon haussa:", err);
-            
-            // Fallback jos API virheen tapahtuessa
-            item.quantity = (item.quantity || 1) + change;
-            if (item.quantity <= 0) {
-                removeItem(index);
-                alert("Tuote poistettu ostoskorista.");
-                return;
-            }
-            
-            // Fallback maksimiarvoksi 1
-            if (item.quantity > 1) {
-                item.quantity = Math.min(item.quantity, 10);
-            }
-            
-            cart[index] = item;
-            localStorage.setItem('eduko_cart', JSON.stringify(cart));
-            renderCart();
-            document.dispatchEvent(new Event('cartUpdated'));
         }
+
+        // Tarkista ennen kuin muutat määrää
+        const newQuantity = (item.quantity || 1) + change;
+
+        // Jos määrä menee 0 tai alle, poista tuote automaattisesti
+        if (newQuantity <= 0) {
+            removeItem(index);
+            alert("Tuote poistettu ostoskorista.");
+            return;
+        }
+
+        // Tarkista maksimi varastosaldon perusteella
+        if (newQuantity > maxStock) {
+            alert(`Maksimissaan ${maxStock} kpl saatavilla.`);
+            return; // Älä muuta määrää, jää nykyiselle määrälle
+        }
+
+        // Päivitä määrä
+        item.quantity = newQuantity;
+
+        // Tallenna muutokset
+        cart[index] = item;
+        localStorage.setItem('eduko_cart', JSON.stringify(cart));
+        renderCart();
+        document.dispatchEvent(new Event('cartUpdated'));
     }
 
     function openCheckoutForm() {

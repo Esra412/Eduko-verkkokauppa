@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eduko – Kiertonet Huutokauppa</title>
 
+    <link rel="stylesheet" href="/verkkokauppa/styles/style.css">
     <link rel="stylesheet" href="/verkkokauppa/styles/categoria.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="icon" href="/verkkokauppa/images/edukosmall.png" type="image/png">
@@ -13,10 +14,16 @@
 
 <header class="main-header">
     <div class="header-container">
-        <div class="logo">
+        <button class="menu-toggle" id="mobile-menu-btn" type="button" aria-label="Avaa navigaatio" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <a href="/verkkokauppa/" class="logo">
             <span class="eduko-text">edu<span>ko</span></span>
             <small>Kouvolan Ammattiopisto</small>
-        </div>
+        </a>
 
         <div class="search-box">
             <input type="text" placeholder="Hae tuotteita tai palveluita..." data-i18n-placeholder="search_placeholder">
@@ -40,7 +47,7 @@
     </div>
 </header>
 
-<nav class="main-nav">
+<nav class="main-nav" id="main-navigation">
     <div class="nav-container">
 
         <div class="nav-links">
@@ -77,8 +84,14 @@
         <a href="/verkkokauppa/kategoria/11"><i class="fas fa-laptop-code"></i> <span data-i18n="cat_ict">Tieto- ja viestintätekniikka</span></a>
     </nav>
 </aside>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
 
     <main class="content">
+        <button id="category-toggle-btn" class="category-toggle" type="button" aria-label="Avaa kategoriavalikko" aria-expanded="false">
+            <span class="line"></span>
+            <span class="line"></span>
+            <span class="line"></span>
+        </button>
 
         <h2 class="section-title">"Kategorian" kohteet</h2>
 

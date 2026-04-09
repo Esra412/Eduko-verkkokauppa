@@ -1,16 +1,10 @@
-Akuutit
-
--Tuotteiden ostos korille lisääminen VALMIS 
--kuvat VALMIS 
--Kielivalikko  VALMIS 
--tilaus historia VALMIS
--tuoteen muokaus 
--kasalle asiakas tiedot ei kysy  VALMIS 
--maksu ei toimi VALMIS
 
 
+-kun ostos on suoritettu ja tulee se juttu mis lukee kiitos tilauksesta tilaus numero on bla bla bla nii sinne 
+alle tulis button .pdf niminen johonkuin klikkaa nii sen pitäis lataa sen kuititn pdf muodossa.
+
+-
 Lisäjutut jos haluu
 
--Kirjautumisnäkymässä ei voi jatkaa eteenpäin ilman enteriä, täytyy painaa hiirellä
 -mini css vikat (ihan viimiseksi)
 -koodien siistiminen

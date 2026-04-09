@@ -21,6 +21,48 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('storage', updateCartBadge);
     window.addEventListener('pageshow', updateCartBadge);
 
+    const sidebar = document.querySelector('.sidebar');
+    const categoryToggleBtn = document.getElementById('category-toggle-btn');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+    if (categoryToggleBtn && sidebar) {
+        const toggleSidebar = (open) => {
+            sidebar.classList.toggle('open', open);
+            categoryToggleBtn.classList.toggle('open', open);
+            categoryToggleBtn.setAttribute('aria-expanded', String(open));
+        };
+
+        categoryToggleBtn.addEventListener('click', () => {
+            const isOpen = !sidebar.classList.contains('open');
+            toggleSidebar(isOpen);
+        });
+
+        sidebar.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                toggleSidebar(false);
+            });
+        });
+    }
+
+    if (sidebarOverlay && sidebar && categoryToggleBtn) {
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            categoryToggleBtn.classList.remove('open');
+            categoryToggleBtn.setAttribute('aria-expanded', 'false');
+        });
+    }
+
+    // --- 1.5. Mobile navigation toggle ---
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mainNav = document.getElementById('main-navigation');
+    if (mobileMenuBtn && mainNav) {
+        mobileMenuBtn.addEventListener('click', () => {
+            const expanded = mainNav.classList.toggle('show');
+            mobileMenuBtn.classList.toggle('open', expanded);
+            mobileMenuBtn.setAttribute('aria-expanded', String(expanded));
+        });
+    }
+
     // --- 2. Kategorian tunnistus osoitepalkista ---
     const pathParts = window.location.pathname.split('/').filter(part => part !== "");
     const categoryId = pathParts[pathParts.length - 1];

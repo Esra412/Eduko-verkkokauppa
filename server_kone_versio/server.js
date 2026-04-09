@@ -777,7 +777,7 @@ app.get(`/verkkokauppa/api/search`, (req, res) => {
 const adminKayttajat = {
     "esra07bagdat@gmail.com": { salasana: "123456" },
     "katike.kemppainen@gmail.com": { salasana: "123456" },
-    "sanni.admin@eduko.fi": { salasana: "salasana2" }
+    "joni.finne@eduko.fi": { salasana: "123456" }
 };
 
 app.post(`/api/login-step1`, async (req, res) => {

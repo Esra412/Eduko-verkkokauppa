@@ -16,10 +16,10 @@
             <span></span><span></span><span></span>
         </button>
 
-        <div class="logo">
+        <a href="/verkkokauppa/" class="logo">
             <span class="eduko-text">edu<span>ko</span></span>
             <small>Kouvolan Ammattiopisto</small>
-        </div>
+        </a>
 
         <div class="search-box">
             <input type="text" placeholder="Hae tuotteita...">
@@ -54,7 +54,7 @@
             <a href="/verkkokauppa/" class="active">Kaikki ilmoitukset</a>
             <a href="#">Miten ostat?</a>
             <a href="#">Myyntipalvelut</a>
-            <a href="/verkkokauppa/tieto">Tietoa meistä</a>
+            <a href="verkkokauppa/tieto">Tietoa meistä</a>
             <a href="https://www.eduko.fi/yhteystiedot/">Yhteystiedot</a>
         </div>
     </div>
@@ -77,11 +77,20 @@
                 <a href="/verkkokauppa/kategoria/11"><i class="fas fa-laptop-code"></i> <span data-i18n="cat_ict">Tieto- ja viestintätekniikka</span></a>
             </nav>
     </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
     <main class="content">
         <section class="hero-banner">
-            <div class="hero-text">
-                <h1>Tuoreimmat kohteet</h1>
+            <div class="hero-head">
+                <button id="category-toggle-btn" class="category-toggle" type="button" aria-label="Avaa kategoriavalikko" aria-expanded="false">
+                    <span class="line"></span>
+                    <span class="line"></span>
+                    <span class="line"></span>
+                </button>
+
+                <div class="hero-text">
+                    <h1>Tuoreimmat kohteet</h1>
+                </div>
             </div>
         </section>
         <div class="product-grid"></div>
