@@ -66,6 +66,32 @@
             transform: scale(1.05);
         }
 
+        .receipt-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn-download {
+            display: inline-block;
+            background-color: #ffffff;
+            color: #b0a078;
+            border: 2px solid #b0a078;
+            padding: 14px 30px;
+            text-decoration: none;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-download:hover {
+            background-color: #f4f1ea;
+            transform: scale(1.03);
+        }
+
         @media (max-width: 768px) {
     .product-container {  /*puhelinkrojauksia*/
         display: block;

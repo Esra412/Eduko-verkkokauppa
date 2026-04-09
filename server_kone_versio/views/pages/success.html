@@ -22,9 +22,13 @@
 
     <p data-i18n="payment_confirmation_info">Vahvistus on lähetetty sähköpostiisi. Voit nyt sulkea tämän sivun tai palata takaisin etusivulle.</p>
     
-    <a href="/verkkokauppa/" class="btn-home" data-i18n="back_to_home_btn">Palaa etusivulle</a>
+    <div class="receipt-actions">
+        <button id="download-receipt" class="btn-download">Lataa kuitti PDF</button>
+        <a href="/verkkokauppa/" class="btn-home" data-i18n="back_to_home_btn">Palaa etusivulle</a>
+    </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="/verkkokauppa/script/language.js"></script>
 <script src="/verkkokauppa/script/success.js"></script>
 </body>

@@ -245,6 +245,88 @@ function handleCancelPage(req, res) {
 app.get(`/cancel`, handleCancelPage);
 app.get(`/verkkokauppa/cancel`, handleCancelPage);
 
+function handleOrderDetails(req, res) {
+    const orderId = req.query.id;
+    if (!orderId) return res.status(400).json({ error: 'Tilauksen tunnus puuttuu.' });
+
+    db.query('SELECT * FROM orders WHERE id = ? LIMIT 1', [orderId], (err, results) => {
+        if (err) {
+            console.error('Order details hakuvirhe:', err);
+            return res.status(500).json({ error: 'Tietokantavirhe' });
+        }
+        if (!results || results.length === 0) {
+            return res.status(404).json({ error: 'Tilausta ei löytynyt.' });
+        }
+
+        const order = results[0];
+        let items = [];
+        try {
+            items = JSON.parse(order.items || '[]');
+        } catch (parseError) {
+            items = [];
+        }
+
+        const itemIds = items.filter(item => item.id).map(item => item.id);
+        if (itemIds.length === 0) {
+            return res.json({
+                id: order.id,
+                amount: Number(order.amount) || 0,
+                customer_email: order.customer_email,
+                customer_name: order.customer_name,
+                customer_phone: order.customer_phone || '',
+                customer_address: order.customer_address || '',
+                customer_postcode: order.customer_postcode || '',
+                customer_city: order.customer_city || '',
+                created_at: order.created_at || null,
+                items
+            });
+        }
+
+        db.query(
+            `SELECT id, category_id, name_fi FROM products WHERE id IN (?)`,
+            [itemIds],
+            (productErr, productResults) => {
+                const productMap = (productResults || []).reduce((map, prod) => {
+                    map[String(prod.id)] = prod;
+                    return map;
+                }, {});
+
+                const enrichedItems = items.map(item => {
+                    const product = item.id ? productMap[String(item.id)] : null;
+                    const categoryId = product ? String(product.category_id) : null;
+                    const vastuuhenkilo = (categoryId && vastuuhenkilot[categoryId]) ? vastuuhenkilot[categoryId] : oletusHenkilo;
+
+                    return {
+                        ...item,
+                        category_id: categoryId,
+                        responsible: {
+                            nimi: vastuuhenkilo.nimi,
+                            email: vastuuhenkilo.email,
+                            puh: vastuuhenkilo.puh
+                        }
+                    };
+                });
+
+                res.json({
+                    id: order.id,
+                    amount: Number(order.amount) || 0,
+                    customer_email: order.customer_email,
+                    customer_name: order.customer_name,
+                    customer_phone: order.customer_phone || '',
+                    customer_address: order.customer_address || '',
+                    customer_postcode: order.customer_postcode || '',
+                    customer_city: order.customer_city || '',
+                    created_at: order.created_at || null,
+                    items: enrichedItems
+                });
+            }
+        );
+    });
+}
+
+app.get(`/api/order-details`, handleOrderDetails);
+app.get(`/verkkokauppa/api/order-details`, handleOrderDetails);
+
 // ================= API REITIT =================
 
 // PAYTRAIL: Maksun luominen

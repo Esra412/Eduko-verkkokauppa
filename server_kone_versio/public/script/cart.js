@@ -206,6 +206,13 @@ const cartList = document.getElementById('cart-list');
         payBtn.disabled = true;
 
         try {
+            sessionStorage.setItem('eduko_pending_order', JSON.stringify({
+                items: cart,
+                amount: totalAmount,
+                customer: customerData,
+                created_at: new Date().toISOString()
+            }));
+
             const response = await fetch('/verkkokauppa/api/paytrail/create-payment', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
