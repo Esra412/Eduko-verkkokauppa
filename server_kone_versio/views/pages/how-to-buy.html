@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miten ostat? – Eduko Verkkokauppa</title>
+    <link rel="stylesheet" href="/verkkokauppa/styles/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="icon" href="/verkkokauppa/images/edukosmall.png" type="image/png">
+</head>
+<body>
+
+<header class="main-header">
+    <div class="header-container">
+        <button class="menu-toggle" id="mobile-menu-btn">
+            <span></span><span></span><span></span>
+        </button>
+
+        <a href="/verkkokauppa/" class="logo">
+            <span class="eduko-text">edu<span>ko</span></span>
+            <small>Kouvolan Ammattiopisto</small>
+        </a>
+
+        <div class="search-box">
+            <input type="text" placeholder="Hae tuotteita...">
+            <button><i class="fas fa-search"></i></button>
+        </div>
+
+        <div class="header-actions-mobile">
+            <div class="cart-wrapper" id="cart-btn">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="cart-count">0</span>
+            </div>
+
+            <div class="header-right">
+                <a href="/verkkokauppa/login" class="btn-primary">Kirjaudu</a>
+            </div>
+
+            <div class="language-selector">
+                <div id="selected-lang">🇫🇮 FI</div>
+                <div id="lang-options" class="select-hide">
+                    <div data-value="fi">🇫🇮 FI</div>
+                    <div data-value="en">🇬🇧 EN</div>
+                    <div data-value="sv">🇸🇪 SV</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<nav class="main-nav" id="main-navigation">
+    <div class="nav-container">
+        <div class="nav-links">
+            <a href="/verkkokauppa/">Kaikki ilmoitukset</a>
+            <a href="/verkkokauppa/miten-ostat"  class="active">Miten ostat?</a>
+            <a href="/verkkokauppa/myyntipalvelut">Myyntipalvelut</a>
+            <a href="/verkkokauppa/tieto">Tietoa meistä</a>
+            <a href="https://www.eduko.fi/yhteystiedot/">Yhteystiedot</a>
+        </div>
+    </div>
+</nav>
+
+<div class="layout-container">
+    <main class="content" style="grid-column: 1 / -1; text-align: center; padding: 80px 20px;">
+        <div class="construction-notice" style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 40px; max-width: 600px; margin: 0 auto;">
+            <h1 style="color: #333; margin-bottom: 20px;">Sivu on vielä muokkauksella</h1>
+            <p style="font-size: 18px; color: #555; margin-bottom: 30px;">
+                Tämä sivu on parhaillaan kehitteillä. Tulemme takaisin pian lisätyllä sisällöllä!
+            </p>
+            <a href="/verkkokauppa/" class="btn-primary" style="display: inline-block; padding: 12px 30px; text-decoration: none;">
+                Palaa pääsivulle
+            </a>
+        </div>
+    </main>
+</div>
+
+<script src="/verkkokauppa/script/language.js"></script>
+<script src="/verkkokauppa/script/script.js"></script>
+</body>
+</html>

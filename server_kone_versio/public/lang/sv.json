@@ -50,5 +50,17 @@
   "payment_thanks": "Tack för din beställning från Eduko-webbutiken.",
   "order_number_label": "Ordernummer",
   "payment_confirmation_info": "En bekräftelse har skickats till din e-post. Du kan nu stänga denna sida eller återvända till startsidan.",
-  "back_to_home_btn": "Tillbaka till startsidan"
+  "back_to_home_btn": "Tillbaka till startsidan",
+
+  "COMMENTTI": "TIETOA_MEISTA.HTML",
+  "about_intro_1": "Eduko Online Store är en lärande miljö skapad av studenter vid Kouvola Yrkeshögskola. Det kombinerar praktisk verksamhet, ansvarsfull handel och digital expertis.",
+  "about_intro_2": "Webbplatsen fungerar som en del av studentprojekt och ger möjlighet att öva på e-handel, kundservice och IT-system i en realistisk miljö.",
+  "about_card_1_title": "Lärande miljö",
+  "about_card_1_text": "Eduko Online Store är byggt för att stödja studenternas lärande. Projekten motsvarar verkliga arbetssituationer och utvecklar tekniska färdigheter och lagarbete.",
+  "about_card_2_title": "Hållbar utveckling",
+  "about_card_2_text": "Vi uppmuntrar återvinning och ansvarsfull konsumtion. Produkter till försäljning kan vara överskottsmaterial, studentarbete eller produkter lämpliga för återanvändning.",
+  "about_card_3_title": "Studentarbete",
+  "about_card_3_text": "Webbplatsen är designad och skapad av studenter. Det inkluderar experter från olika utbildningsområden såsom mjukvaruutveckling, el, logistik och media.",
+  "about_card_4_title": "Samarbete",
+  "about_card_4_text": "Vi samarbetar med lärare och olika utbildningssektorer. Målet är att skapa en realistisk och säker plattform för att öva på handel."
 }

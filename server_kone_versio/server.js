@@ -129,6 +129,10 @@ app.get(`/tuote/:id`, (req, res) => res.sendFile(path.join(__dirname, 'views/pag
 app.get(`/verkkokauppa/tuote/:id`, (req, res) => res.sendFile(path.join(__dirname, 'views/pages/product-details.html')));
 app.get(`/tieto`, (req, res) => res.sendFile(path.join(__dirname, 'views/pages/Tietoa_meista.html')));
 app.get(`/verkkokauppa/tieto`, (req, res) => res.sendFile(path.join(__dirname, 'views/pages/Tietoa_meista.html')));
+app.get(`/miten-ostat`, (req, res) => res.sendFile(path.join(__dirname, 'views/pages/how-to-buy.html')));
+app.get(`/verkkokauppa/miten-ostat`, (req, res) => res.sendFile(path.join(__dirname, 'views/pages/how-to-buy.html')));
+app.get(`/myyntipalvelut`, (req, res) => res.sendFile(path.join(__dirname, 'views/pages/sales-services.html')));
+app.get(`/verkkokauppa/myyntipalvelut`, (req, res) => res.sendFile(path.join(__dirname, 'views/pages/sales-services.html')));
 app.get(`/kori`, (req, res) => res.sendFile(path.join(__dirname, 'views/pages/cart.html')));
 // Alias reitti /verkkokauppa/kori
 app.get(`/verkkokauppa/kori`, (req, res) => res.sendFile(path.join(__dirname, 'views/pages/cart.html')));

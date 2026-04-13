@@ -50,5 +50,17 @@
   "payment_thanks": "Thank you for your order from Eduko Online Store.",
   "order_number_label": "Order No.",
   "payment_confirmation_info": "A confirmation has been sent to your email. You can now close this page or return to the home page.",
-  "back_to_home_btn": "Back to Home Page"
+  "back_to_home_btn": "Back to Home Page",
+
+  "COMMENTTI": "TIETOA_MEISTA.HTML",
+  "about_intro_1": "Eduko Online Store is a learning environment created by students of Kouvola Vocational College. It combines practical doing, responsible commerce, and digital expertise.",
+  "about_intro_2": "The website serves as part of student projects and provides an opportunity to practice online commerce, customer service, and IT systems in a realistic environment.",
+  "about_card_1_title": "Learning Environment",
+  "about_card_1_text": "Eduko Online Store is built to support student learning. Projects correspond to real workplace situations and develop technical and teamwork skills.",
+  "about_card_2_title": "Sustainable Development",
+  "about_card_2_text": "We encourage recycling and responsible consumption. Products for sale may be surplus materials, student work, or products suitable for reuse.",
+  "about_card_3_title": "Student Work",
+  "about_card_3_text": "The website is designed and created by students. It includes experts from various educational fields such as software development, electrical, logistics, and media.",
+  "about_card_4_title": "Collaboration",
+  "about_card_4_text": "We collaborate with teachers and various educational sectors. The goal is to create a realistic and safe platform for practicing commerce."
 }

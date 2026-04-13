@@ -53,5 +53,17 @@
   "payment_thanks": "Kiitos tilauksestasi Eduko-verkkokaupasta.",
   "order_number_label": "Tilausnro",
   "payment_confirmation_info": "Vahvistus on lähetetty sähköpostiisi. Voit nyt sulkea tämän sivun tai palata takaisin etusivulle.",
-  "back_to_home_btn": "Palaa etusivulle"
+  "back_to_home_btn": "Palaa etusivulle",
+
+  "COMMENTTI": "TIETOA_MEISTA.HTML",
+  "about_intro_1": "Eduko-verkkokauppa on Kouvolan Ammattiopiston opiskelijoiden toteuttama oppimisympäristö, jossa yhdistyvät käytännönläheinen tekeminen, vastuullinen kaupankäynti ja digitaalinen osaaminen.",
+  "about_intro_2": "Sivusto toimii osana opiskelijoiden projekteja ja antaa mahdollisuuden harjoitella verkkokaupan, asiakaspalvelun ja IT-järjestelmien käyttöä aidon kaltaisessa ympäristössä.",
+  "about_card_1_title": "Oppimisympäristö",
+  "about_card_1_text": "Eduko-verkkokauppa on rakennettu tukemaan opiskelijoiden oppimista. Projektit vastaavat oikeita työelämän tilanteita ja kehittävät teknistä sekä tiimityöosaamista.",
+  "about_card_2_title": "Kestävä kehitys",
+  "about_card_2_text": "Kannustamme kierrätykseen ja vastuulliseen kuluttamiseen. Myynnissä olevat tuotteet voivat olla ylijäämämateriaaleja, opiskelijatöitä tai uudelleenkäyttöön soveltuvia tuotteita.",
+  "about_card_3_title": "Opiskelijatyö",
+  "about_card_3_text": "Sivusto on opiskelijoiden suunnittelema ja toteuttama. Mukana on osaajia eri koulutusaloilta, kuten ohjelmistokehityksestä, sähköstä, logistiikasta ja media-alalta.",
+  "about_card_4_title": "Yhteistyö",
+  "about_card_4_text": "Teemme yhteistyötä opettajien ja eri koulutusalojen kanssa. Tavoitteena on luoda realistinen ja turvallinen alusta kaupankäynnin harjoitteluun."
 }
