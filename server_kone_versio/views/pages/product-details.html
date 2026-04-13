@@ -7,165 +7,28 @@
     <link rel="stylesheet" href="/verkkokauppa/styles/product-details.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="icon" href="/verkkokauppa/images/edukosmall.png" type="image/png">
-</head>
-<style>
-    /* Responsiiviset korjaukset mobiilille */
-    @media (max-width: 600px) {
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            max-width: 100%;
-            overflow-x: hidden !important;
-            background: #fff;
-            position: relative;
-            touch-action: pan-y;
-        }
-        .main-header, .main-nav, .layout-container, .product-main, .product-info-box, .sidebar, .product-gallery, .tab-pane, .tab-buttons {
-            box-sizing: border-box;
-            width: 100% !important;
-            max-width: 100% !important;
-            margin: 0 !important;
-            padding-left: 0 !important;
-            padding-right: 0 !important;
-        }
-        .layout-container {
-            display: block !important;
-            padding: 0 !important;
-        }
-        .sidebar {
-            display: none !important;
-        }
-        .product-main {
-            width: 100% !important;
-            padding: 0 0 60px 0 !important;
-            margin: 0 !important;
-        }
-        .product-info-box {
-            width: 100% !important;
-            margin: 0 !important;
-            padding: 10px 8px 60px 8px !important;
-            box-sizing: border-box;
-        }
-        .main-image-container img {
-            width: 100% !important;
-            max-width: 100% !important;
-            height: auto !important;
-            display: block;
-            margin: 0 auto;
-        }
-        .tab-pane, .tab-buttons {
-            width: 100% !important;
-            max-width: 100% !important;
-            margin: 0 !important;
-            padding: 0 8px !important;
-            box-sizing: border-box;
-        }
-        .mobile-buy-bar {
-            position: fixed;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #fff;
-            border-top: 1px solid #eee;
-            z-index: 1000;
-            padding: 10px 16px;
-            box-sizing: border-box;
-        }
-        .mobile-price {
-            font-size: 1.2em;
-            font-weight: bold;
-        }
-        .mobile-buy-btn {
-            font-size: 1em;
-            padding: 10px 18px;
-            background: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .contact-card {
-            width: 100% !important;
-            max-width: 100% !important;
-            margin: 0 !important;
-            padding: 0 8px !important;
-            box-sizing: border-box;
-        }
-        .thumbnail-grid {
-            grid-template-columns: repeat(2, 1fr) !important;
-            gap: 8px !important;
-            padding: 0 8px !important;
-        }
-        .header-container {
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            gap: 0;
-            width: 100%;
-            max-width: 100%;
-        }
-        .logo {
-            order: 1;
-            margin-bottom: 8px;
-        }
-        .search-box {
-            order: 2;
-            width: 100%;
-            margin: 8px 0 8px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            gap: 6px;
-        }
-        .auth-buttons {
-            order: 3;
-            width: 100%;
-            display: flex;
-            justify-content: flex-start;
-        }
-        .search-box input {
-            width: 100%;
-            min-width: 0;
-            display: block;
-            box-sizing: border-box;
-            margin-bottom: 4px;
-        }
-        .search-box button {
-            width: 100%;
-            min-width: 40px;
-            height: 40px;
-            margin: 0;
-        }
-        .nav-container, .nav-links {
-            width: 100% !important;
-            max-width: 100% !important;
-            overflow-x: auto;
-            box-sizing: border-box;
-        }
-        .nav-links a {
-            white-space: nowrap;
-        }
-    }
-</style>
-</head>
 <body>
 
 <header class="main-header">
     <div class="header-container">
-        <div class="logo">
+        <button class="menu-toggle" id="mobile-menu-btn" type="button" aria-label="Avaa navigaatio" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <a href="/verkkokauppa/" class="logo">
             <span class="eduko-text">edu<span>ko</span></span>
             <small>Kouvolan Ammattiopisto</small>
-        </div>
+        </a>
         <div class="search-box">
             <input type="text" placeholder="Hae tuotteita tai palveluita..." data-i18n-placeholder="search_placeholder">
             <button><i class="fas fa-search"></i></button>
         </div>
         <div class="header-actions-mobile">
+            <div class="cart-wrapper" id="cart-btn" onclick="window.location.href='/verkkokauppa/kori'">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count">0</span>
+            </div>
             <div class="header-right">
                 <a href="/verkkokauppa/login" class="btn-primary" data-i18n="login_btn">Kirjaudu</a>
             </div>
@@ -181,7 +44,7 @@
     </div>
 </header>
 
-<nav class="main-nav">
+<nav class="main-nav" id="main-navigation">
     <div class="nav-container">
         <div class="nav-links">
             <a href="/verkkokauppa/" class="active" data-i18n="all_ads">Kaikki ilmoitukset</a>
@@ -189,10 +52,6 @@
             <a href="#" data-i18n="sales_services">Myyntipalvelut</a>
             <a href="/verkkokauppa/tieto" data-i18n="about_us">Tietoa meistä</a>
             <a href="https://www.eduko.fi/eduko/yhteystiedot/" data-i18n="contact">Yhteystiedot</a>
-        </div>
-        <div class="cart-container" id="cart-btn" onclick="window.location.href='/verkkokauppa/kori'">
-            <i class="fas fa-shopping-cart"></i>
-            <span id="cart-count">0</span>
         </div>
     </div>
 </nav>

@@ -1,4 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mainNav = document.getElementById('main-navigation');
+    if (mobileMenuBtn && mainNav) {
+        mobileMenuBtn.addEventListener('click', () => {
+            const expanded = mainNav.classList.toggle('show');
+            mobileMenuBtn.classList.toggle('open', expanded);
+            mobileMenuBtn.setAttribute('aria-expanded', String(expanded));
+        });
+    }
 
     // ===============================
     // VASTUUHENKILÖT
@@ -201,12 +210,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // OSTOSKORI
     // ===============================
     function updateCartBadge() {
-        const badge = document.getElementById('cart-count');
-        if (!badge) return;
-
         const cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
         const totalItems = cart.reduce((sum, item) => sum + Number(item.quantity || 1), 0);
-        badge.innerText = totalItems;
+        document.querySelectorAll('.cart-count, #cart-count').forEach((badge) => {
+            badge.innerText = totalItems;
+        });
     }
 
     updateCartBadge();

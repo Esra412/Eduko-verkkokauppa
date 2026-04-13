@@ -237,6 +237,10 @@ li b, li span, li div {
         height: 20px;
         background: none;
         border: none;
+        appearance: none;
+        -webkit-appearance: none;
+        box-shadow: none;
+        outline: none;
         position: static;
         top: auto;
         left: auto;
@@ -288,8 +292,11 @@ li b, li span, li div {
 
     .header-actions-mobile .btn-primary {
         white-space: nowrap;
-        padding: 10px 16px;
-        display: none;
+        padding: 8px 10px;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .cart-wrapper {

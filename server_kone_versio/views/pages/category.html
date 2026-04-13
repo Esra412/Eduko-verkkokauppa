@@ -31,6 +31,11 @@
         </div>
 
         <div class="header-actions-mobile">
+            <div class="cart-wrapper" onclick="window.location.href='/verkkokauppa/kori'">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count">0</span>
+            </div>
+
             <div class="header-right">
                 <a href="/verkkokauppa/login" class="btn-primary" data-i18n="login_btn">Kirjaudu</a>
             </div>
@@ -56,11 +61,6 @@
             <a href="#" data-i18n="sales_services">Myyntipalvelut</a>
             <a href="/verkkokauppa/tieto" data-i18n="about_us">Tietoa meistä</a>
             <a href="https://www.eduko.fi/eduko/yhteystiedot/" data-i18n="contact">Yhteystiedot</a>
-        </div>
-
-        <div class="cart-container" id="cart-btn" onclick="window.location.href='/verkkokauppa/kori'">
-            <i class="fas fa-shopping-cart"></i>
-            <span id="cart-count">0</span>
         </div>
 
     </div>
