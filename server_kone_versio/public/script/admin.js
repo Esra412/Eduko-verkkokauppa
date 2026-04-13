@@ -4,6 +4,32 @@
 
 console.log("Admin.js ladattu!");
 
+function showAdminSessionExpiredMessage() {
+    alert("Istuntosi on vanhentunut. Kirjaudu uudelleen sisään jatkaaksesi.");
+    window.location.href = "/verkkokauppa/login";
+}
+
+async function parseAdminJsonResponse(res, defaultMessage) {
+    let payload = null;
+
+    try {
+        payload = await res.json();
+    } catch (err) {
+        payload = null;
+    }
+
+    if (res.status === 401) {
+        showAdminSessionExpiredMessage();
+        throw new Error("ADMIN_SESSION_EXPIRED");
+    }
+
+    if (!res.ok) {
+        throw new Error(payload?.message || defaultMessage || "Toiminto epäonnistui.");
+    }
+
+    return payload;
+}
+
 // --- TILAN HALLINTA ---
 let currentLanguage = 'fi';
 let editingProductId = null;
@@ -152,7 +178,7 @@ async function renderOrders() {
 
     try {
         const res = await fetch('/verkkokauppa/api/admin/orders');
-        const orders = await res.json();
+        const orders = await parseAdminJsonResponse(res, "Tilausten lataus epäonnistui.");
         
         if (orders.length === 0) {
             list.innerHTML = "<p>Ei tilauksia.</p>";
@@ -174,7 +200,9 @@ async function renderOrders() {
             </li>
         `}).join('');
     } catch (err) {
+        if (err.message === "ADMIN_SESSION_EXPIRED") return;
         console.error("Virhe tilausten latauksessa:", err);
+        list.innerHTML = "<p>Tilausten lataus epäonnistui. Yritä hetken kuluttua uudelleen.</p>";
     }
 }
 
@@ -231,7 +259,7 @@ async function renderProducts(search = "") {
     try {
         // use the admin endpoint and absolute path to avoid relative URL issues on /admin
         const res = await fetch("/verkkokauppa/api/admin/products");
-        let products = await res.json();
+        let products = await parseAdminJsonResponse(res, "Tuotteiden lataus epäonnistui.");
         
         if (search) {
             products = products.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
@@ -283,7 +311,11 @@ async function renderProducts(search = "") {
                 </div>
             </li>
         `}).join('');
-    } catch (e) { console.error("Tuotteiden latausvirhe:", e); }
+    } catch (e) {
+        if (e.message === "ADMIN_SESSION_EXPIRED") return;
+        console.error("Tuotteiden latausvirhe:", e);
+        list.innerHTML = "<p>Tuotteiden lataus epäonnistui. Yritä hetken kuluttua uudelleen.</p>";
+    }
 }
 
 window.editProduct = async (id) => {
@@ -439,6 +471,11 @@ document.getElementById('addProductForm').onsubmit = async (e) => {
             body: formData
         });
 
+        if (res.status === 401) {
+            showAdminSessionExpiredMessage();
+            return;
+        }
+
         if (res.ok) {
             const result = await res.json();
             alert(editingProductId ? "Tuote päivitetty onnistuneesti!" : "Tuote lisätty onnistuneesti!");
@@ -466,7 +503,7 @@ document.getElementById('addProductForm').onsubmit = async (e) => {
         } else {
             const errorText = await res.text();
             console.error("Palvelimen virhe:", res.status, errorText);
-            alert("Virhe tallennuksessa: " + (res.status === 413 ? "Tiedosto liian suuri" : errorText || res.statusText));
+            alert("Virhe tallennuksessa: " + (res.status === 413 ? "Tiedosto liian suuri" : "Tallennus epäonnistui. Tarkista tiedot ja yritä uudelleen."));
         }
     } catch (err) {
         console.error("Verkkovirhe:", err);

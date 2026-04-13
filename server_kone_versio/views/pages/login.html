@@ -29,7 +29,7 @@
         <p data-i18n="verify_info" style="font-size: 0.9rem; color: #666;">Lähetimme 6-numeroisen koodin sähköpostiisi.</p>
         <div class="input-group">
             <label data-i18n="code_label">Vahvistuskoodi</label>
-            <input type="text" id="code" maxlength="6" data-i18n-placeholder="code_placeholder" placeholder="123456" style="text-align: center; font-weight: bold;">
+            <input type="text" id="code" name="verification_code" maxlength="6" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" data-i18n-placeholder="code_placeholder" placeholder="123456" style="text-align: center; font-weight: bold;">
         </div>
         <button onclick="verifyCode()" data-i18n="login_confirm_btn">Vahvista ja kirjaudu</button>
         <button onclick="location.reload()" data-i18n="back_btn" style="background: none; color: #666; font-size: 0.8rem;">Palaa takaisin</button>
