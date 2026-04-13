@@ -309,6 +309,8 @@ body {
     gap: 30px;
     padding: 0 20px;
 }
+.sidebar { grid-column: 1; }
+.content { grid-column: 2; }
 
 /* --- SIDEBAR --- */
 .sidebar h3 {

@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
             sidebar.classList.toggle('open', open);
             categoryToggleBtn.classList.toggle('open', open);
             categoryToggleBtn.setAttribute('aria-expanded', String(open));
+            document.body.classList.toggle('sidebar-open', open);
         };
 
         categoryToggleBtn.addEventListener('click', () => {
@@ -49,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
             sidebar.classList.remove('open');
             categoryToggleBtn.classList.remove('open');
             categoryToggleBtn.setAttribute('aria-expanded', 'false');
+            document.body.classList.remove('sidebar-open');
         });
     }
 
@@ -159,48 +161,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Luetaan tiedot napin data-attribuuteista
                 const productId = button.dataset.id;
-                const product = {
-                    id: productId,
-                    name: button.dataset.name,
-                    price: button.dataset.price,
-                    image: button.dataset.image,
-                    quantity: 1
-                };
+                const name = button.dataset.name;
+                const price = button.dataset.price;
+                const image = button.dataset.image;
 
                 // Haetaan tuotteen varastosaldo
-                let maxStock = 1; // oletus
+                let stock = 1; // oletus
                 try {
                     const response = await fetch(`/verkkokauppa/api/products/${productId}`);
                     const productData = await response.json();
-                    maxStock = productData.stock; // Käytä varastosaldoa suoraan
+                    stock = productData.stock || 0;
                 } catch (err) {
                     console.error("Virhe varastosaldon haussa:", err);
                 }
 
-                // Tallennus localStorageen
-                let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
-                
-                // Tarkista, onko tuote jo korissa
-                const existingItem = cart.find(item => item.id == productId);
-                if (existingItem) {
-                    // Jos tuote on jo korissa, kasvata määrää (max maxStock)
-                    if (existingItem.quantity < maxStock) {
-                        existingItem.quantity += 1;
-                    } else {
-                        alert(`Maksimimäärä (${maxStock} kpl) saavutettu!`);
+                // Käytä addToCart funktiota jos se on saatavilla, muuten oma logiikka
+                if (typeof addToCart === 'function') {
+                    addToCart(productId, name, price, image, stock);
+                } else {
+                    // Tallennus localStorageen
+                    let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
+                    
+                    // Tarkista, onko tuote jo korissa
+                    const existingItem = cart.find(item => item.id == productId);
+                    const currentQuantity = existingItem ? (existingItem.quantity || 1) : 0;
+                    
+                    // Tarkista varastosaldo
+                    if (currentQuantity >= stock) {
+                        alert(`Tuote "${name}" on loppunut varastosta. Varastosaldo: ${stock} kpl`);
                         return;
                     }
-                } else {
-                    // Lisää uusi tuote
-                    cart.push(product);
+                    
+                    if (existingItem) {
+                        existingItem.quantity = currentQuantity + 1;
+                    } else {
+                        cart.push({ id: productId, name, price, image, quantity: 1, stock: stock });
+                    }
+                    
+                    localStorage.setItem('eduko_cart', JSON.stringify(cart));
+                    updateCartBadge();
+                    document.dispatchEvent(new Event('cartUpdated'));
+                    
+                    // Visuaalinen palaute
+                    const countSpan = document.getElementById('cart-count');
+                    if (countSpan) {
+                        countSpan.style.transform = "scale(1.5)";
+                        setTimeout(() => { countSpan.style.transform = "scale(1)"; }, 200);
+                    }
                 }
-                
-                localStorage.setItem('eduko_cart', JSON.stringify(cart));
 
-                // Käyttöliittymän päivitys
-                updateCartBadge();
-                document.dispatchEvent(new Event('cartUpdated'));
-                
                 // Visuaalinen palaute napissa
                 const alkuperainenTeksti = button.innerText;
                 button.innerText = "Lisätty! ✓";

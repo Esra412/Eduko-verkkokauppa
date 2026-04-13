@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
             sidebar.classList.toggle('open', open);
             categoryToggleBtn.classList.toggle('open', open);
             categoryToggleBtn.setAttribute('aria-expanded', String(open));
+            document.body.classList.toggle('sidebar-open', open);
         };
 
         categoryToggleBtn.addEventListener('click', () => {
@@ -37,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
             sidebar.classList.remove('open');
             categoryToggleBtn.classList.remove('open');
             categoryToggleBtn.setAttribute('aria-expanded', 'false');
+            document.body.classList.remove('sidebar-open');
         });
     }
 
@@ -92,8 +94,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const priceText = card.querySelector('.price').innerText;
                 const price = parseFloat(priceText.replace(/[^\d.,]/g, '').replace(',', '.'));
                 const image = card.querySelector('img')?.src || '/verkkokauppa/images/edukosmall.png';
+                const stock = parseInt(card.dataset.stock) || 0;
 
-                addToCart(productId, name, price, image);
+                addToCart(productId, name, price, image, stock);
                 return;
             }
 
@@ -133,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     products.forEach(p => {
                         grid.innerHTML += `
-                            <div class="product-card" data-product-id="${p.id}" style="cursor: pointer;">
+                            <div class="product-card" data-product-id="${p.id}" data-stock="${p.stock || 0}" style="cursor: pointer;">
                                 <div class="image-wrapper">
                                     <img src="${getImageSrc(p.image)}" alt="${p.name}" onerror="this.onerror=null; this.src='/verkkokauppa/images/edukosmall.png';">
                                 </div>
@@ -197,15 +200,23 @@ function getCartItemCount() {
     return cart.reduce((sum, item) => sum + (Number(item.quantity) || 1), 0);
 }
 
-function addToCart(productId, name, price, image) {
+function addToCart(productId, name, price, image, stock) {
     let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
     
     // Tarkista, onko tuote jo korissa
     const existingItem = cart.find(item => item.id == productId);
+    const currentQuantity = existingItem ? (existingItem.quantity || 1) : 0;
+    
+    // Tarkista varastosaldo
+    if (currentQuantity >= stock) {
+        alert(`Tuote "${name}" on loppunut varastosta. Varastosaldo: ${stock} kpl`);
+        return;
+    }
+    
     if (existingItem) {
-        existingItem.quantity = (existingItem.quantity || 1) + 1;
+        existingItem.quantity = currentQuantity + 1;
     } else {
-        cart.push({ id: productId, name, price, image, quantity: 1 });
+        cart.push({ id: productId, name, price, image, quantity: 1, stock: stock });
     }
     
     localStorage.setItem('eduko_cart', JSON.stringify(cart));
@@ -227,10 +238,10 @@ function updateQuantity(index, change) {
 
     if (!item) return;
 
-    item.quantity = (item.quantity || 1) + change;
+    const newQuantity = (item.quantity || 1) + change;
 
     // Jos määrä menee 0 tai alle, poista tuote
-    if (item.quantity <= 0) {
+    if (newQuantity <= 0) {
         cart.splice(index, 1);
         localStorage.setItem('eduko_cart', JSON.stringify(cart));
         renderCart();
@@ -238,6 +249,14 @@ function updateQuantity(index, change) {
         return;
     }
 
+    // Tarkista varastosaldo
+    const maxStock = item.stock || 0;
+    if (newQuantity > maxStock) {
+        alert(`Maksimissaan ${maxStock} kpl saatavilla.`);
+        return;
+    }
+
+    item.quantity = newQuantity;
     localStorage.setItem('eduko_cart', JSON.stringify(cart));
     renderCart();
     updateCartUI();
@@ -330,7 +349,7 @@ function loadProducts() {
                 const imageSrc = getImageSrc(p.image);
                 console.log(`Product: ${p.name}, Image: ${p.image}, ImageSrc: ${imageSrc}`);
                 grid.innerHTML += `
-        <div class="product-card" data-product-id="${p.id}" style="cursor: pointer;">
+        <div class="product-card" data-product-id="${p.id}" data-stock="${p.stock || 0}" style="cursor: pointer;">
             <div class="image-wrapper">
                 <img src="${getImageSrc(p.image)}" alt="${p.name}" onerror="this.onerror=null; this.src='/images/edukosmall.png';">
             </div>

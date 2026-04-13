@@ -167,6 +167,8 @@ body {
 
 /* --- TUOTEKORTIT & LAYOUT --- */
 .layout-container { max-width: 1200px; margin: 30px auto; display: grid; grid-template-columns: 280px 1fr; gap: 30px; padding: 0 20px; }
+.sidebar { grid-column: 1; }
+.content { grid-column: 2; }
 .side-nav a { display: block; padding: 12px 15px; color: var(--eduko-dark); text-decoration: none; background: white; margin-bottom: 5px; border-radius: 4px; transition: 0.2s; font-size: 14px; border-left: 3px solid transparent; }
 .side-nav a:hover { background: #fdfcf9; border-left: 3px solid var(--eduko-gold); color: var(--eduko-gold); }
 
@@ -222,16 +224,17 @@ li b, li span, li div {
         flex-wrap: wrap;
         align-items: center;
         justify-content: space-between;
-        gap: 10px;
-        padding-top: 15px;
+        gap: 5px;
+        padding-top: 10px;
+        padding-bottom: 10px;
     }
 
     .menu-toggle {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        width: 34px;
-        height: 24px;
+        width: 28px;
+        height: 20px;
         background: none;
         border: none;
         position: static;
@@ -241,6 +244,7 @@ li b, li span, li div {
         z-index: 1200;
         flex-shrink: 0;
         order: 0;
+        padding: 0;
     }
     .menu-toggle span { width: 100%; height: 3px; background: var(--eduko-dark); border-radius: 2px; transition: 0.3s; }
     .menu-toggle.open span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
@@ -248,10 +252,14 @@ li b, li span, li div {
     .menu-toggle.open span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
 
     .logo {
-        flex: 1 1 140px;
-        min-width: 140px;
-        margin: 0 12px;
+        flex: 0 0 auto;
+        min-width: auto;
+        margin: 0 5px;
         order: 1;
+    }
+
+    .logo small {
+        display: none;
     }
 
     .header-actions-mobile {
@@ -259,7 +267,7 @@ li b, li span, li div {
         flex-direction: row;
         align-items: center;
         justify-content: flex-end;
-        gap: 10px;
+        gap: 5px;
         flex: 0 0 auto;
         min-width: 0;
         order: 2;
@@ -269,21 +277,50 @@ li b, li span, li div {
         flex-shrink: 0;
     }
 
+    .language-selector {
+        padding: 6px 8px;
+        font-size: 0.85rem;
+    }
+
+    #selected-lang {
+        font-size: 0.8rem;
+    }
+
     .header-actions-mobile .btn-primary {
         white-space: nowrap;
         padding: 10px 16px;
+        display: none;
+    }
+
+    .cart-wrapper {
+        font-size: 18px;
+        margin-right: 5px;
+    }
+
+    #cart-count {
+        font-size: 9px;
+        padding: 1px 4px;
+        top: -5px;
+        right: -10px;
     }
 
     .search-box {
-        order: 3;
-        width: 100%;
-        max-width: 100%;
-        margin: 10px 0 0;
+        flex: 0 1 auto;
+        max-width: 170px;
+        margin: 0 5px;
+        height: 36px;
     }
 
-    .search-box input,
+    .search-box input {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+        height: 100%;
+    }
+
     .search-box button {
-        height: 42px;
+        padding: 0 12px;
+        font-size: 0.9rem;
+        height: 100%;
     }
 
     .main-nav {
@@ -332,7 +369,7 @@ li b, li span, li div {
         transition: opacity 0.25s ease;
         pointer-events: none;
     }
-    .sidebar.open ~ .sidebar-overlay {
+    .sidebar-open .sidebar-overlay {
         display: block;
         opacity: 1;
         pointer-events: auto;
@@ -342,7 +379,7 @@ li b, li span, li div {
     .hero-head { width: 100%; }
 
     .product-grid { grid-template-columns: 1fr; gap: 20px; }
-    .eduko-text { font-size: 26px; }
+    .eduko-text { font-size: 18px; }
 
     .cart-content { max-width: 100%; }
     

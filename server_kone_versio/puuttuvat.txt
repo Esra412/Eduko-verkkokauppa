@@ -1,11 +1,16 @@
 
 
--kun ostos on suoritettu ja tulee se juttu mis lukee kiitos tilauksesta tilaus numero on bla bla bla nii sinne 
-alle tulis button .pdf niminen johonkuin klikkaa nii sen pitäis lataa sen kuititn pdf muodossa.
 
 -kun valitsee jonkun kategorian ja avaa uudelleen kategoria valikon, valikon nappi tulee keskelle valikkoa eikä vasempaan yläkulmaan
-- varasto saldo kusee puhelin näkymässä (antaa lisätä enemmän kuin varasto saldo on )
+
+
+
 Lisäjutut jos haluu
 
 -mini css vikat (ihan viimiseksi)
 -koodien siistiminen
+-meneeko vahvistusviesti oikelle vastuuhenkilölle?? (testaa!!!!)
+-koko sivun yleinen testaus (toimivuus, tietoturva)
+
+-admin sivulle kirjautumisen yhteydessä oleva vahvistuskoodi, pitäisi poistaa vanhat koodit näkyvistä (kun alkaa syöttämään uutta koodia)
+-jos admin sivun istunto vanhenee, pitäisi antaa virheilmoitus tekstinä, ei koodina, jotta asiakas ymmärtää
