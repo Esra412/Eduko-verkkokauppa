@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testiraportin malli - Verkkokauppa</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+        h1 { color: #2E75B6; border-bottom: 2px solid #2E75B6; padding-bottom: 10px; }
+        h2 { color: #2E75B6; margin-top: 30px; }
+        h3 { color: #5B9BD5; margin-top: 20px; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; font-weight: bold; }
+        .summary-box { background-color: #f9f9f9; padding: 15px; border-left: 4px solid #2E75B6; margin: 20px 0; }
+        .priority-high { background-color: #ffcccc; }
+        .priority-medium { background-color: #fff2cc; }
+        .priority-low { background-color: #ccffcc; }
+        .checkbox { margin-right: 10px; }
+        .signature { border-top: 1px solid #000; width: 200px; margin-top: 50px; padding-top: 10px; }
+    </style>
+</head>
+<body>
+
+<h1>Testiraportin malli - Verkkokauppa</h1>
+
+<h2>1. Yhteenveto ja Metriikat</h2>
+
+<h3>Testauksen yleiskatsaus</h3>
+<ul>
+    <li><strong>Testauksen kohde:</strong> [esim. verkkokaupan tuoterekisteri / ostoskori / kirjautuminen]</li>
+    <li><strong>Testiryhmä:</strong> [esim. QA-tiimi (5 henkilöä), kehittäjät, tuotetiimi]</li>
+    <li><strong>Testausaika:</strong> [alku - loppu, esim. 2026-04-01 - 2026-04-14]</li>
+    <li><strong>Raportin laatu:</strong> [esim. ensimmäinen läpikäynti, regressiotestaus, käyttöliittymätesti]</li>
+    <li><strong>Tavoite:</strong> [esim. varmistaa, että uusi julkaisu toimii odotetusti kaikilla päätelaitteilla ja kielillä]</li>
+</ul>
+
+<h3>Testitulosten yhteenveto</h3>
+<table>
+    <tr>
+        <th>Metriikka</th>
+        <th>Arvo</th>
+        <th>Kommentti</th>
+    </tr>
+    <tr>
+        <td>Suoritettujen testien määrä</td>
+        <td>[esim. 150]</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>Onnistuneet testit</td>
+        <td>[esim. 140]</td>
+        <td>[prosentti]</td>
+    </tr>
+    <tr>
+        <td>Epäonnistuneet testit</td>
+        <td>[esim. 10]</td>
+        <td>[prosentti]</td>
+    </tr>
+    <tr>
+        <td>Puuttuvat testit</td>
+        <td>[esim. 5]</td>
+        <td>[prosentti]</td>
+    </tr>
+    <tr>
+        <td>Löydettyjen vikojen määrä</td>
+        <td>[esim. 25]</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>Vakavat viat (P1)</td>
+        <td>[esim. 3]</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>Keskitasoiset viat (P2)</td>
+        <td>[esim. 12]</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>Pienet viat (P3)</td>
+        <td>[esim. 10]</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>Testikattavuus</td>
+        <td>[esim. 85%]</td>
+        <td></td>
+    </tr>
+</table>
+
+<h2>2. Testauksen laajuus ja kattavuus</h2>
+
+<h3>Testin tyyppi</h3>
+<ul>
+    <li><span class="checkbox">☐</span> Manuaalinen testaus</li>
+    <li><span class="checkbox">☐</span> Automatisoitu testaus</li>
+    <li><span class="checkbox">☐</span> Hybridi (manuaalinen + automaattinen)</li>
+    <li><span class="checkbox">☐</span> Exploratory testing</li>
+    <li><span class="checkbox">☐</span> Regression testing</li>
+</ul>
+
+<h3>Testatut toiminnallisuudet</h3>
+<table>
+    <tr>
+        <th>Moduuli</th>
+        <th>Testattu</th>
+        <th>Huomiot</th>
+    </tr>
+    <tr>
+        <td>Etusivu</td>
+        <td>☑</td>
+        <td>[esim. latausajat OK]</td>
+    </tr>
+    <tr>
+        <td>Tuotesivu</td>
+        <td>☑</td>
+        <td>[esim. kuvat latautuvat]</td>
+    </tr>
+    <tr>
+        <td>Ostoskori</td>
+        <td>☑</td>
+        <td>[esim. määräpäivitys toimii]</td>
+    </tr>
+    <tr>
+        <td>Kassaprosessi</td>
+        <td>☑</td>
+        <td>[esim. maksutavat testattu]</td>
+    </tr>
+    <tr>
+        <td>Kirjautuminen / rekisteröinti</td>
+        <td>☑</td>
+        <td>[esim. salasanan reset toimii]</td>
+    </tr>
+    <tr>
+        <td>Hallintapaneeli / admin</td>
+        <td>☑</td>
+        <td>[esim. tuotteen lisäys OK]</td>
+    </tr>
+    <tr>
+        <td>Kieliversiot</td>
+        <td>☑</td>
+        <td>[esim. fi, en, sv testattu]</td>
+    </tr>
+    <tr>
+        <td>Maksutavat</td>
+        <td>☑</td>
+        <td>[esim. PayPal, kortti]</td>
+    </tr>
+    <tr>
+        <td>Tuotehaun toimivuus</td>
+        <td>☑</td>
+        <td>[esim. hakusanat toimivat]</td>
+    </tr>
+    <tr>
+        <td>Kategoriat</td>
+        <td>☑</td>
+        <td>[esim. suodatus toimii]</td>
+    </tr>
+    <tr>
+        <td>Käyttäjätili</td>
+        <td>☑</td>
+        <td>[esim. profiilin päivitys]</td>
+    </tr>
+    <tr>
+        <td>Tilaushistoria</td>
+        <td>☑</td>
+        <td>[esim. tilausten näyttö]</td>
+    </tr>
+</table>
+
+<h3>Ei testattu tai rajattu pois</h3>
+<ul>
+    <li><span class="checkbox">☐</span> Kolmannen osapuolen API:t</li>
+    <li><span class="checkbox">☐</span> Suorituskyky kuormituksen alla</li>
+    <li><span class="checkbox">☐</span> Käyttökuormitus (load testing)</li>
+    <li><span class="checkbox">☐</span> Turvallisuustestaus (penetration testing)</li>
+    <li><span class="checkbox">☐</span> Esteettömyys (WCAG)</li>
+    <li><span class="checkbox">☐</span> Selainyhteensopivuus vanhoilla versioilla</li>
+</ul>
+
+<h2>3. Testiympäristö ja resurssit</h2>
+
+<h3>Tekninen ympäristö</h3>
+<ul>
+    <li><strong>Palvelin / URL:</strong> [esim. localhost:3000, staging.verkkokauppa.fi, testipalvelin]</li>
+    <li><strong>Tietokanta:</strong> [esim. MySQL 8.0, testidata]</li>
+    <li><strong>Backend:</strong> [esim. Node.js 18.x, Express]</li>
+    <li><strong>Frontend:</strong> [esim. HTML/CSS/JS, responsive design]</li>
+</ul>
+
+<h3>Testauslaitteet ja selaimet</h3>
+<table>
+    <tr>
+        <th>Selain</th>
+        <th>Versio</th>
+        <th>Windows</th>
+        <th>macOS</th>
+        <th>Android</th>
+        <th>iOS</th>
+    </tr>
+    <tr>
+        <td>Chrome</td>
+        <td>[esim. 123]</td>
+        <td>☑</td>
+        <td>☑</td>
+        <td>☑</td>
+        <td>☑</td>
+    </tr>
+    <tr>
+        <td>Firefox</td>
+        <td>[esim. 121]</td>
+        <td>☑</td>
+        <td>☑</td>
+        <td>☐</td>
+        <td>☐</td>
+    </tr>
+    <tr>
+        <td>Edge</td>
+        <td>[esim. 122]</td>
+        <td>☑</td>
+        <td>☐</td>
+        <td>☐</td>
+        <td>☐</td>
+    </tr>
+    <tr>
+        <td>Safari</td>
+        <td>[esim. 17]</td>
+        <td>☐</td>
+        <td>☑</td>
+        <td>☐</td>
+        <td>☑</td>
+    </tr>
+</table>
+
+<h3>Testidata</h3>
+<ul>
+    <li><span class="checkbox">☑</span> Testituotteet (vähintään 20 tuotetta eri kategorioissa)</li>
+    <li><span class="checkbox">☑</span> Käyttäjätilit (admin, normaali käyttäjä, vieras)</li>
+    <li><span class="checkbox">☑</span> Maksutavat (testikortit, PayPal sandbox)</li>
+    <li><span class="checkbox">☑</span> Tilaukset (eri tilat: odottaa, maksettu, toimitettu)</li>
+    <li><span class="checkbox">☑</span> Kielikäännökset (fi, en, sv)</li>
+</ul>
+
+<h3>Huomioitavaa ympäristössä</h3>
+<ul>
+    <li>Rajapinta ei ole käytettävissä testiympäristössä</li>
+    <li>Testiympäristössä ei ole tuotantodataa</li>
+    <li>Maksut ovat sandbox-moodissa</li>
+    <li>Sähköpostit eivät lähetä oikeasti</li>
+</ul>
+
+<h2>4. Testiryhmä ja vastuut</h2>
+
+<h3>Tiimin jäsenet ja roolit</h3>
+<table>
+    <tr>
+        <th>Nimi</th>
+        <th>Rooli</th>
+        <th>Vastuu</th>
+    </tr>
+    <tr>
+        <td>[Nimi]</td>
+        <td>Testauskoordinaattori</td>
+        <td>Testien suunnittelu, aikataulutus, raportointi</td>
+    </tr>
+    <tr>
+        <td>[Nimi]</td>
+        <td>Manuaalinen testaaja</td>
+        <td>Käyttöliittymän testaus, exploratory testing</td>
+    </tr>
+    <tr>
+        <td>[Nimi]</td>
+        <td>Automaatiotestaaja</td>
+        <td>Skriptien ajaminen, CI/CD valvonta</td>
+    </tr>
+    <tr>
+        <td>[Nimi]</td>
+        <td>Tuotetiimin edustaja</td>
+        <td>Liiketoimintalogiikan validointi</td>
+    </tr>
+    <tr>
+        <td>[Nimi]</td>
+        <td>Kehittäjä</td>
+        <td>Tekninen tuki, bugien analysointi</td>
+    </tr>
+</table>
+
+<h3>Testausmenetelmät</h3>
+<ul>
+    <li><span class="checkbox">☑</span> Käyttötapaukset (User Stories)</li>
+    <li><span class="checkbox">☑</span> Regressiotesti</li>
+    <li><span class="checkbox">☑</span> Exploratory testing</li>
+    <li><span class="checkbox">☑</span> Esteettömyystestaus (perustaso)</li>
+    <li><span class="checkbox">☑</span> Kielitestit</li>
+    <li><span class="checkbox">☑</span> Responsiivisuustestaus (mobiili, tabletti, desktop)</li>
+    <li><span class="checkbox">☐</span> Suorituskykytestaus</li>
+    <li><span class="checkbox">☐</span> Turvallisuustestaus</li>
+</ul>
+
+<h2>5. Testitapausten yksityiskohtainen yhteenveto</h2>
+
+<h3>5.1 Etusivu</h3>
+<table>
+    <tr>
+        <th>Testitapaus ID</th>
+        <th>Kuvaus</th>
+        <th>Odotettu tulos</th>
+        <th>Tulos</th>
+        <th>Kommentit</th>
+    </tr>
+    <tr>
+        <td>UI-001</td>
+        <td>Etusivu latautuu alle 3 sekunnissa</td>
+        <td>Sivu latautuu nopeasti</td>
+        <td>OK</td>
+        <td>Latausaika: 1.2s</td>
+    </tr>
+    <tr>
+        <td>UI-002</td>
+        <td>Tuotteiden karuselli toimii</td>
+        <td>Tuotteet vaihtuvat automaattisesti</td>
+        <td>OK</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>UI-003</td>
+        <td>Hakupalkki toimii</td>
+        <td>Haku johtaa tuloksiin</td>
+        <td>OK</td>
+        <td></td>
+    </tr>
+</table>
+
+<h3>5.2 Ostoskori</h3>
+<table>
+    <tr>
+        <th>Testitapaus ID</th>
+        <th>Kuvaus</th>
+        <th>Odotettu tulos</th>
+        <th>Tulos</th>
+        <th>Kommentit</th>
+    </tr>
+    <tr>
+        <td>CART-001</td>
+        <td>Tuote lisätään ostoskoriin</td>
+        <td>Tuote näkyy korissa</td>
+        <td>OK</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>CART-002</td>
+        <td>Määrän päivitys toimii</td>
+        <td>Kokonaissumma päivittyy</td>
+        <td>OK</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>CART-003</td>
+        <td>Tyhjä ostoskori näyttää viestin</td>
+        <td>"Ostoskori on tyhjä"</td>
+        <td>OK</td>
+        <td></td>
+    </tr>
+</table>
+
+<h3>5.3 Kassaprosessi</h3>
+<table>
+    <tr>
+        <th>Testitapaus ID</th>
+        <th>Kuvaus</th>
+        <th>Odotettu tulos</th>
+        <th>Tulos</th>
+        <th>Kommentit</th>
+    </tr>
+    <tr>
+        <td>CHECKOUT-001</td>
+        <td>Maksutapa valitaan</td>
+        <td>Valittu maksutapa tallentuu</td>
+        <td>OK</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>CHECKOUT-002</td>
+        <td>Tilaus vahvistetaan</td>
+        <td>Kiitos-sivu näytetään</td>
+        <td>OK</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>CHECKOUT-003</td>
+        <td>Virheellinen kortti estää tilauksen</td>
+        <td>Virheilmoitus näytetään</td>
+        <td>FAIL</td>
+        <td>Bug #123</td>
+    </tr>
+</table>
+
+<h2>6. Havaitut löydökset ja viat</h2>
+
+<h3>6.1 Vakavat viat (Priority 1 - Estävät julkaisun)</h3>
+<table class="priority-high">
+    <tr>
+        <th>#</th>
+        <th>Bug ID</th>
+        <th>Ongelma</th>
+        <th>Vaikutus</th>
+        <th>Toistettavuus</th>
+        <th>Status</th>
+        <th>Omistaja</th>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>BUG-001</td>
+        <td>Kassaprosessi kaatuu virheellisellä kortilla</td>
+        <td>Estää ostoksen tekemisen</td>
+        <td>Aina</td>
+        <td>Avattu</td>
+        <td>Dev Team</td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>BUG-002</td>
+        <td>Admin-paneeli ei lataudu mobiilissa</td>
+        <td>Estää hallinnan</td>
+        <td>Mobiilissa aina</td>
+        <td>Avattu</td>
+        <td>Dev Team</td>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>BUG-003</td>
+        <td>Kielikäännös puuttuu ruotsista</td>
+        <td>Huono UX</td>
+        <td>Kaikissa tuotteissa</td>
+        <td>Avattu</td>
+        <td>Content Team</td>
+    </tr>
+</table>
+
+<h3>6.2 Keskitasoiset virheet (Priority 2 - Haittaavat käyttökokemusta)</h3>
+<table class="priority-medium">
+    <tr>
+        <th>#</th>
+        <th>Bug ID</th>
+        <th>Ongelma</th>
+        <th>Vaikutus</th>
+        <th>Toistettavuus</th>
+        <th>Status</th>
+        <th>Omistaja</th>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td>BUG-004</td>
+        <td>Hakutulokset eivät järjestä hintaan</td>
+        <td>Huono löydettävyys</td>
+        <td>Firefoxissa</td>
+        <td>Avattu</td>
+        <td>Dev Team</td>
+    </tr>
+    <tr>
+        <td>5</td>
+        <td>BUG-005</td>
+        <td>Sähköpostivahvistus ei lähetä</td>
+        <td>Käyttäjä ei saa vahvistusta</td>
+        <td>Sandboxissa</td>
+        <td>Hyväksytty</td>
+        <td>Dev Team</td>
+    </tr>
+</table>
+
+<h3>6.3 Pienet puutteet ja parannukset (Priority 3 - Kosmeettiset)</h3>
+<table class="priority-low">
+    <tr>
+        <th>#</th>
+        <th>Bug ID</th>
+        <th>Ongelma</th>
+        <th>Vaikutus</th>
+        <th>Toistettavuus</th>
+        <th>Status</th>
+        <th>Omistaja</th>
+    </tr>
+    <tr>
+        <td>6</td>
+        <td>BUG-006</td>
+        <td>CSS-tyylit hajovat tabletissa</td>
+        <td>Visuaalinen ongelma</td>
+        <td>Satunnainen</td>
+        <td>Avattu</td>
+        <td>Design Team</td>
+    </tr>
+    <tr>
+        <td>7</td>
+        <td>BUG-007</td>
+        <td>Linkki avautuu uuteen välilehteen</td>
+        <td>Odottamaton käyttäytyminen</td>
+        <td>Kaikissa linkeissä</td>
+        <td>Ehdotettu</td>
+        <td>UX Team</td>
+    </tr>
+</table>
+
+<h2>7. Riskiarviointi ja prioriteetit</h2>
+
+<h3>Riskitasot</h3>
+<ul>
+    <li><strong>Kriittinen:</strong> Estää perustoiminnallisuuden (P1-viat)</li>
+    <li><strong>Korkea:</strong> Haittaa käyttökokemusta merkittävästi (P2-viat)</li>
+    <li><strong>Keskitaso:</strong> Pienet ongelmat, jotka voidaan hyväksyä (P3-viat)</li>
+</ul>
+
+<h3>Jatkotoimenpiteet</h3>
+<ol>
+    <li><strong>Välitön korjaus:</strong> P1-viat korjataan ennen julkaisua</li>
+    <li><strong>Seuraava sprintti:</strong> P2-viat korjataan seuraavassa iteraatiossa</li>
+    <li><strong>Jatkokehitys:</strong> P3-parannukset seuraavissa versioissa</li>
+</ol>
+
+<h3>Suositellut jatkotestit</h3>
+<ul>
+    <li><span class="checkbox">☐</span> Uudelleentestaus korjausten jälkeen (regression)</li>
+    <li><span class="checkbox">☐</span> Käyttäjätestaus / hyväksymistestaus (UAT)</li>
+    <li><span class="checkbox">☐</span> Monikielisyystestaus jokaisella kielellä perusteellisesti</li>
+    <li><span class="checkbox">☐</span> Suorituskykytestaus (latausajat, responsiivisuus)</li>
+    <li><span class="checkbox">☐</span> Turvallisuustestaus (OWASP top 10)</li>
+    <li><span class="checkbox">☐</span> Esteettömyystestaus (WCAG 2.1 AA)</li>
+</ul>
+
+<h2>8. Testin päätös ja hyväksyntä</h2>
+
+<h3>Julkaisusuositus</h3>
+<ul>
+    <li><span class="checkbox">☐</span> <strong>Julkaisuvalmis</strong> - Kaikki P1-viat korjattu</li>
+    <li><span class="checkbox">☐</span> <strong>Ehdollisesti julkaisukelpoinen</strong> - P1-viat korjattu, P2-viat dokumentoitu</li>
+    <li><span class="checkbox">☐</span> <strong>Ei julkaistava</strong> - Kriittisiä vikoja jäljellä</li>
+</ul>
+
+<h3>Hyväksyjät</h3>
+<table>
+    <tr>
+        <th>Nimi</th>
+        <th>Rooli</th>
+        <th>Hyväksyntä</th>
+        <th>Päivämäärä</th>
+    </tr>
+    <tr>
+        <td>[Nimi]</td>
+        <td>Testauskoordinaattori</td>
+        <td class="signature">[allekirjoitus]</td>
+        <td>[päivämäärä]</td>
+    </tr>
+    <tr>
+        <td>[Nimi]</td>
+        <td>Tuotepäällikkö</td>
+        <td class="signature">[allekirjoitus]</td>
+        <td>[päivämäärä]</td>
+    </tr>
+    <tr>
+        <td>[Nimi]</td>
+        <td>Tekninen johtaja</td>
+        <td class="signature">[allekirjoitus]</td>
+        <td>[päivämäärä]</td>
+    </tr>
+</table>
+
+<hr>
+
+<h2>9. Liitteet ja lisätiedot</h2>
+
+<h3>Dokumentaatio</h3>
+<ul>
+    <li>Testisuunnitelma: [linkki]</li>
+    <li>Testitapaukset: [linkki]</li>
+    <li>Bugiraportit: [linkki JIRA/trello]</li>
+    <li>Kuvankaappaukset: [linkki kansio]</li>
+</ul>
+
+<h3>Kommunikaatio ja seuranta</h3>
+<ul>
+    <li>Testiryhmän kokoukset: [esim. päivittäin klo 9:00 Teamsissa]</li>
+    <li>Bugien päivitykset: [esim. JIRA:ssa reaaliajassa]</li>
+    <li>Raportit: [esim. viikoittain sähköpostilla]</li>
+    <li>Ongelmien eskalaatio: [esim. P1-viat välittömästi Slackissa]</li>
+</ul>
+
+<h3>Huomioita suurista ryhmistä</h3>
+<ul>
+    <li>Kommunikointi tapahtuu pääasiassa Teams-kanavalla #qa-testing</li>
+    <li>Vastuuhenkilöt on määritelty kullekin moduulille</li>
+    <li>Aikataulut noudattavat sprintin rajautumista (perjantai klo 17:00)</li>
+    <li>Dokumentaatio päivitetään reaaliajassa Google Docsissa</li>
+</ul>
+
+<h3>Versiohistoria</h3>
+<ul>
+    <li><strong>v1.0</strong> - Alkuperäinen malli (2026-04-14)</li>
+    <li><strong>v1.1</strong> - Päivitykset [kuvaus]</li>
+</ul>
+
+</body>
+</html>
