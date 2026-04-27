@@ -1,111 +1,110 @@
-// Globaali muuttuja käännöksille
+// Global variable for translations
 let translations = {};
 const languageBasePath = window.location.pathname.startsWith('/verkkokauppa')
     ? '/verkkokauppa/lang'
     : '/lang';
 
-/**
- * Hae nykyinen kielivalinta
- */
 function getCurrentLanguage() {
-    return localStorage.getItem("language") || "fi";
+    return localStorage.getItem('language') || 'fi';
 }
 
-/**
- * Lataa valitun kielen JSON-tiedoston ja päivittää sivun tekstit
- */
 async function applyLanguage(lang) {
     try {
         const res = await fetch(`${languageBasePath}/${lang}.json`);
-        if (!res.ok) throw new Error("Käännöstiedostoa ei löytynyt");
-        
-        translations = await res.json(); 
+        if (!res.ok) throw new Error('Kaannostiedostoa ei loytynyt');
 
-        // Päivitä elementit, joilla on data-i18n -attribuutti
-        document.querySelectorAll("[data-i18n]").forEach(el => {
+        translations = await res.json();
+
+        document.querySelectorAll('[data-i18n]').forEach((el) => {
             const key = el.dataset.i18n;
             if (translations[key]) el.textContent = translations[key];
         });
 
-        // Päivitä placeholderit
-        document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+        document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
             const key = el.dataset.i18nPlaceholder;
             if (translations[key]) el.placeholder = translations[key];
         });
 
-        // Tallenna kielivalinta selaimen muistiin (localStorage)
-        localStorage.setItem("language", lang);
-
-        // Ilmoita muille scripteille, että kieli on muuttunut
+        localStorage.setItem('language', lang);
         document.dispatchEvent(new Event('languageChanged'));
-
     } catch (err) {
-        console.error("Kielen lataus epäonnistui:", err);
+        console.error('Kielen lataus epaonnistui:', err);
     }
 }
 
-/**
- * Apufunktio tekstin hakemiseen JavaScript-koodin sisällä
- */
 function t(key) {
-    return translations[key] || key; 
+    return translations[key] || key;
 }
 
-/**
- * Hae lipun emoji valitun kielen perusteella
- */
-function getFlagEmoji(lang) {
-    const flags = {
-        fi: '🇫🇮',
-        en: '🇬🇧',
-        sv: '🇸🇪'
+function getLanguageMeta(lang) {
+    const languages = {
+        fi: { code: 'FI', label: 'Suomi', flagSrc: '/verkkokauppa/images/flags/fi.svg' },
+        en: { code: 'EN', label: 'Englanti', flagSrc: '/verkkokauppa/images/flags/gb.svg' },
+        sv: { code: 'SV', label: 'Ruotsi', flagSrc: '/verkkokauppa/images/flags/se.svg' }
     };
-    return flags[lang] || '🇫🇮';
+
+    return languages[lang] || languages.fi;
 }
 
-/**
- * Kielivalikon (custom select) toiminnallisuus
- */
+function renderSelectedLanguage(lang) {
+    const selected = document.getElementById('selected-lang');
+    if (!selected) return;
+
+    const meta = getLanguageMeta(lang);
+    selected.innerHTML = `
+        <img class="lang-flag" src="${meta.flagSrc}" alt="">
+        <span class="lang-code">${meta.code}</span>
+    `;
+}
+
+function renderLanguageOptions() {
+    const optionsContainer = document.getElementById('lang-options');
+    if (!optionsContainer) return;
+
+    ['fi', 'en', 'sv'].forEach((lang) => {
+        const option = optionsContainer.querySelector(`[data-value="${lang}"]`);
+        if (!option) return;
+
+        const meta = getLanguageMeta(lang);
+        option.innerHTML = `
+            <img class="lang-flag" src="${meta.flagSrc}" alt="">
+            <span class="lang-label">${meta.label}</span>
+        `;
+    });
+}
+
 function setupCustomSelect() {
-    const selected = document.getElementById("selected-lang");
-    const optionsContainer = document.getElementById("lang-options");
-    const options = optionsContainer ? optionsContainer.querySelectorAll("div") : [];
+    const selected = document.getElementById('selected-lang');
+    const optionsContainer = document.getElementById('lang-options');
+    const options = optionsContainer ? optionsContainer.querySelectorAll('div') : [];
 
     if (!selected || !optionsContainer) return;
 
-    selected.addEventListener("click", (e) => {
+    selected.addEventListener('click', (e) => {
         e.stopPropagation();
-        optionsContainer.classList.toggle("select-hide");
+        optionsContainer.classList.toggle('select-hide');
     });
 
-    options.forEach(option => {
-        option.addEventListener("click", function() {
-            const lang = this.getAttribute("data-value");
-            selected.innerHTML = getFlagEmoji(lang) + ' ' + lang.toUpperCase();
+    options.forEach((option) => {
+        option.addEventListener('click', function () {
+            const lang = this.getAttribute('data-value');
+            renderSelectedLanguage(lang);
             applyLanguage(lang);
-            optionsContainer.classList.add("select-hide");
+            optionsContainer.classList.add('select-hide');
         });
     });
 
-    window.addEventListener("click", () => {
-        optionsContainer.classList.add("select-hide");
+    window.addEventListener('click', () => {
+        optionsContainer.classList.add('select-hide');
     });
 }
 
-/**
- * Alustetaan kieli sivun latautuessa
- */
 function initLanguage() {
-    const savedLang = localStorage.getItem("language") || "fi";
+    const savedLang = localStorage.getItem('language') || 'fi';
+    renderLanguageOptions();
     applyLanguage(savedLang);
-
-    // Päivitetään valikon teksti vastaamaan tallennettua kieltä
-    const selected = document.getElementById("selected-lang");
-    if (selected) {
-        selected.innerHTML = getFlagEmoji(savedLang) + ' ' + savedLang.toUpperCase();
-    }
-
+    renderSelectedLanguage(savedLang);
     setupCustomSelect();
 }
 
-document.addEventListener("DOMContentLoaded", initLanguage);
+document.addEventListener('DOMContentLoaded', initLanguage);

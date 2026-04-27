@@ -29,7 +29,8 @@ body {
     background: var(--white);
     padding: 15px 0;
     border-bottom: 2px solid var(--eduko-gold);
-    position: relative;
+    position: sticky;
+    top: 0;
     z-index: 1100;
 }
 
@@ -208,7 +209,7 @@ body {
     background: var(--eduko-dark); 
     width: 100%; 
     position: sticky; 
-    top: 0; 
+    top: 83px; 
     z-index: 1000;
     transition: max-height 0.4s ease-in-out; 
 }
@@ -281,6 +282,20 @@ li b, li span, li div {
     font-weight: 600;
     white-space: nowrap;
 }
+.lang-flag {
+    width: 18px;
+    height: 14px;
+    display: inline-block;
+    object-fit: cover;
+    border-radius: 2px;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
+    flex-shrink: 0;
+}
+.lang-code,
+.lang-label {
+    display: inline-flex;
+    align-items: center;
+}
 #lang-options { 
     position: absolute; 
     top: calc(100% + 4px); 
@@ -299,10 +314,10 @@ li b, li span, li div {
     padding: 10px 12px; 
     cursor: pointer; 
     transition: background 0.2s;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 10px;
     white-space: nowrap;
 }
 #lang-options div:hover { 
@@ -437,8 +452,9 @@ li b, li span, li div {
         display: block;
         max-height: 0;
         overflow: hidden;
-        position: relative;
+        position: sticky;
         background: var(--eduko-dark);
+        top: 64px;
     }
     .main-nav.show {
         max-height: 500px;

@@ -33,8 +33,10 @@ body { margin: 0; background-color: var(--eduko-bg); color: var(--text-main); }
 .menu-toggle { display: none; }
 .language-selector { position: relative; cursor: pointer; background: #f4f1ea; padding: 8px 12px; border-radius: 5px; z-index: 999; }
 #selected-lang { font-weight: 600; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.lang-flag { width: 18px; height: 14px; display: inline-block; object-fit: cover; border-radius: 2px; box-shadow: 0 0 0 1px rgba(0,0,0,0.08); flex-shrink: 0; }
+.lang-code, .lang-label { display: inline-flex; align-items: center; }
 #lang-options { position: absolute; top: 100%; right: 0; background: white; border: 1px solid #ddd; border-radius: 5px; min-width: 100px; box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
-#lang-options div { padding: 8px 10px; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+#lang-options div { padding: 8px 10px; display: flex; align-items: center; gap: 10px; white-space: nowrap; }
 #lang-options div:hover { background: #f4f1ea; }
 .select-hide { display: none; }
 .btn-primary { background: var(--eduko-gold); color: white; padding: 10px 22px; border-radius: 4px; text-decoration: none; font-weight: bold; }

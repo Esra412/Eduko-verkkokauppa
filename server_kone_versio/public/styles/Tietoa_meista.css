@@ -27,6 +27,9 @@ body {
     background: var(--white);
     padding: 15px 0;
     border-bottom: 2px solid var(--eduko-gold);
+    position: sticky;
+    top: 0;
+    z-index: 1100;
 }
 
 .header-container {
@@ -97,7 +100,7 @@ body {
     background: var(--eduko-dark);
     width: 100%;
     position: sticky;
-    top: 0;
+    top: 83px;
     z-index: 1000;
 }
 
@@ -250,6 +253,10 @@ body {
     .nav-links {
         flex-wrap: wrap;
         justify-content: center;
+    }
+
+    .main-nav {
+        top: 64px;
     }
 
     .nav-links a {
