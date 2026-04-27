@@ -824,9 +824,17 @@ app.delete(`/verkkokauppa/api/products/:id`, vaadiKirjautuminen, (req, res) => {
 // Haku API: Etsii tuotteita nimen tai kuvauksen perusteella
 app.get(`/api/search`, (req, res) => {
     const term = req.query.q;
+    const lang = req.query.lang || 'fi';
     if (!term) return res.json([]);
 
-    const sql = "SELECT * FROM products WHERE name_fi LIKE ? OR description_fi LIKE ? ORDER BY created_at DESC";
+    const langMap = {
+        fi: { name: 'name_fi', description: 'description_fi' },
+        en: { name: 'name_en', description: 'description_en' },
+        sv: { name: 'name_sv', description: 'description_sv' }
+    };
+    
+    const columns = langMap[lang] || langMap.fi;
+    const sql = `SELECT * FROM products WHERE ${columns.name} LIKE ? OR ${columns.description} LIKE ? ORDER BY created_at DESC`;
     const values = [`%${term}%`, `%${term}%` || ''];
 
     db.query(sql, values, (err, results) => {
@@ -834,8 +842,11 @@ app.get(`/api/search`, (req, res) => {
             console.error("Hakuvirhe:", err);
             return res.status(500).json({ error: "Tietokantavirhe haussa" });
         }
-        // Normalisoi kuvat kaikille hakutuloksille
-        const normalizedResults = results.map(product => normalizeProductImages(product));
+        // Sovella kielivalinta ja normalisoi kuvat
+        const normalizedResults = results.map(product => {
+            let p = applyProductLanguage(product, lang);
+            return normalizeProductImages(p);
+        });
         res.json(normalizedResults);
     });
 });
@@ -843,9 +854,17 @@ app.get(`/api/search`, (req, res) => {
 // Haku API: Etsii tuotteita - ALIAS REITTI /verkkokauppa/api/search
 app.get(`/verkkokauppa/api/search`, (req, res) => {
     const term = req.query.q;
+    const lang = req.query.lang || 'fi';
     if (!term) return res.json([]);
 
-    const sql = "SELECT * FROM products WHERE name_fi LIKE ? OR description_fi LIKE ? ORDER BY created_at DESC";
+    const langMap = {
+        fi: { name: 'name_fi', description: 'description_fi' },
+        en: { name: 'name_en', description: 'description_en' },
+        sv: { name: 'name_sv', description: 'description_sv' }
+    };
+    
+    const columns = langMap[lang] || langMap.fi;
+    const sql = `SELECT * FROM products WHERE ${columns.name} LIKE ? OR ${columns.description} LIKE ? ORDER BY created_at DESC`;
     const values = [`%${term}%`, `%${term}%` || ''];
 
     db.query(sql, values, (err, results) => {
@@ -853,8 +872,11 @@ app.get(`/verkkokauppa/api/search`, (req, res) => {
             console.error("Hakuvirhe:", err);
             return res.status(500).json({ error: "Tietokantavirhe haussa" });
         }
-        // Normalisoi kuvat kaikille hakutuloksille
-        const normalizedResults = results.map(product => normalizeProductImages(product));
+        // Sovella kielivalinta ja normalisoi kuvat
+        const normalizedResults = results.map(product => {
+            let p = applyProductLanguage(product, lang);
+            return normalizeProductImages(p);
+        });
         res.json(normalizedResults);
     });
 });
@@ -864,7 +886,12 @@ app.get(`/verkkokauppa/api/search`, (req, res) => {
 const adminKayttajat = {
     "esra07bagdat@gmail.com": { salasana: "123456" },
     "katike.kemppainen@gmail.com": { salasana: "123456" },
-    "joni.finne@eduko.fi": { salasana: "123456" }
+    "joni.finne@eduko.fi": { salasana: "123456" },
+    
+    
+    "matias.ovasko@student.eduko.fi": { salasana: "123456" },
+    "ilmari.heinola@student.eduko.fi": { salasana: "123456" },
+    "joni.kunnaskari@student.eduko.fi": { salasana: "123456" }
 };
 
 app.post(`/api/login-step1`, async (req, res) => {

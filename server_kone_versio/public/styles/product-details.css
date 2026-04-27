@@ -32,9 +32,9 @@ body { margin: 0; background-color: var(--eduko-bg); color: var(--text-main); }
 #cart-count { position: absolute; top: -8px; right: -12px; background: var(--danger); color: white; font-size: 11px; font-weight: bold; border-radius: 50%; padding: 2px 6px; min-width: 18px; text-align: center; border: 2px solid white; }
 .menu-toggle { display: none; }
 .language-selector { position: relative; cursor: pointer; background: #f4f1ea; padding: 8px 12px; border-radius: 5px; z-index: 999; }
-#selected-lang { font-weight: 600; }
+#selected-lang { font-weight: 600; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
 #lang-options { position: absolute; top: 100%; right: 0; background: white; border: 1px solid #ddd; border-radius: 5px; min-width: 100px; box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
-#lang-options div { padding: 8px 10px; }
+#lang-options div { padding: 8px 10px; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
 #lang-options div:hover { background: #f4f1ea; }
 .select-hide { display: none; }
 .btn-primary { background: var(--eduko-gold); color: white; padding: 10px 22px; border-radius: 4px; text-decoration: none; font-weight: bold; }
@@ -45,6 +45,18 @@ body { margin: 0; background-color: var(--eduko-bg); color: var(--text-main); }
 .nav-links { display: flex; list-style: none; }
 .nav-links a { color: var(--white); text-decoration: none; padding: 18px 20px; display: inline-block; font-size: 14px; font-weight: 600; text-transform: uppercase; }
 .nav-links a.active, .nav-links a:hover { background: var(--eduko-gold); color: var(--eduko-dark); }
+
+.main-nav,
+.main-nav .nav-container,
+.main-nav .nav-links,
+.main-nav .nav-links a {
+    position: relative;
+}
+
+.main-nav .nav-links a {
+    z-index: 1;
+    pointer-events: auto;
+}
 
 /* --- TUOTESIVUN SISÄLTÖ (Luonnoksen mukaan) --- */
 .layout-container { max-width: 1200px; margin: 30px auto; display: grid; grid-template-columns: 280px 1fr; gap: 30px; padding: 0 20px; }
@@ -85,6 +97,8 @@ body { margin: 0; background-color: var(--eduko-bg); color: var(--text-main); }
 
 .tab-pane { display: none; }
 .tab-pane.active { display: block; }
+.info-tabs { min-height: 420px; }
+.tab-pane { min-height: 260px; }
 .no-return { color: var(--danger); font-weight: bold; margin-top: 15px; font-size: 13px; }
 
 /* Sivupalkki */
@@ -129,6 +143,13 @@ body { margin: 0; background-color: var(--eduko-bg); color: var(--text-main); }
     border: 1px solid #ece6d8;
     border-radius: 10px;
     background: #fcfbf8;
+}
+
+#product-meta,
+#product-specs,
+.contact-card,
+#thumbnail-container {
+    min-height: 140px;
 }
 
 .thumbnail {

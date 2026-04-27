@@ -1,12 +1,13 @@
-const cartList = document.getElementById('cart-list');
+document.addEventListener('DOMContentLoaded', () => {
+    const cartList = document.getElementById('cart-list');
     const totalElem = document.getElementById('cart-total');
     const showFormBtn = document.getElementById('show-form-btn');
     const formContainer = document.getElementById('checkout-form-container');
     const payBtn = document.getElementById('pay-button');
 
-    // Varmista että kaikki elementit on olemassa
     if (!cartList || !totalElem || !showFormBtn || !formContainer || !payBtn) {
         console.error('Virhe: Ostoskorin DOM-elementit puuttuvat!');
+        return;
     }
 
     function getCartImageSrc(image) {
@@ -22,17 +23,17 @@ const cartList = document.getElementById('cart-list');
     }
 
     function renderCart() {
-        let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
-        cartList.innerHTML = "";
+        const cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
+        cartList.innerHTML = '';
         let total = 0;
 
         if (cart.length === 0) {
             cartList.innerHTML = `
-                <div class='empty-cart' style="text-align: center; padding: 40px 20px; color: #666;">
+                <div class="empty-cart" style="text-align: center; padding: 40px 20px; color: #666;">
                     <h3>Ostoskorisi on tyhjä.</h3>
-                    <p><a href='/verkkokauppa/' style='color: #b0a078; text-decoration: none;'>Palaa ostoksille tästä.</a></p>
+                    <p><a href="/verkkokauppa/" style="color: #b0a078; text-decoration: none;">Palaa ostoksille tästä.</a></p>
                 </div>`;
-            totalElem.innerText = "0.00";
+            totalElem.innerText = '0.00';
             showFormBtn.style.display = 'none';
             formContainer.style.display = 'none';
             return;
@@ -53,105 +54,88 @@ const cartList = document.getElementById('cart-list');
                         <h4 style="margin: 0 0 5px 0;">${item.name}</h4>
                         <p style="margin: 0; color: #666;">${price.toFixed(2)} €</p>
                         <div class="quantity-control" style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
-                            <button class="quantity-btn decrease-btn" data-index="${index}" style="background: #eee; border: none; width: 30px; height: 30px; border-radius: 4px; cursor: pointer; font-weight: bold;">−</button>
+                            <button class="quantity-btn decrease-btn" data-index="${index}" style="background: #eee; border: none; width: 30px; height: 30px; border-radius: 4px; cursor: pointer; font-weight: bold;">-</button>
                             <span class="quantity-display" data-index="${index}" style="min-width: 30px; text-align: center; font-weight: bold;">${quantity}</span>
                             <button class="quantity-btn increase-btn" data-index="${index}" style="background: #eee; border: none; width: 30px; height: 30px; border-radius: 4px; cursor: pointer; font-weight: bold;">+</button>
                         </div>
                     </div>
                     <div class="cart-item-price" style="text-align: right; min-width: 100px;">
                         <p style="font-weight: bold; margin: 0;">${itemTotal.toFixed(2)} €</p>
-                        <button class="remove-btn" onclick="removeItem(${index})" style="background: #ff4444; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; margin-top: 8px; font-size: 0.9rem;">
+                        <button class="remove-btn" type="button" data-remove-index="${index}" style="background: #ff4444; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; margin-top: 8px; font-size: 0.9rem;">
                             Poista
                         </button>
                     </div>
                 </div>
             `;
         });
+
         totalElem.innerText = total.toFixed(2);
-        
-        // Liitä event listenerit quantity nappeihin
         attachQuantityListeners();
     }
 
-
-    
     function removeItem(index) {
-        let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
+        const cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
         if (index >= 0 && index < cart.length) {
-            const removedItem = cart[index];
             cart.splice(index, 1);
             localStorage.setItem('eduko_cart', JSON.stringify(cart));
             renderCart();
-            
-            // Päivitä korin laskuri jos se on olemassa
-            const count = document.getElementById('cart-count');
-            if (count) count.innerText = cart.reduce((sum, item) => sum + (Number(item.quantity) || 1), 0);
             document.dispatchEvent(new Event('cartUpdated'));
         }
     }
 
-    // Attach event listeners keille quantity nappeihin
     function attachQuantityListeners() {
-        document.querySelectorAll('.increase-btn').forEach(btn => {
+        document.querySelectorAll('.increase-btn').forEach((btn) => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
-                const index = parseInt(btn.dataset.index);
-                updateQuantity(index, 1);
+                updateQuantity(parseInt(btn.dataset.index, 10), 1);
             });
         });
 
-        document.querySelectorAll('.decrease-btn').forEach(btn => {
+        document.querySelectorAll('.decrease-btn').forEach((btn) => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
-                const index = parseInt(btn.dataset.index);
-                updateQuantity(index, -1);
+                updateQuantity(parseInt(btn.dataset.index, 10), -1);
+            });
+        });
+
+        document.querySelectorAll('[data-remove-index]').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                removeItem(parseInt(btn.dataset.removeIndex, 10));
             });
         });
     }
 
-    // Päivitä tuotteen määrä ostoskorissa
     async function updateQuantity(index, change) {
-        let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
+        const cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
         const item = cart[index];
-
         if (!item) return;
 
-        // Käytä ensin tallenettua varastosaldoa. Jos sitä ei ole, hae API:sta.
         let maxStock = item.stock;
-
         if (!maxStock) {
             try {
                 const response = await fetch(`/verkkokauppa/api/products/${item.id}`);
                 const product = await response.json();
                 maxStock = product.stock || 0;
-                item.stock = maxStock; // Tallenna tulevaa käyttöä varten
+                item.stock = maxStock;
             } catch (err) {
-                console.error("Virhe tuotteen varastosaldon haussa:", err);
-                alert("Virhe tuotteen tietojen haussa. Yritä uudelleen.");
+                console.error('Virhe tuotteen varastosaldon haussa:', err);
+                alert('Virhe tuotteen tietojen haussa. Yrita uudelleen.');
                 return;
             }
         }
 
-        // Tarkista ennen kuin muutat määrää
         const newQuantity = (item.quantity || 1) + change;
-
-        // Jos määrä menee 0 tai alle, poista tuote automaattisesti
         if (newQuantity <= 0) {
             removeItem(index);
-            alert("Tuote poistettu ostoskorista.");
             return;
         }
 
-        // Tarkista maksimi varastosaldon perusteella
         if (newQuantity > maxStock) {
             alert(`Maksimissaan ${maxStock} kpl saatavilla.`);
-            return; // Älä muuta määrää, jää nykyiselle määrälle
+            return;
         }
 
-        // Päivitä määrä
         item.quantity = newQuantity;
-
-        // Tallenna muutokset
         cart[index] = item;
         localStorage.setItem('eduko_cart', JSON.stringify(cart));
         renderCart();
@@ -161,15 +145,13 @@ const cartList = document.getElementById('cart-list');
     function openCheckoutForm() {
         formContainer.style.display = 'block';
         showFormBtn.style.display = 'none';
-        formContainer.scrollIntoView({ behavior: 'smooth' });
+        requestAnimationFrame(() => {
+            formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
     }
 
-    // "Jatka tilaamaan" -painikkeen logiikka
-    showFormBtn.addEventListener('click', () => {
-        openCheckoutForm();
-    });
+    showFormBtn.addEventListener('click', openCheckoutForm);
 
-    // Lopullinen maksun luonti
     payBtn.addEventListener('click', async () => {
         const customerData = {
             fname: document.getElementById('fname').value.trim(),
@@ -181,28 +163,25 @@ const cartList = document.getElementById('cart-list');
             city: document.getElementById('city').value.trim()
         };
 
-        // Validaatio
-        const emptyFields = Object.entries(customerData).filter(([key, val]) => val === "");
+        const emptyFields = Object.entries(customerData).filter(([, val]) => val === '');
         if (emptyFields.length > 0) {
-            alert("Täytä kaikki osoitetiedot jatkaaksesi.");
+            alert('Täytä kaikki osoitetiedot jatkaaksesi.');
             return;
         }
 
-        let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
-        
+        const cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
         if (cart.length === 0) {
-            alert("Ostoskorisi on tyhjä!");
+            alert('Ostoskorisi on tyhjä!');
             return;
         }
-        
-        // Laske yhteissumma ottamalla huomioon määrät
+
         const totalAmount = cart.reduce((sum, item) => {
             const price = parseFloat(item.price.toString().replace(',', '.'));
             const quantity = item.quantity || 1;
             return sum + (price * quantity);
         }, 0);
 
-        payBtn.innerText = "Valmistellaan maksua...";
+        payBtn.innerText = 'Valmistellaan maksua...';
         payBtn.disabled = true;
 
         try {
@@ -224,7 +203,6 @@ const cartList = document.getElementById('cart-list');
             });
 
             const data = await response.json();
-
             if (!response.ok) {
                 throw new Error(data.error || 'Maksun luominen epäonnistui.');
             }
@@ -243,7 +221,6 @@ const cartList = document.getElementById('cart-list');
         }
     });
 
-    // Alustetaan kori heti
     renderCart();
 
     if (sessionStorage.getItem('openCheckoutForm') === '1') {
@@ -254,7 +231,7 @@ const cartList = document.getElementById('cart-list');
         }
     }
 
-    // Kuuntele ostoskori päivityksistä
     document.addEventListener('cartUpdated', () => {
         renderCart();
     });
+});

@@ -1,5 +1,4 @@
 {
-  "COMMENTTI": "INDEX.HTML",
   "search_placeholder": "Hae tuotteita tai palveluita...",
   "login_btn": "Kirjaudu",
   "all_ads": "Kaikki ilmoitukset",
@@ -10,6 +9,20 @@
   "categories_title": "Kategoriat",
   "latest_items": "Tuoreimmat kohteet",
   "add_to_cart": "Lisää ostoskoriin",
+  "buy_btn": "OSTA",
+  "added_btn": "Lisätty!",
+  "description_tab": "Kuvaus",
+  "specs_tab": "Tekniset tiedot",
+  "images_tab": "Kuvat",
+  "responsible_tab": "Vastuuhenkilö",
+  "stock_label": "Varastossa",
+  "pickup_point_label": "Noutopiste",
+  "no_description": "Ei kuvausta.",
+  "no_specs": "Ei teknisiä tietoja saatavilla",
+  "search_results_title": "Haun tulokset",
+  "search_no_results": "Hakusanalla ei löytynyt tuotteita",
+  "search_error": "Haku epäonnistui.",
+  "no_return_notice": "Huom: Noutotuotteilla ei ole palautusoikeutta.",
   "cart_added": "Tuote lisätty koriin!",
   "cart_updated": "Tuotteen määrä päivitetty!",
   "cart_max_limit": "Maksimimäärä saavutettu!",
@@ -26,10 +39,6 @@
   "cat_electric": "Sähkö ja automaatio",
   "cat_health": "Sosiaali- ja terveysala",
   "cat_ict": "Tieto- ja viestintätekniikka",
-
-
-
-  "COMMENTTI": "LOGIN.HTML",
   "login_title": "Kirjautuminen | Vahvistuskoodi",
   "login_header": "Kirjaudu sisään",
   "email_label": "Sähköpostiosoite",
@@ -45,17 +54,11 @@
   "back_btn": "Palaa takaisin",
   "error_login": "Sähköposti tai salasana on väärin.",
   "error_code": "Väärä vahvistuskoodi.",
-
-
-
-  "COMMENTTI": "SUCCESS.HTML",
   "payment_success_header": "Maksu onnistui!",
   "payment_thanks": "Kiitos tilauksestasi Eduko-verkkokaupasta.",
   "order_number_label": "Tilausnro",
   "payment_confirmation_info": "Vahvistus on lähetetty sähköpostiisi. Voit nyt sulkea tämän sivun tai palata takaisin etusivulle.",
   "back_to_home_btn": "Palaa etusivulle",
-
-  "COMMENTTI": "TIETOA_MEISTA.HTML",
   "about_intro_1": "Eduko-verkkokauppa on Kouvolan Ammattiopiston opiskelijoiden toteuttama oppimisympäristö, jossa yhdistyvät käytännönläheinen tekeminen, vastuullinen kaupankäynti ja digitaalinen osaaminen.",
   "about_intro_2": "Sivusto toimii osana opiskelijoiden projekteja ja antaa mahdollisuuden harjoitella verkkokaupan, asiakaspalvelun ja IT-järjestelmien käyttöä aidon kaltaisessa ympäristössä.",
   "about_card_1_title": "Oppimisympäristö",

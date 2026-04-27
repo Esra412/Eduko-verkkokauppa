@@ -69,21 +69,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const categoryId = pathParts[pathParts.length - 1];
 
     const kategoriat = {
-        '1': 'Ajoneuvoala',
-        '2': 'Hius- ja kauneudenhoito',
-        '3': 'Kone- ja metalliala',
-        '4': 'Logistiikka',
-        '5': 'Prosessi- ja laboratorio',
-        '6': 'Turvallisuusala',
-        '7': 'Rakennus',
-        '8': 'Ravintola',
-        '9': 'Sahko ja automaatio',
-        '10': 'Sosiaali- ja terveysala',
-        '11': 'IT-ala'
+        '1': 'cat_auto',
+        '2': 'cat_beauty',
+        '3': 'cat_metal',
+        '4': 'cat_logistics',
+        '5': 'cat_lab',
+        '6': 'cat_security',
+        '7': 'cat_construction',
+        '8': 'cat_restaurant',
+        '9': 'cat_electric',
+        '10': 'cat_health',
+        '11': 'cat_ict'
     };
 
     if (kategoriat[categoryId] && categoryTitle) {
-        categoryTitle.innerText = kategoriat[categoryId];
+        categoryTitle.innerText = typeof t === 'function' ? t(kategoriat[categoryId]) : kategoriat[categoryId];
     }
 
     // --- 3. Tuotteiden piirtaminen sivulle ---
@@ -121,6 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const addCartText = typeof t === 'function' ? t('add_to_cart') : 'Lisää koriin';
         products.forEach(product => {
             const card = document.createElement('div');
             card.className = 'product-card';
@@ -141,8 +142,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             data-name="${product.name}"
                             data-price="${product.price}"
                             data-image="${resolveImageSrc(product.image)}"
+                            data-i18n="add_to_cart"
                             type="button">
-                            Lisaa koriin
+                            ${addCartText}
                         </button>
                     </div>
                 </div>
@@ -216,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 const originalText = button.innerText;
-                button.innerText = 'Lisatty! ✓';
+                button.innerText = 'Lisätty! ✓';
                 button.style.background = '#28a745';
                 button.disabled = true;
 
@@ -248,12 +250,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 6. Hakutoiminto ---
     const suoritaHaku = () => {
         const term = searchInput.value.trim();
+        const currentLang = getCurrentLanguage();
         if (term.length > 0) {
-            categoryTitle.innerText = `Haun tulokset: "${term}"`;
-            fetch(`/verkkokauppa/api/search?q=${encodeURIComponent(term)}`)
+            const label = typeof t === 'function' ? t('search_results_title') : 'Haun tulokset';
+            categoryTitle.innerText = `${label}: "${term}"`;
+            fetch(`/verkkokauppa/api/search?q=${encodeURIComponent(term)}&lang=${encodeURIComponent(currentLang)}`)
                 .then(res => res.json())
                 .then(products => renderProducts(products))
                 .catch(err => console.error('Hakuvirhe:', err));
+        } else {
+            loadCategoryProducts();
         }
     };
 
@@ -266,6 +272,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.addEventListener('languageChanged', () => {
         console.log('Kieli muuttui kategorian sivulla - ladataan tuotteet uudelleen');
+        if (kategoriat[categoryId] && categoryTitle) {
+            categoryTitle.innerText = typeof t === 'function' ? t(kategoriat[categoryId]) : kategoriat[categoryId];
+        }
         loadCategoryProducts();
     });
 });

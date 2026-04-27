@@ -52,6 +52,18 @@ function t(key) {
 }
 
 /**
+ * Hae lipun emoji valitun kielen perusteella
+ */
+function getFlagEmoji(lang) {
+    const flags = {
+        fi: '🇫🇮',
+        en: '🇬🇧',
+        sv: '🇸🇪'
+    };
+    return flags[lang] || '🇫🇮';
+}
+
+/**
  * Kielivalikon (custom select) toiminnallisuus
  */
 function setupCustomSelect() {
@@ -69,7 +81,7 @@ function setupCustomSelect() {
     options.forEach(option => {
         option.addEventListener("click", function() {
             const lang = this.getAttribute("data-value");
-            selected.innerHTML = this.innerHTML;
+            selected.innerHTML = getFlagEmoji(lang) + ' ' + lang.toUpperCase();
             applyLanguage(lang);
             optionsContainer.classList.add("select-hide");
         });
@@ -88,13 +100,9 @@ function initLanguage() {
     applyLanguage(savedLang);
 
     // Päivitetään valikon teksti vastaamaan tallennettua kieltä
-    const optionsContainer = document.getElementById("lang-options");
     const selected = document.getElementById("selected-lang");
-    
-    if (optionsContainer && selected) {
-        const activeOption = Array.from(optionsContainer.querySelectorAll("div"))
-                                  .find(opt => opt.dataset.value === savedLang);
-        if (activeOption) selected.innerHTML = activeOption.innerHTML;
+    if (selected) {
+        selected.innerHTML = getFlagEmoji(savedLang) + ' ' + savedLang.toUpperCase();
     }
 
     setupCustomSelect();

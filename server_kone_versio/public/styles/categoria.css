@@ -45,9 +45,9 @@ body {
 .header-actions-mobile { display: flex; align-items: center; gap: 15px; }
 .header-right { display: flex; align-items: center; }
 .language-selector { position: relative; cursor: pointer; background: #f4f1ea; padding: 8px 12px; border-radius: 5px; z-index: 999; }
-#selected-lang { font-weight: 600; }
+#selected-lang { font-weight: 600; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
 #lang-options { position: absolute; top: 100%; right: 0; background: white; border: 1px solid #ddd; border-radius: 5px; min-width: 100px; box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
-#lang-options div { padding: 8px 10px; }
+#lang-options div { padding: 8px 10px; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
 #lang-options div:hover { background: #f4f1ea; }
 .select-hide { display: none; }
 
