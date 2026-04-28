@@ -11,6 +11,22 @@
     --border: #e0ddd5;
 }
 
+html,
+body {
+    min-height: 100%;
+    overflow-y: scroll;
+}
+
+html {
+    scroll-behavior: smooth;
+    scrollbar-gutter: stable;
+}
+
+body {
+    width: 100%;
+    overflow-x: hidden;
+}
+
 * {
     box-sizing: border-box;
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;

@@ -258,14 +258,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     stock: maxStock,
                     quantity: 1
                 });
-                alert('Tuote lisatty koriin!');
+                alert('Tuote lis\u00E4tty koriin!');
             }
 
             localStorage.setItem('eduko_cart', JSON.stringify(cart));
             updateCartBadge();
             document.dispatchEvent(new Event('cartUpdated'));
 
-            buyBtn.innerText = typeof t === 'function' ? t('added_btn') : 'Lisätty!';
+            buyBtn.innerText = typeof t === 'function' ? t('added_btn') : 'Lis\u00E4tty!';
             buyBtn.style.background = '#28a745';
 
             setTimeout(() => {
@@ -318,18 +318,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     stock: maxStock,
                     quantity: 1
                 });
-                alert('Tuote lisatty koriin!');
+                alert('Tuote lis\u00E4tty koriin!');
             }
 
             localStorage.setItem('eduko_cart', JSON.stringify(cart));
             updateCartBadge();
             document.dispatchEvent(new Event('cartUpdated'));
 
-            mobileBuyBtn.innerText = typeof t === 'function' ? t('added_btn') : 'Lisätty!';
+            mobileBuyBtn.innerText = typeof t === 'function' ? t('added_btn') : 'Lis\u00E4tty!';
             mobileBuyBtn.style.background = '#28a745';
 
             setTimeout(() => {
-                mobileBuyBtn.innerText = typeof t === 'function' ? t('add_to_cart') : 'Lisää koriin';
+                mobileBuyBtn.innerText = typeof t === 'function' ? t('add_to_cart') : 'Lis\u00E4\u00E4 koriin';
                 mobileBuyBtn.style.background = '';
             }, 2000);
         });

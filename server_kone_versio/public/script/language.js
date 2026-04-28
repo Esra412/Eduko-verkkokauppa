@@ -1,8 +1,8 @@
 // Global variable for translations
 let translations = {};
-const languageBasePath = window.location.pathname.startsWith('/verkkokauppa')
-    ? '/verkkokauppa/lang'
-    : '/lang';
+const routeBasePath = window.location.pathname.startsWith('/verkkokauppa') ? '/verkkokauppa' : '';
+const languageBasePath = `${routeBasePath}/lang`;
+const flagBasePath = `${routeBasePath}/images/flags`;
 
 function getCurrentLanguage() {
     return localStorage.getItem('language') || 'fi';
@@ -11,24 +11,29 @@ function getCurrentLanguage() {
 async function applyLanguage(lang) {
     try {
         const res = await fetch(`${languageBasePath}/${lang}.json`);
-        if (!res.ok) throw new Error('Kaannostiedostoa ei loytynyt');
+        if (!res.ok) throw new Error('Käännöstiedostoa ei löytynyt');
 
         translations = await res.json();
 
         document.querySelectorAll('[data-i18n]').forEach((el) => {
             const key = el.dataset.i18n;
-            if (translations[key]) el.textContent = translations[key];
+            if (translations.hasOwnProperty(key)) {
+                el.textContent = translations[key];
+            }
         });
 
         document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
             const key = el.dataset.i18nPlaceholder;
-            if (translations[key]) el.placeholder = translations[key];
+            if (translations.hasOwnProperty(key)) {
+                el.placeholder = translations[key];
+            }
         });
 
+        document.documentElement.lang = lang;
         localStorage.setItem('language', lang);
         document.dispatchEvent(new Event('languageChanged'));
     } catch (err) {
-        console.error('Kielen lataus epaonnistui:', err);
+        console.error('Kielen lataus epäonnistui:', err);
     }
 }
 
@@ -38,9 +43,9 @@ function t(key) {
 
 function getLanguageMeta(lang) {
     const languages = {
-        fi: { code: 'FI', label: 'Suomi', flagSrc: '/verkkokauppa/images/flags/fi.svg' },
-        en: { code: 'EN', label: 'Englanti', flagSrc: '/verkkokauppa/images/flags/gb.svg' },
-        sv: { code: 'SV', label: 'Ruotsi', flagSrc: '/verkkokauppa/images/flags/se.svg' }
+        fi: { code: 'FI', label: 'Suomi', flagSrc: `${flagBasePath}/fi.svg` },
+        en: { code: 'EN', label: 'Englanti', flagSrc: `${flagBasePath}/gb.svg` },
+        sv: { code: 'SV', label: 'Ruotsi', flagSrc: `${flagBasePath}/se.svg` }
     };
 
     return languages[lang] || languages.fi;

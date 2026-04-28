@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const addCartText = typeof t === 'function' ? t('add_to_cart') : 'Lisää koriin';
+        const addCartText = typeof t === 'function' ? t('add_to_cart') : 'Lis\u00E4\u00E4 koriin';
         products.forEach(product => {
             const card = document.createElement('div');
             card.className = 'product-card';

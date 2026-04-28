@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const addCartText = typeof t === 'function' ? t('add_to_cart') : 'Lisää ostoskoriin';
+        const addCartText = typeof t === 'function' ? t('add_to_cart') : 'Lis\u00E4\u00E4 ostoskoriin';
         products.forEach((product) => {
             grid.innerHTML += `
                 <div class="product-card" data-product-id="${product.id}" data-stock="${product.stock || 0}" style="cursor: pointer;">
@@ -400,7 +400,7 @@ function loadProducts() {
                     return;
                 }
 
-                const addCartText = typeof t === 'function' ? t('add_to_cart') : 'Lisää ostoskoriin';
+                const addCartText = typeof t === 'function' ? t('add_to_cart') : 'Lis\u00E4\u00E4 ostoskoriin';
                 products.forEach((product) => {
                     grid.innerHTML += `
                         <div class="product-card" data-product-id="${product.id}" data-stock="${product.stock || 0}" style="cursor: pointer;">
@@ -440,7 +440,7 @@ function loadProducts() {
                 return;
             }
 
-            const addCartText = typeof t === 'function' ? t('add_to_cart') : 'Lisää ostoskoriin';
+            const addCartText = typeof t === 'function' ? t('add_to_cart') : 'Lis\u00E4\u00E4 ostoskoriin';
             products.forEach((product) => {
                 grid.innerHTML += `
                     <div class="product-card" data-product-id="${product.id}" data-stock="${product.stock || 0}" style="cursor: pointer;">
