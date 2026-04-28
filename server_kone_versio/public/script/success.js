@@ -168,7 +168,7 @@ function buildPdf(orderDetails) {
 
     pdf.setFontSize(12);
     pdf.text('Tilausvahvistus / kuitti', 50, 95);
-    pdf.text(`Paivamaara: ${createdAtText}`, 50, 110);
+    pdf.text(`Päivämäärä: ${createdAtText}`, 50, 110);
     pdf.text(`Tilausnumero: ${orderDetails.id || '-'}`, 50, 125);
 
     pdf.setTextColor(34, 34, 34);
@@ -179,7 +179,7 @@ function buildPdf(orderDetails) {
     pdf.setFont('helvetica', 'normal');
     pdf.setFontSize(11);
     pdf.text(`Nimi: ${orderDetails.customer_name || '-'}`, 50, 192);
-    pdf.text(`Sahkoposti: ${orderDetails.customer_email || '-'}`, 50, 208);
+    pdf.text(`Sähköposti: ${orderDetails.customer_email || '-'}`, 50, 208);
     pdf.text(`Puhelin: ${orderDetails.customer_phone || '-'}`, 50, 224);
     drawWrappedText(pdf, `Osoite: ${formatAddress(orderDetails)}`, 50, 240, 470, 14);
 
@@ -206,13 +206,13 @@ function buildPdf(orderDetails) {
 
         pdf.setFont('helvetica', 'normal');
         pdf.setFontSize(10);
-        pdf.text(`Maara: ${quantity} kpl`, 50, textY + 6);
+        pdf.text(`Määrä: ${quantity} kpl`, 50, textY + 6);
         pdf.text(`Hinta / kpl: ${formatPrice(price)}`, 160, textY + 6);
-        pdf.text(`Yhteensa: ${formatPrice(lineTotal)}`, 320, textY + 6);
+        pdf.text(`Yhteensä: ${formatPrice(lineTotal)}`, 320, textY + 6);
 
         textY = drawWrappedText(
             pdf,
-            `Vastuuhenkilo: ${responsible.nimi || 'Eduko Asiakaspalvelu'}`,
+            `Vastuuhenkilö: ${responsible.nimi || 'Eduko Asiakaspalvelu'}`,
             50,
             textY + 24,
             470,
@@ -220,7 +220,7 @@ function buildPdf(orderDetails) {
         );
         textY = drawWrappedText(
             pdf,
-            `Sahkoposti: ${responsible.email || '-'}`,
+            `Sähköposti: ${responsible.email || '-'}`,
             50,
             textY,
             470,
@@ -252,7 +252,7 @@ function buildPdf(orderDetails) {
     pdf.setFontSize(10);
     drawWrappedText(
         pdf,
-        'Tuotteiden noudosta sovitaan kuitissa nimetyn vastuuhenkilon kanssa.',
+        'Tuotteiden noudosta sovitaan kuitissa nimetyn vastuuhenkilön kanssa.',
         50,
         cursorY + 50,
         470,

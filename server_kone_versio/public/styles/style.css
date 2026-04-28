@@ -59,7 +59,7 @@ body {
     padding: 0 20px;
 }
 
-.logo { display: flex; flex-direction: column; text-decoration: none; }
+.logo { display: flex; flex-direction: column; text-decoration: none; margin-left: -90px; /* //muokkaa */ }
 .eduko-text { font-size: 32px; font-weight: 900; letter-spacing: -1px; color: var(--eduko-dark); }
 .eduko-text span { color: var(--eduko-gold); }
 .logo small { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-top: -5px; color: var(--eduko-dark); }
