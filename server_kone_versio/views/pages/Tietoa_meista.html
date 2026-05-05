@@ -3,6 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        (function () {
+            try {
+                var savedLang = localStorage.getItem('language') || 'fi';
+                document.documentElement.lang = savedLang;
+                document.documentElement.classList.add(savedLang !== 'fi' ? 'i18n-pending' : 'i18n-ready');
+            } catch (err) {}
+        })();
+    </script>
+    <style>
+        html.i18n-pending body {
+            visibility: hidden;
+        }
+    </style>
     <title>Tietoa meistä</title>
     <link rel="stylesheet" href="/verkkokauppa/styles/Tietoa_meista.css">
     <link rel="stylesheet" href="/verkkokauppa/styles/style.css">
@@ -61,7 +75,6 @@
 </nav>
 
 <main class="about-section">
-
     <section class="about-hero">
         <h1 data-i18n="about_us">Tietoa meistä</h1>
         <p data-i18n="about_intro_1">
@@ -77,7 +90,6 @@
     </section>
 
     <section class="about-grid">
-
         <div class="about-card">
             <h3>🎓 <span data-i18n="about_card_1_title">Oppimisympäristö</span></h3>
             <p data-i18n="about_card_1_text">
@@ -113,57 +125,11 @@
                 kaupankäynnin harjoitteluun.
             </p>
         </div>
-
     </section>
-
 </main>
 
 <script src="/verkkokauppa/script/language.js"></script>
 <script src="/verkkokauppa/script/script.js"></script>
-<script>
-    // Lisäksi kielivalikko erityisesti tälle sivulle
-    document.addEventListener('DOMContentLoaded', () => {
-        // Lataa kieleen tallennettu kieli
-        applyLanguage(getCurrentLanguage());
-
-        // Kielivalikko
-        const selectedLang = document.getElementById('selected-lang');
-        const langOptions = document.getElementById('lang-options');
-        const langButtons = document.querySelectorAll('#lang-options div[data-value]');
-
-        if (selectedLang && langOptions) {
-            selectedLang.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                const isHidden = langOptions.classList.contains('select-hide');
-                if (isHidden) {
-                    langOptions.classList.remove('select-hide');
-                } else {
-                    langOptions.classList.add('select-hide');
-                }
-            });
-
-            langButtons.forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    const lang = this.dataset.value;
-                    applyLanguage(lang);
-                    selectedLang.textContent = this.textContent;
-                    langOptions.classList.add('select-hide');
-                });
-            });
-
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.language-selector')) {
-                    langOptions.classList.add('select-hide');
-                }
-            });
-        }
-    });
-</script>
 
 </body>
 </html>

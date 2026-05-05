@@ -4,6 +4,11 @@ const routeBasePath = window.location.pathname.startsWith('/verkkokauppa') ? '/v
 const languageBasePath = `${routeBasePath}/lang`;
 const flagBasePath = `${routeBasePath}/images/flags`;
 
+function markLanguageReady() {
+    document.documentElement.classList.remove('i18n-pending');
+    document.documentElement.classList.add('i18n-ready');
+}
+
 function getCurrentLanguage() {
     return localStorage.getItem('language') || 'fi';
 }
@@ -11,7 +16,7 @@ function getCurrentLanguage() {
 async function applyLanguage(lang) {
     try {
         const res = await fetch(`${languageBasePath}/${lang}.json`);
-        if (!res.ok) throw new Error('Käännöstiedostoa ei löytynyt');
+        if (!res.ok) throw new Error('Kaannostiedostoa ei loytynyt');
 
         translations = await res.json();
 
@@ -31,9 +36,11 @@ async function applyLanguage(lang) {
 
         document.documentElement.lang = lang;
         localStorage.setItem('language', lang);
+        markLanguageReady();
         document.dispatchEvent(new Event('languageChanged'));
     } catch (err) {
-        console.error('Kielen lataus epäonnistui:', err);
+        console.error('Kielen lataus epaonnistui:', err);
+        markLanguageReady();
     }
 }
 

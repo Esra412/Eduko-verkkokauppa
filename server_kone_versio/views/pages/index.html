@@ -3,6 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        (function () {
+            try {
+                var savedLang = localStorage.getItem('language') || 'fi';
+                document.documentElement.lang = savedLang;
+                document.documentElement.classList.add(savedLang !== 'fi' ? 'i18n-pending' : 'i18n-ready');
+            } catch (err) {}
+        })();
+    </script>
+    <style>
+        html.i18n-pending body {
+            visibility: hidden;
+        }
+    </style>
     <title>Eduko - verkkokauppa</title>
     <link rel="stylesheet" href="/verkkokauppa/styles/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -102,18 +116,21 @@
 <div id="cart-modal" class="cart-modal hidden">
     <div class="cart-content">
         <div class="cart-header">
-            <h2>Ostoskori</h2>
+            <h2 data-i18n="cart_title">Ostoskori</h2>
             <button id="close-cart" type="button">&times;</button>
         </div>
         <div id="cart-items-list">
-            <p class="empty-msg">Korisi on tyhjä.</p>
+            <p class="empty-msg" data-i18n="cart_empty_message">Korisi on tyhjä.</p>
         </div>
         <div class="cart-footer">
             <div class="total-row">
-                <span>Yhteensä:</span>
+                <span data-i18n="total_label">Yhteensä:</span>
                 <span id="cart-total">0.00 €</span>
             </div>
-            <button class="checkout-btn" id="go-to-checkout" type="button">Kassalle</button>
+            <div class="cart-footer-buttons">
+                <button class="checkout-btn clear-cart-btn" id="clear-cart-btn" type="button" data-i18n="clear_cart">Tyhjennä ostoskori</button>
+                <button class="checkout-btn" id="go-to-checkout" type="button" data-i18n="checkout_btn">Kassalle</button>
+            </div>
         </div>
     </div>
 </div>

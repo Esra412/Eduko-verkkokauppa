@@ -175,6 +175,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const clearCartBtn = document.getElementById('clear-cart-btn');
+    if (clearCartBtn) {
+        clearCartBtn.addEventListener('click', () => {
+            if (confirm(typeof t === 'function' ? t('confirm_clear_cart') : 'Haluatko varmasti tyhjentää ostoskorin?')) {
+                clearCart();
+            }
+        });
+    }
+
     window.addEventListener('click', (e) => {
         if (e.target === cartModal) {
             cartModal.classList.add('hidden');
@@ -198,7 +207,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const image = card.querySelector('img')?.src || '/verkkokauppa/images/edukosmall.png';
                 const stock = parseInt(card.dataset.stock, 10) || 0;
 
-                addToCart(productId, name, price, image, stock);
+                addToCart(productId, name, price, image, stock, {
+                    showToastNotification: false,
+                    buttonElement: addButton
+                });
                 return;
             }
 
@@ -244,14 +256,15 @@ function getCartItemCount() {
     return cart.reduce((sum, item) => sum + (Number(item.quantity) || 1), 0);
 }
 
-function addToCart(productId, name, price, image, stock) {
+function addToCart(productId, name, price, image, stock, options = {}) {
+    const { showToastNotification = true, buttonElement = null } = options;
     const cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
     const existingItem = cart.find((item) => item.id == productId);
     const currentQuantity = existingItem ? (existingItem.quantity || 1) : 0;
 
     if (currentQuantity >= stock) {
         showToast(`Tuote "${name}" on loppunut varastosta. Varastosaldo: ${stock} kpl`, 'error');
-        return;
+        return false;
     }
 
     if (existingItem) {
@@ -280,8 +293,24 @@ function addToCart(productId, name, price, image, stock) {
         }, 600);
     }
 
-    // Näytä toast notification
-    showToast(`✓ ${name} lisätty koriin`, 'success');
+    if (buttonElement) {
+        const originalText = buttonElement.innerText;
+        buttonElement.innerText = 'Lisätty! ✓';
+        buttonElement.disabled = true;
+        buttonElement.style.background = '#28a745';
+
+        setTimeout(() => {
+            buttonElement.innerText = originalText;
+            buttonElement.disabled = false;
+            buttonElement.style.background = '';
+        }, 1500);
+    }
+
+    if (showToastNotification) {
+        showToast(`✓ ${name} lisätty koriin`, 'success');
+    }
+
+    return true;
 }
 
 function updateQuantity(index, change) {
@@ -300,8 +329,8 @@ function updateQuantity(index, change) {
 
     const maxStock = item.stock || 0;
     if (newQuantity > maxStock) {
-        alert(`Maksimissaan ${maxStock} kpl saatavilla.`);
-        return;
+            const maxStockText = typeof t === 'function' ? t('cart_max_stock_message').replace('{count}', maxStock) : `Maksimissaan ${maxStock} kpl saatavilla.`;
+            alert(maxStockText);
     }
 
     item.quantity = newQuantity;
@@ -315,6 +344,13 @@ function removeFromCart(index) {
     const cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
     cart.splice(index, 1);
     localStorage.setItem('eduko_cart', JSON.stringify(cart));
+    updateCartUI();
+    renderCart();
+    document.dispatchEvent(new Event('cartUpdated'));
+}
+
+function clearCart() {
+    localStorage.setItem('eduko_cart', JSON.stringify([]));
     updateCartUI();
     renderCart();
     document.dispatchEvent(new Event('cartUpdated'));
@@ -337,10 +373,15 @@ function renderCart() {
     let total = 0;
 
     if (cart.length === 0) {
-        list.innerHTML = '<p class="empty-msg">Korisi on tyhjä.</p>';
+        list.innerHTML = `<p class="empty-msg">${typeof t === 'function' ? t('cart_empty_message') : 'Korisi on tyhjä.'}</p>`;
         totalEl.innerText = '0.00 €';
+        const clearCartBtn = document.getElementById('clear-cart-btn');
+        if (clearCartBtn) clearCartBtn.disabled = true;
         return;
     }
+
+    const clearCartBtn = document.getElementById('clear-cart-btn');
+    if (clearCartBtn) clearCartBtn.disabled = false;
 
     cart.forEach((item, index) => {
         const price = parseFloat(item.price);
@@ -362,7 +403,7 @@ function renderCart() {
                 </div>
                 <div style="text-align: right;">
                     <div style="font-weight: bold;">${itemTotal.toFixed(2)} €</div>
-                    <button onclick="removeFromCart(${index})" class="remove-item-btn" style="background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-top: 5px; font-size: 0.85rem;">
+                    <button onclick="removeFromCart(${index})" class="remove-btn" style="background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-top: 5px; font-size: 0.85rem;">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>

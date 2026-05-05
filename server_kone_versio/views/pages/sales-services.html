@@ -3,6 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        (function () {
+            try {
+                var savedLang = localStorage.getItem('language') || 'fi';
+                document.documentElement.lang = savedLang;
+                document.documentElement.classList.add(savedLang !== 'fi' ? 'i18n-pending' : 'i18n-ready');
+            } catch (err) {}
+        })();
+    </script>
+    <style>
+        html.i18n-pending body {
+            visibility: hidden;
+        }
+    </style>
     <title>Myyntipalvelut - Eduko Verkkokauppa</title>
     <link rel="stylesheet" href="/verkkokauppa/styles/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -63,11 +77,11 @@
 <div class="layout-container">
     <main class="content" style="grid-column: 1 / -1; text-align: center; padding: 80px 20px;">
         <div class="construction-notice" style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 40px; max-width: 600px; margin: 0 auto;">
-            <h1 style="color: #333; margin-bottom: 20px;">Sivu on vielä muokkauksella</h1>
-            <p style="font-size: 18px; color: #555; margin-bottom: 30px;">
+            <h1 style="color: #333; margin-bottom: 20px;" data-i18n="page_under_construction_title">Sivu on vielä muokkauksella</h1>
+            <p style="font-size: 18px; color: #555; margin-bottom: 30px;" data-i18n="page_under_construction_text">
                 Tämä sivu on parhaillaan kehitteillä. Tulemme takaisin pian lisätyllä sisällöllä.
             </p>
-            <a href="/verkkokauppa/" class="btn-primary" style="display: inline-block; padding: 12px 30px; text-decoration: none;">
+            <a href="/verkkokauppa/" class="btn-primary" style="display: inline-block; padding: 12px 30px; text-decoration: none;" data-i18n="back_to_main_page">
                 Palaa pääsivulle
             </a>
         </div>

@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if (typeof addToCart === 'function') {
-                    addToCart(productId, name, price, image, stock);
+                    addToCart(productId, name, price, image, stock, { showToastNotification: false });
                 } else {
                     let cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
                     const existingItem = cart.find(item => item.id == productId);

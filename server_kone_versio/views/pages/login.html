@@ -3,6 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        (function () {
+            try {
+                var savedLang = localStorage.getItem('language') || 'fi';
+                document.documentElement.lang = savedLang;
+                document.documentElement.classList.add(savedLang !== 'fi' ? 'i18n-pending' : 'i18n-ready');
+            } catch (err) {}
+        })();
+    </script>
+    <style>
+        html.i18n-pending body {
+            visibility: hidden;
+        }
+    </style>
     <title data-i18n="login_title">Kirjautuminen | Vahvistuskoodi</title>
     <link rel="stylesheet" href="/verkkokauppa/styles/login.css">
     <link rel="icon" href="/verkkokauppa/images/edukosmall.png" type="image/png">
