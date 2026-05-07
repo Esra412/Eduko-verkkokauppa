@@ -47,6 +47,7 @@
   "remove_item": "Remove",
   "product_stock_fetch_error": "Error fetching product details. Please try again.",
   "cart_max_stock_message": "Maximum {count} items available.",
+  "invalid_quantity": "Invalid quantity. Please enter a positive whole number.",
   "server_error_try_again": "Connection error. Please try again.",
   "checkout_btn": "Checkout",
   "cart_page_title": "Shopping Cart - Eduko",
@@ -90,8 +91,9 @@
   "about_card_3_title": "Student Work",
   "about_card_3_text": "The website is designed and created by students. It includes experts from various educational fields such as software development, electrical, logistics, and media.",
   "about_card_4_title": "Collaboration",
-  "about_card_4_text": "We collaborate with teachers and various educational sectors. The goal is to create a realistic and safe platform for practicing commerce."
-  ,
+  "about_card_4_text": "We collaborate with teachers and various educational sectors. The goal is to create a realistic and safe platform for practicing commerce.",
+  "about_banner_title": "Connecting education and practical work",
+  "about_banner_text": "Eduko Online Store provides students with an authentic digital learning environment where customer experience, product presentation, and logistics work together as one.",
   "page_under_construction_title": "This page is still under construction",
   "page_under_construction_text": "This page is currently being developed. We will be back soon with more content.",
   "back_to_main_page": "Back to the main page"

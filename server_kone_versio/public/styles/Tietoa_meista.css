@@ -189,6 +189,7 @@ body {
 .about-hero p {
     font-size: 17px;
     max-width: 800px;
+    color: var(--text-main);
 }
 
 .about-grid {
@@ -221,20 +222,28 @@ body {
 
 /* --- INFO-BANNER --- */
 .info-banner {
-    background: var(--eduko-dark);
+    background: linear-gradient(135deg, rgba(176,160,120,0.95), rgba(51,51,51,0.95));
     color: white;
-    padding: 40px 20px;
+    padding: 40px 30px;
     text-align: center;
-    margin-top: 60px;
+    margin-top: 40px;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
 }
 
 .info-banner h2 {
-    margin: 0 0 10px;
+    margin: 0 0 14px;
+    font-size: 28px;
+    letter-spacing: 0.5px;
 }
 
 .info-banner p {
     margin: 0;
-    opacity: 0.9;
+    opacity: 0.92;
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.7;
 }
 
 

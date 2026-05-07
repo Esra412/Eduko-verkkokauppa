@@ -140,6 +140,28 @@ h2 {
     font-weight: bold;
 }
 
+.quantity-input {
+    width: 50px;
+    text-align: center;
+    border: none;
+    background: transparent;
+    font-weight: bold;
+    font-size: inherit;
+    padding: 2px;
+}
+
+.quantity-input:focus {
+    outline: 1px solid var(--gold);
+    border-radius: 2px;
+}
+
+.quantity-error {
+    color: red;
+    font-size: 0.85rem;
+    margin-top: 4px;
+    display: none;
+}
+
 /* =========================
    PRICE + REMOVE
 ========================= */

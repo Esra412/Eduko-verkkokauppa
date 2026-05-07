@@ -152,20 +152,42 @@ function setupLanguageButtons() {
 
 function setupImagePreview() {
     const mainInput = document.getElementById('mainImageInput');
+    const extraInput = document.getElementById('extraImagesInput');
     const preview = document.getElementById('imagePreview');
 
-    mainInput.onchange = () => {
+    const renderPreviews = () => {
         preview.innerHTML = "";
+
+        const files = [];
         if (mainInput.files && mainInput.files[0]) {
+            files.push({ file: mainInput.files[0], label: 'Pääkuva' });
+        }
+        if (extraInput.files && extraInput.files.length > 0) {
+            for (let i = 0; i < extraInput.files.length; i++) {
+                files.push({ file: extraInput.files[i], label: `Lisäkuva ${i + 1}` });
+            }
+        }
+
+        files.forEach(({ file, label }) => {
             const reader = new FileReader();
             reader.onload = (e) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'preview-image-wrapper';
+                const caption = document.createElement('div');
+                caption.className = 'preview-image-label';
+                caption.innerText = label;
                 const img = document.createElement('img');
                 img.src = e.target.result;
-                preview.appendChild(img);
+                wrapper.appendChild(img);
+                wrapper.appendChild(caption);
+                preview.appendChild(wrapper);
             };
-            reader.readAsDataURL(mainInput.files[0]);
-        }
+            reader.readAsDataURL(file);
+        });
     };
+
+    mainInput.onchange = renderPreviews;
+    extraInput.onchange = renderPreviews;
 }
 
 /* =================================================
@@ -460,6 +482,14 @@ document.getElementById('addProductForm').onsubmit = async (e) => {
     const mainImageFile = document.getElementById('mainImageInput').files[0];
     if (mainImageFile) {
         formData.append('mainImage', mainImageFile);
+    }
+
+    // Lisätään kaikki valitut lisäkuvat
+    const extraImageFiles = document.getElementById('extraImagesInput').files;
+    if (extraImageFiles && extraImageFiles.length > 0) {
+        for (let i = 0; i < extraImageFiles.length; i++) {
+            formData.append('extraImages', extraImageFiles[i]);
+        }
     }
 
     try {

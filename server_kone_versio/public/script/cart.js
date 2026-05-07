@@ -55,9 +55,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         <p>${price.toFixed(2)} €</p>
                         <div class="quantity-control">
                             <button class="quantity-btn decrease-btn" data-index="${index}">-</button>
-                            <span class="quantity-display" data-index="${index}">${quantity}</span>
+                            <input type="number" class="quantity-input" data-index="${index}" value="${quantity}" min="1" max="${item.stock || 999}">
                             <button class="quantity-btn increase-btn" data-index="${index}">+</button>
                         </div>
+                        <div class="quantity-error" data-error-index="${index}" style="display: none; color: red; font-size: 0.85rem; margin-top: 4px;"></div>
                     </div>
                     <div class="cart-item-price">
                         <p>${itemTotal.toFixed(2)} €</p>
@@ -104,6 +105,24 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
+        document.querySelectorAll('.quantity-input').forEach((input) => {
+            input.addEventListener('change', (e) => {
+                e.preventDefault();
+                const index = parseInt(input.dataset.index, 10);
+                const newQuantity = parseInt(input.value, 10);
+                setQuantity(index, newQuantity);
+            });
+            input.addEventListener('blur', (e) => {
+                // Reset to current value if invalid
+                const index = parseInt(input.dataset.index, 10);
+                const cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
+                const item = cart[index];
+                if (item) {
+                    input.value = item.quantity || 1;
+                }
+            });
+        });
+
         document.querySelectorAll('[data-remove-index]').forEach((btn) => {
             btn.addEventListener('click', () => {
                 removeItem(parseInt(btn.dataset.removeIndex, 10));
@@ -112,6 +131,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function updateQuantity(index, change) {
+        // Clear any previous error for this item
+        showQuantityError(index, '');
+
         const cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
         const item = cart[index];
         if (!item) return;
@@ -126,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (err) {
                 console.error('Virhe tuotteen varastosaldon haussa:', err);
                 const stockErrorText = typeof t === 'function' ? t('product_stock_fetch_error') : 'Virhe tuotteen tietojen haussa. Yritä uudelleen.';
-                alert(stockErrorText);
+                showQuantityError(index, stockErrorText);
                 return;
             }
         }
@@ -139,7 +161,63 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (newQuantity > maxStock) {
             const maxStockText = typeof t === 'function' ? t('cart_max_stock_message').replace('{count}', maxStock) : `Maksimissaan ${maxStock} kpl saatavilla.`;
-            alert(maxStockText);
+            showQuantityError(index, maxStockText);
+            return;
+        }
+
+        item.quantity = newQuantity;
+        cart[index] = item;
+        localStorage.setItem('eduko_cart', JSON.stringify(cart));
+        renderCart();
+        document.dispatchEvent(new Event('cartUpdated'));
+    }
+
+    function showQuantityError(index, message) {
+        const errorElement = document.querySelector(`[data-error-index="${index}"]`);
+        if (errorElement) {
+            if (message) {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            } else {
+                errorElement.style.display = 'none';
+                errorElement.textContent = '';
+            }
+        }
+    }
+
+    async function setQuantity(index, newQuantity) {
+        // Clear any previous error for this item
+        showQuantityError(index, '');
+
+        const cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
+        const item = cart[index];
+        if (!item) return;
+
+        // Validate input
+        if (isNaN(newQuantity) || newQuantity < 1) {
+            const invalidQuantityText = typeof t === 'function' ? t('invalid_quantity') : 'Virheellinen määrä. Anna positiivinen kokonaisluku.';
+            showQuantityError(index, invalidQuantityText);
+            return;
+        }
+
+        let maxStock = item.stock;
+        if (!maxStock) {
+            try {
+                const response = await fetch(`/verkkokauppa/api/products/${item.id}`);
+                const product = await response.json();
+                maxStock = product.stock || 0;
+                item.stock = maxStock;
+            } catch (err) {
+                console.error('Virhe tuotteen varastosaldon haussa:', err);
+                const stockErrorText = typeof t === 'function' ? t('product_stock_fetch_error') : 'Virhe tuotteen tietojen haussa. Yritä uudelleen.';
+                showQuantityError(index, stockErrorText);
+                return;
+            }
+        }
+
+        if (newQuantity > maxStock) {
+            const maxStockText = typeof t === 'function' ? t('cart_max_stock_message').replace('{count}', maxStock) : `Maksimissaan ${maxStock} kpl saatavilla.`;
+            showQuantityError(index, maxStockText);
             return;
         }
 

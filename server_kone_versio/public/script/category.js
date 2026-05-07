@@ -1,3 +1,18 @@
+/**
+ * Näytä toast notification
+ */
+function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast-notification');
+    if (!toast) return;
+
+    toast.textContent = message;
+    toast.className = `toast-notification ${type} show`;
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3500);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const grid = document.getElementById('product-grid');
     const categoryTitle = document.querySelector('.section-title');
@@ -196,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const currentQuantity = existingItem ? (existingItem.quantity || 1) : 0;
 
                     if (currentQuantity >= stock) {
-                        alert(`Tuote "${name}" on loppunut varastosta. Varastosaldo: ${stock} kpl`);
+                        showToast(`Tuote "${name}" on loppunut varastosta. Varastosaldo: ${stock} kpl`, 'error');
                         return;
                     }
 

@@ -47,6 +47,7 @@
   "remove_item": "Ta bort",
   "product_stock_fetch_error": "Fel vid hämtning av produktinformation. Försök igen.",
   "cart_max_stock_message": "Högst {count} artiklar tillgängliga.",
+  "invalid_quantity": "Ogiltig mängd. Ange ett positivt heltal.",
   "server_error_try_again": "Anslutningsfel. Försök igen.",
   "checkout_btn": "Till kassan",
   "cart_page_title": "Varukorg - Eduko",
@@ -90,8 +91,9 @@
   "about_card_3_title": "Studentarbete",
   "about_card_3_text": "Webbplatsen är designad och skapad av studenter. Det inkluderar experter från olika utbildningsområden såsom mjukvaruutveckling, el, logistik och media.",
   "about_card_4_title": "Samarbete",
-  "about_card_4_text": "Vi samarbetar med lärare och olika utbildningssektorer. Målet är att skapa en realistisk och säker plattform för att öva på handel."
-  ,
+  "about_card_4_text": "Vi samarbetar med lärare och olika utbildningssektorer. Målet är att skapa en realistisk och säker plattform för att öva på handel.",
+  "about_banner_title": "Vi förenar utbildning och praktik",
+  "about_banner_text": "Eduko Online Store ger studenter en autentisk digital lärmiljö där kundupplevelse, produktpresentation och logistik fungerar tillsammans som en helhet.",
   "page_under_construction_title": "Sidan är fortfarande under arbete",
   "page_under_construction_text": "Den här sidan håller just nu på att utvecklas. Vi kommer snart tillbaka med mer innehåll.",
   "back_to_main_page": "Tillbaka till startsidan"

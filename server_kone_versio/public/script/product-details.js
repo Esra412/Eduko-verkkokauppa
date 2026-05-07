@@ -1,3 +1,18 @@
+/**
+ * Näytä toast notification
+ */
+function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast-notification');
+    if (!toast) return;
+
+    toast.textContent = message;
+    toast.className = `toast-notification ${type} show`;
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3500);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
     const mainNav = document.getElementById('main-navigation');
@@ -59,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const vastuuhenkilot = {
         '1': { nimi: 'Matti Meikalainen', email: 'matti.ajoneuvo@eduko.fi', puh: '040 123 4567' },
         '2': { nimi: 'Sanni Suortuva', email: 'sanni.hius@eduko.fi', puh: '040 234 5678' },
-        '3': { nimi: 'Kalle Koneistaja', email: 'kalle.metalli@eduko.fi', puh: '040 345 6789' },
+        '3': { nimi: 'Esra Bagdat', email: 'esra07bagdat@gmail.com', puh: '040 345 6789' },
         '4': { nimi: 'Lauri Lastaus', email: 'lauri.logistiikka@eduko.fi', puh: '040 456 7890' },
         '5': { nimi: 'Paula Putki', email: 'paula.prosessi@eduko.fi', puh: '040 567 8901' },
         '6': { nimi: 'Teemu Turva', email: 'teemu.turva@eduko.fi', puh: '040 678 9012' },
@@ -179,8 +194,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (metaDiv) {
                     const stockLabel = typeof t === 'function' ? t('stock_label') : 'Varastossa';
                     const pickupLabel = typeof t === 'function' ? t('pickup_point_label') : 'Noutopiste';
+                    const remainingStock = getRemainingStock(product);
                     metaDiv.innerHTML = `
-                        <p><strong>${stockLabel}:</strong> ${product.stock || 0} kpl</p>
+                        <p><strong>${stockLabel}:</strong> ${remainingStock} kpl</p>
                         <p><strong>${pickupLabel}:</strong> ${product.pickup_point || 'Päärakennus'}</p>
                     `;
                 }
@@ -227,10 +243,58 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function getCartItemQuantity(productId) {
+        const cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
+        const existingItem = cart.find((item) => item.id == productId);
+        return existingItem ? Number(existingItem.quantity || 0) : 0;
+    }
+
+    function getRemainingStock(product) {
+        return Math.max(0, Number(product.stock) || 0);
+    }
+
+    function updateProductStockDisplay() {
+        if (!currentProductData) return;
+        const metaDiv = document.getElementById('product-meta');
+        if (!metaDiv) return;
+
+        const stockLabel = typeof t === 'function' ? t('stock_label') : 'Varastossa';
+        const pickupLabel = typeof t === 'function' ? t('pickup_point_label') : 'Noutopiste';
+        const remainingStock = getRemainingStock(currentProductData);
+
+        metaDiv.innerHTML = `
+            <p><strong>${stockLabel}:</strong> ${remainingStock} kpl</p>
+            <p><strong>${pickupLabel}:</strong> ${currentProductData.pickup_point || 'Päärakennus'}</p>
+        `;
+
+        const buyButtons = [document.querySelector('.buy-now-btn'), document.querySelector('.mobile-buy-btn')];
+        buyButtons.forEach((button) => {
+            if (!button) return;
+            if (remainingStock <= 0) {
+                button.disabled = true;
+                button.style.opacity = '0.6';
+                button.style.cursor = 'not-allowed';
+            } else {
+                button.disabled = false;
+                button.style.opacity = '';
+                button.style.cursor = '';
+            }
+        });
+    }
+
     updateCartBadge();
-    document.addEventListener('cartUpdated', updateCartBadge);
-    window.addEventListener('storage', updateCartBadge);
-    window.addEventListener('pageshow', updateCartBadge);
+    document.addEventListener('cartUpdated', () => {
+        updateCartBadge();
+        updateProductStockDisplay();
+    });
+    window.addEventListener('storage', () => {
+        updateCartBadge();
+        updateProductStockDisplay();
+    });
+    window.addEventListener('pageshow', () => {
+        updateCartBadge();
+        updateProductStockDisplay();
+    });
 
     const buyBtn = document.querySelector('.buy-now-btn');
     if (buyBtn) {
@@ -244,9 +308,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (existingItem) {
                 if (existingItem.quantity < maxStock) {
                     existingItem.quantity += 1;
-                    alert(`Maara paivitetty: ${existingItem.quantity} kpl`);
+                    showToast(`Määrä päivitetty: ${existingItem.quantity} kpl`, 'success');
                 } else {
-                    alert(`Maksimimaara (${maxStock} kpl) saavutettu!`);
+                    showToast(`Maksimimäärä (${maxStock} kpl) saavutettu!`, 'error');
                     return;
                 }
             } else {
@@ -258,11 +322,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     stock: maxStock,
                     quantity: 1
                 });
-                alert('Tuote lis\u00E4tty koriin!');
+                showToast('Tuote lisätty koriin!', 'success');
             }
 
             localStorage.setItem('eduko_cart', JSON.stringify(cart));
             updateCartBadge();
+            updateProductStockDisplay();
             document.dispatchEvent(new Event('cartUpdated'));
 
             buyBtn.innerText = typeof t === 'function' ? t('added_btn') : 'Lis\u00E4tty!';
@@ -299,14 +364,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (existingItem) {
                 if (existingItem.quantity < maxStock) {
                     existingItem.quantity += 1;
-                    alert(`Maara paivitetty: ${existingItem.quantity} kpl`);
+                    showToast(`Määrä päivitetty: ${existingItem.quantity} kpl`, 'success');
                 } else {
-                    alert(`Maksimimaara (${maxStock} kpl) saavutettu!`);
+                    showToast(`Maksimimäärä (${maxStock} kpl) saavutettu!`, 'error');
                     return;
                 }
             } else {
                 if (maxStock <= 0) {
-                    alert('Tuote ei ole saatavilla!');
+                    showToast('Tuote ei ole saatavilla!', 'error');
                     return;
                 }
 
@@ -318,11 +383,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     stock: maxStock,
                     quantity: 1
                 });
-                alert('Tuote lis\u00E4tty koriin!');
+                showToast('Tuote lisätty koriin!', 'success');
             }
 
             localStorage.setItem('eduko_cart', JSON.stringify(cart));
             updateCartBadge();
+            updateProductStockDisplay();
             document.dispatchEvent(new Event('cartUpdated'));
 
             mobileBuyBtn.innerText = typeof t === 'function' ? t('added_btn') : 'Lis\u00E4tty!';

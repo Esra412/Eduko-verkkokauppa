@@ -4,7 +4,7 @@ localStorage.removeItem('eduko_cart');
 const RESPONSIBLES = {
     '1': { nimi: 'Matti Meikalainen', email: 'matti.ajoneuvo@eduko.fi', puh: '040 123 4567' },
     '2': { nimi: 'Sanni Suortuva', email: 'sanni.hius@eduko.fi', puh: '040 234 5678' },
-    '3': { nimi: 'Kalle Koneistaja', email: 'kalle.metalli@eduko.fi', puh: '040 345 6789' },
+    '3': { nimi: 'Esra Bagdat', email: 'esra07bagdat@gmail.com', puh: '040 345 6789' },
     '4': { nimi: 'Lauri Lastaus', email: 'lauri.logistiikka@eduko.fi', puh: '040 456 7890' },
     '5': { nimi: 'Paula Putki', email: 'paula.prosessi@eduko.fi', puh: '040 567 8901' },
     '6': { nimi: 'Teemu Turva', email: 'teemu.turva@eduko.fi', puh: '040 678 9012' },

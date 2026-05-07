@@ -15,17 +15,9 @@ const PORT = process.env.PORT || 3000;
 
 // Vastuuhenkilöiden tiedot kategorioittain (ID on avain)
 const vastuuhenkilot = {
-    "1": { nimi: "Matti Meikäläinen", email: "matti.ajoneuvo@eduko.fi", puh: "040 123 4567" },
-    "2": { nimi: "Sanni Suortuva", email: "sanni.hius@eduko.fi", puh: "040 234 5678" },
-    "3": { nimi: "Kalle Koneistaja", email: "kalle.metalli@eduko.fi", puh: "040 345 6789" },
+    "3": { nimi: "Kalle Metalli", email: "kalle.metalli@eduko.fi", puh: "040 345 6789" },
     "4": { nimi: "Lauri Lastaus", email: "lauri.logistiikka@eduko.fi", puh: "040 456 7890" },
-    "5": { nimi: "Paula Putki", email: "paula.prosessi@eduko.fi", puh: "040 567 8901" },
-    "6": { nimi: "Teemu Turva", email: "teemu.turva@eduko.fi", puh: "040 678 9012" },
-    "7": { nimi: "Risto Rakentaja", email: "risto.raksa@eduko.fi", puh: "040 789 0123" },
-    "8": { nimi: "Keijo Kokki", email: "keijo.kokki@eduko.fi", puh: "040 890 1234" },
-    "9": { nimi: "Seppo Sähkö", email: "seppo.sahko@eduko.fi", puh: "040 901 2345" },
-    "10": { nimi: "Sari Sote", email: "sari.sote@eduko.fi", puh: "040 012 3456" },
-    "11": { nimi: "Iiro It", email: "iiro.it@eduko.fi", puh: "040 111 2222" }
+    "7": { nimi: "Risto Rakentaja", email: "risto.raksa@eduko.fi", puh: "040 789 0123" }
 };
 const oletusHenkilo = { nimi: "Eduko Asiakaspalvelu", email: "info@eduko.fi", puh: "020 61511" };
 
@@ -59,14 +51,41 @@ const PAYTRAIL_CONFIG = {
     apiEndpoint: 'https://services.paytrail.com'
 };
 
-function calculateHmac(secret, params, body = '') {
-    const hmacPayload = Object.keys(params)
+function calculateHmac(secret, params, body) {
+    const payloadLines = Object.keys(params)
         .sort()
-        .map((key) => `${key}:${params[key]}`)
-        .concat(body ? JSON.stringify(body) : '')
-        .join('\n');
+        .map((key) => `${key}:${params[key]}`);
 
-    return crypto.createHmac('sha256', secret).update(hmacPayload).digest('hex');
+    if (body !== undefined && body !== null) {
+        payloadLines.push(JSON.stringify(body));
+    }
+
+    return crypto.createHmac('sha256', secret).update(payloadLines.join('\n')).digest('hex');
+}
+
+async function verifyPaytrailPayment(stamp) {
+    const headers = {
+        'checkout-account': PAYTRAIL_CONFIG.merchantId,
+        'checkout-algorithm': 'sha256',
+        'checkout-method': 'GET',
+        'checkout-nonce': crypto.randomBytes(16).toString('hex'),
+        'checkout-timestamp': new Date().toISOString()
+    };
+    headers['checkout-signature'] = calculateHmac(PAYTRAIL_CONFIG.secret, headers);
+
+    try {
+        const response = await axios.get(`${PAYTRAIL_CONFIG.apiEndpoint}/payments/${encodeURIComponent(stamp)}`, {
+            headers
+        });
+        return response.data;
+    } catch (err) {
+        if (err.response) {
+            console.error('Paytrail verification response error:', err.response.status, err.response.data);
+            const message = err.response.data?.message || err.response.data?.status || err.response.status;
+            throw new Error(`Paytrail verify failed: ${message}`);
+        }
+        throw err;
+    }
 }
 
 // === JSON/URLencoded middlewaret VAIN tälle reitille ===
@@ -142,16 +161,99 @@ app.get(`/verkkokauppa/kori`, (req, res) => res.sendFile(path.join(__dirname, 'v
 async function handleSuccessPage(req, res) {
     const orderId = req.query.id;
 
-    db.query(`UPDATE orders SET status = 'Maksettu' WHERE id = ?`, [orderId], (err) => {
-        if (err) console.error("Tietokantavirhe (status):", err);
-    });
-
     db.query(`SELECT * FROM orders WHERE id = ?`, [orderId], async (err, results) => {
         if (err || results.length === 0) return res.sendFile(path.join(__dirname, 'views/pages/success.html'));
 
         const order = results[0];
         const items = JSON.parse(order.items);
         const itemIds = items.map(i => i.id);
+
+        let paymentConfirmed = false;
+        let paymentVerifyFallback = false;
+        try {
+            const paymentData = await verifyPaytrailPayment(orderId);
+            const paytrailStatus = paymentData?.status || paymentData?.payment?.status;
+            paymentConfirmed = paytrailStatus === 'PAID';
+            if (!paymentConfirmed) {
+                console.warn(`Paytrail-maksua ei vahvistettu tilaukselle ${orderId}. Status:`, paytrailStatus, paymentData);
+            }
+        } catch (verifyErr) {
+            const invalidTransaction = verifyErr.message?.includes('Invalid transaction ID') ||
+                verifyErr.message?.includes('400');
+            if (invalidTransaction) {
+                console.warn(`Paytrail-maksun vahvistus epäonnistui tilaukselle ${orderId} invalid transaction ID -virheestä. Käytetään fallback-päivitystä success-reitillä.`);
+                paymentVerifyFallback = true;
+            } else {
+                console.error(`Paytrail-maksun vahvistus epäonnistui tilaukselle ${orderId}:`, verifyErr?.message || verifyErr);
+            }
+        }
+
+        const shouldUpdateStock = (paymentConfirmed || paymentVerifyFallback) && order.status !== 'Maksettu';
+        if (shouldUpdateStock) {
+            db.query(`UPDATE orders SET status = 'Maksettu' WHERE id = ?`, [orderId], (updateErr) => {
+                if (updateErr) console.error("Tietokantavirhe (status):", updateErr);
+            });
+
+            // Vähennä stock määrät ja tarkista loppuminen
+            for (const item of items) {
+                const quantity = item.quantity || 1;
+                db.query(`UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?`, 
+                    [quantity, item.id, quantity], (stockErr, stockResult) => {
+                    if (stockErr) {
+                        console.error(`Virhe tuotteen ${item.id} stock päivityksessä:`, stockErr);
+                        return;
+                    }
+
+                    if (stockResult.affectedRows === 0) {
+                        console.warn(`Tuotteen ${item.id} stockia ei päivitetty, mahdollisesti varastoa ei riitä.`);
+                        return;
+                    }
+
+                    // Tarkista uusi stock määrä
+                    db.query(`SELECT stock, name_fi, category_id FROM products WHERE id = ?`, [item.id], async (stockCheckErr, stockResults) => {
+                        if (stockCheckErr || stockResults.length === 0) return;
+
+                        const newStock = stockResults[0].stock;
+                        const productName = stockResults[0].name_fi;
+                        const categoryId = stockResults[0].category_id;
+
+                        // Jos stock on 1 tai vähemmän, lähetä sähköposti vastuuhenkilölle
+                        if (newStock <= 1) {
+                            const v = vastuuhenkilot[String(categoryId)] || oletusHenkilo;
+                            try {
+                                await lahetin.sendMail({
+                                    from: '"Eduko Varastojärjestelmä" <kissakoira773@gmail.com>',
+                                    to: v.email,
+                                    subject: `TUOTE LOPPUMASSA - ${productName}`,
+                                    html: `
+                                        <div style="font-family: sans-serif; border: 2px solid #ff4444; padding: 20px;">
+                                            <h2 style="color: #ff4444;">⚠️ TUOTE LOPPUMASSA</h2>
+                                            <p><strong>Tuote:</strong> ${productName}</p>
+                                            <p><strong>Jäljellä oleva määrä:</strong> ${newStock} kpl</p>
+                                            <p>Tuote on loppumassa varastosta. Harkitse uuden erän tilaamista.</p>
+                                            <hr>
+                                            <p style="font-size: 12px; color: #666;">
+                                                Tämä on automaattinen ilmoitus Eduko-järjestelmästä.
+                                            </p>
+                                        </div>`
+                                });
+                                console.log(`Sähköposti lähetetty vastuuhenkilölle ${v.email} tuotteen ${productName} loppumisesta`);
+                            } catch (mailError) {
+                                console.error(`Sähköpostin lähetys epäonnistui tuotteen ${productName} loppumisesta:`, mailError);
+                            }
+                        }
+                    });
+                });
+            }
+        }
+
+        if (!shouldUpdateStock) {
+            if (!paymentConfirmed) {
+                console.log(`Order ${orderId} ei ole vielä vahvistetusti maksettu, stockia ei jätettiin muuttamatta.`);
+            } else {
+                console.log(`Order ${orderId} on jo maksettu, stockia ei päivitetty uudelleen.`);
+            }
+        }
 
         db.query(`SELECT id, category_id, name_fi FROM products WHERE id IN (?)`, [itemIds], async (pErr, pRes) => {
             let vastuuhenkiloBlokitHtml = "";
@@ -347,6 +449,31 @@ async function createPaytrailPayment(req, res, debugLabel = 'PAYTRAIL DEBUG') {
             return res.status(400).json({ error: 'Asiakkaan sähköposti puuttuu.' });
         }
 
+        // Tarkista stock määrät ennen tilauksen luomista
+        for (const item of items) {
+            const quantity = item.quantity || 1;
+            const stockCheck = await new Promise((resolve) => {
+                db.query(`SELECT stock, name_fi FROM products WHERE id = ?`, [item.id], (err, results) => {
+                    if (err || results.length === 0) {
+                        resolve({ available: false, stock: 0, name: item.name });
+                    } else {
+                        const product = results[0];
+                        resolve({ 
+                            available: product.stock >= quantity, 
+                            stock: product.stock, 
+                            name: product.name_fi || item.name 
+                        });
+                    }
+                });
+            });
+
+            if (!stockCheck.available) {
+                return res.status(400).json({ 
+                    error: `Tuote "${stockCheck.name}" on loppunut varastosta. Saatavilla: ${stockCheck.stock} kpl, pyydetty: ${quantity} kpl.` 
+                });
+            }
+        }
+
         const mainStamp = `eduko-${Date.now()}`;
         const numericReference = `${Date.now()}`;
         const fullName = `${customer.fname || ''} ${customer.lname || ''}`.trim();
@@ -419,7 +546,7 @@ async function createPaytrailPayment(req, res, debugLabel = 'PAYTRAIL DEBUG') {
             'checkout-timestamp': new Date().toISOString()
         };
 
-        headers.signature = calculateHmac(PAYTRAIL_CONFIG.secret, headers, body);
+        headers['checkout-signature'] = calculateHmac(PAYTRAIL_CONFIG.secret, headers, body);
 
         console.log(`=== ${debugLabel} ===`);
         console.log('Asiakkaalta saatu amount:', amount);
@@ -430,6 +557,7 @@ async function createPaytrailPayment(req, res, debugLabel = 'PAYTRAIL DEBUG') {
         console.log('==================');
 
         const response = await axios.post(`${PAYTRAIL_CONFIG.apiEndpoint}/payments`, body, { headers });
+        console.log('Paytrail creation response data:', JSON.stringify(response.data, null, 2));
         return res.json({ href: response.data.href });
     } catch (error) {
         const paytrailError = error.response?.data || {};
@@ -888,10 +1016,13 @@ const adminKayttajat = {
     "katike.kemppainen@gmail.com": { salasana: "123456" },
     "joni.finne@eduko.fi": { salasana: "123456" },
     
-    
+    "jonne.autere@student.eduko.fi": { salasana: "123456" },
+    "kristian.turtiainen@student.eduko.fi": { salasana: "123456" },
+    "miko.heikkinen@student.eduko.fi": { salasana: "123456" },
+
     "matias.ovasko@student.eduko.fi": { salasana: "123456" },
     "ilmari.heinola@student.eduko.fi": { salasana: "123456" },
-    "joni.kunnaskari@student.eduko.fi": { salasana: "123456" }
+    "joni.kunnaskari@student.eduko.fi": { salasana: "123456" } 
 };
 
 app.post(`/api/login-step1`, async (req, res) => {

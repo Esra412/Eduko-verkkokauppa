@@ -313,10 +313,28 @@ function addToCart(productId, name, price, image, stock, options = {}) {
     return true;
 }
 
-function updateQuantity(index, change) {
+async function updateQuantity(index, change) {
+    // Clear any previous error for this item
+    showQuantityError(index, '');
+
     const cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
     const item = cart[index];
     if (!item) return;
+
+    let maxStock = item.stock;
+    if (!maxStock) {
+        try {
+            const response = await fetch(`/verkkokauppa/api/products/${item.id}`);
+            const product = await response.json();
+            maxStock = product.stock || 0;
+            item.stock = maxStock;
+        } catch (err) {
+            console.error('Virhe tuotteen varastosaldon haussa:', err);
+            const stockErrorText = typeof t === 'function' ? t('product_stock_fetch_error') : 'Virhe tuotteen tietojen haussa. Yritä uudelleen.';
+            showQuantityError(index, stockErrorText);
+            return;
+        }
+    }
 
     const newQuantity = (item.quantity || 1) + change;
     if (newQuantity <= 0) {
@@ -327,13 +345,71 @@ function updateQuantity(index, change) {
         return;
     }
 
-    const maxStock = item.stock || 0;
     if (newQuantity > maxStock) {
-            const maxStockText = typeof t === 'function' ? t('cart_max_stock_message').replace('{count}', maxStock) : `Maksimissaan ${maxStock} kpl saatavilla.`;
-            alert(maxStockText);
+        const maxStockText = typeof t === 'function' ? t('cart_max_stock_message').replace('{count}', maxStock) : `Maksimissaan ${maxStock} kpl saatavilla.`;
+        showQuantityError(index, maxStockText);
+        return;
     }
 
     item.quantity = newQuantity;
+    cart[index] = item;
+    localStorage.setItem('eduko_cart', JSON.stringify(cart));
+    renderCart();
+    updateCartUI();
+    document.dispatchEvent(new Event('cartUpdated'));
+}
+
+function showQuantityError(index, message) {
+    const errorElement = document.querySelector(`[data-error-index="${index}"]`);
+    if (errorElement) {
+        if (message) {
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        } else {
+            errorElement.style.display = 'none';
+            errorElement.textContent = '';
+        }
+    }
+}
+
+async function setQuantity(index, newQuantity) {
+    // Clear any previous error for this item
+    showQuantityError(index, '');
+
+    const cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
+    const item = cart[index];
+    if (!item) return;
+
+    // Validate input
+    if (isNaN(newQuantity) || newQuantity < 1) {
+        const invalidQuantityText = typeof t === 'function' ? t('invalid_quantity') : 'Virheellinen määrä. Anna positiivinen kokonaisluku.';
+        showQuantityError(index, invalidQuantityText);
+        return;
+    }
+
+    let maxStock = item.stock;
+    if (!maxStock) {
+        try {
+            const response = await fetch(`/verkkokauppa/api/products/${item.id}`);
+            const product = await response.json();
+            maxStock = product.stock || 0;
+            item.stock = maxStock;
+        } catch (err) {
+            console.error('Virhe tuotteen varastosaldon haussa:', err);
+            const stockErrorText = typeof t === 'function' ? t('product_stock_fetch_error') : 'Virhe tuotteen tietojen haussa. Yritä uudelleen.';
+            showQuantityError(index, stockErrorText);
+            return;
+        }
+    }
+
+    if (newQuantity > maxStock) {
+        const maxStockText = typeof t === 'function' ? t('cart_max_stock_message').replace('{count}', maxStock) : `Maksimissaan ${maxStock} kpl saatavilla.`;
+        showQuantityError(index, maxStockText);
+        return;
+    }
+
+    item.quantity = newQuantity;
+    cart[index] = item;
     localStorage.setItem('eduko_cart', JSON.stringify(cart));
     renderCart();
     updateCartUI();
@@ -397,9 +473,10 @@ function renderCart() {
                     <span class="item-price">${price.toFixed(2)} €</span>
                     <div style="display: flex; align-items: center; gap: 8px; margin-top: 5px;">
                         <button onclick="updateQuantity(${index}, -1)" style="background: #eee; border: none; width: 24px; height: 24px; border-radius: 3px; cursor: pointer; font-weight: bold;">-</button>
-                        <span style="min-width: 24px; text-align: center; font-weight: bold;">${quantity}</span>
+                        <input type="number" class="quantity-input" data-index="${index}" value="${quantity}" min="1" max="${item.stock || 999}" style="width: 50px; text-align: center; border: 1px solid #ddd; border-radius: 3px; padding: 2px;">
                         <button onclick="updateQuantity(${index}, 1)" style="background: #eee; border: none; width: 24px; height: 24px; border-radius: 3px; cursor: pointer; font-weight: bold;">+</button>
                     </div>
+                    <div class="quantity-error" data-error-index="${index}" style="display: none; color: red; font-size: 0.85rem; margin-top: 4px;"></div>
                 </div>
                 <div style="text-align: right;">
                     <div style="font-weight: bold;">${itemTotal.toFixed(2)} €</div>
@@ -412,6 +489,25 @@ function renderCart() {
     });
 
     totalEl.innerText = `${total.toFixed(2)} €`;
+
+    // Add event listeners for quantity inputs
+    document.querySelectorAll('.quantity-input').forEach((input) => {
+        input.addEventListener('change', (e) => {
+            e.preventDefault();
+            const index = parseInt(input.dataset.index, 10);
+            const newQuantity = parseInt(input.value, 10);
+            setQuantity(index, newQuantity);
+        });
+        input.addEventListener('blur', (e) => {
+            // Reset to current value if invalid
+            const index = parseInt(input.dataset.index, 10);
+            const cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
+            const item = cart[index];
+            if (item) {
+                input.value = item.quantity || 1;
+            }
+        });
+    });
 }
 
 function loadProducts() {

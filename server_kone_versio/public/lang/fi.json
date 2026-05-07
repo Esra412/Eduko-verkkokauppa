@@ -50,6 +50,7 @@
   "remove_item": "Poista",
   "product_stock_fetch_error": "Virhe tuotteen tietojen haussa. Yritä uudelleen.",
   "cart_max_stock_message": "Maksimissaan {count} kpl saatavilla.",
+  "invalid_quantity": "Virheellinen määrä. Anna positiivinen kokonaisluku.",
   "server_error_try_again": "Yhteysvirhe palvelimeen. Yritä uudelleen.",
   "checkout_btn": "Kassalle",
   "cart_page_title": "Ostoskori - Eduko",
@@ -93,8 +94,9 @@
   "about_card_3_title": "Opiskelijatyö",
   "about_card_3_text": "Sivusto on opiskelijoiden suunnittelema ja toteuttama. Mukana on osaajia eri koulutusaloilta, kuten ohjelmistokehityksestä, sähköstä, logistiikasta ja media-alalta.",
   "about_card_4_title": "Yhteistyö",
-  "about_card_4_text": "Teemme yhteistyötä opettajien ja eri koulutusalojen kanssa. Tavoitteena on luoda realistinen ja turvallinen alusta kaupankäynnin harjoitteluun."
-  ,
+  "about_card_4_text": "Teemme yhteistyötä opettajien ja eri koulutusalojen kanssa. Tavoitteena on luoda realistinen ja turvallinen alusta kaupankäynnin harjoitteluun.",
+  "about_banner_title": "Yhdistämme koulutuksen ja käytännön työn",
+  "about_banner_text": "Eduko-verkkokauppa tarjoaa opiskelijoille aidon digitaalisen oppimisympäristön, jossa asiakaskokemus, tuotteiden esittely ja toimitusketju toimivat yhtenä kokonaisuutena.",
   "page_under_construction_title": "Sivu on vielä muokkauksella",
   "page_under_construction_text": "Tämä sivu on parhaillaan kehitteillä. Tulemme takaisin pian lisätyllä sisällöllä.",
   "back_to_main_page": "Palaa pääsivulle"

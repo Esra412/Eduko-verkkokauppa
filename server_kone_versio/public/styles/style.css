@@ -225,6 +225,26 @@ body {
     text-align: right;
 }
 
+.quantity-input {
+    width: 50px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    padding: 2px;
+    font-weight: bold;
+}
+
+.quantity-input:focus {
+    outline: 1px solid var(--eduko-gold);
+}
+
+.quantity-error {
+    color: red;
+    font-size: 0.85rem;
+    margin-top: 4px;
+    display: none;
+}
+
 .cart-footer { padding: 20px; background: #f9f7f2; border-top: 1px solid #ddd; }
 
 .total-row {
