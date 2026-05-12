@@ -153,16 +153,27 @@ document.addEventListener('DOMContentLoaded', () => {
         limitedImages.forEach((imgUrl, index) => {
             const thumb = document.createElement('img');
             thumb.src = imgUrl;
-            thumb.alt = product.image_alt || product.name || '';
+            thumb.alt = product.image_alt || product.name || `Lisakuva ${index + 1}`;
             thumb.className = index === 0 ? 'thumbnail active' : 'thumbnail';
+            thumb.tabIndex = 0;
+            thumb.role = 'button';
+            thumb.setAttribute('role', 'button');
+            thumb.setAttribute('aria-label', `${product.name || 'Tuote'} kuva ${index + 1}`);
             thumb.onerror = () => {
                 thumb.onerror = null;
                 thumb.src = '/verkkokauppa/images/edukosmall.png';
             };
-            thumb.addEventListener('click', () => {
+            const activateImage = () => {
                 mainImg.src = imgUrl;
                 thumbContainer.querySelectorAll('.thumbnail').forEach((img) => img.classList.remove('active'));
                 thumb.classList.add('active');
+            };
+            thumb.addEventListener('click', activateImage);
+            thumb.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    activateImage();
+                }
             });
             thumbContainer.appendChild(thumb);
         });
@@ -443,12 +454,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     document.querySelectorAll('.tab-btn').forEach((btn) => {
-        btn.addEventListener('click', () => {
+        const activateTab = () => {
             const target = btn.dataset.target;
             document.querySelectorAll('.tab-pane').forEach((pane) => pane.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach((button) => button.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach((button) => {
+                button.classList.remove('active');
+                button.setAttribute('aria-selected', 'false');
+            });
             btn.classList.add('active');
+            btn.setAttribute('aria-selected', 'true');
             document.getElementById(target)?.classList.add('active');
+        };
+
+        btn.addEventListener('click', activateTab);
+        btn.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                activateTab();
+            }
         });
     });
 

@@ -106,28 +106,28 @@
             </div>
 
             <div class="info-tabs">
-                <div class="tab-buttons">
-                    <button class="tab-btn active" data-target="kuvaus" data-i18n="description_tab" type="button">Kuvaus</button>
-                    <button class="tab-btn" data-target="tekniset" data-i18n="specs_tab" type="button">Tekniset tiedot</button>
-                    <button class="tab-btn" data-target="kuvat" data-i18n="images_tab" type="button">Kuvat</button>
-                    <button class="tab-btn" data-target="vastuuhenkilo-tab" data-i18n="responsible_tab" type="button">Vastuuhenkilö</button>
+                <div class="tab-buttons" role="tablist" aria-label="Tuotetiedot välilehdet">
+                    <button id="tab-desc" class="tab-btn active" role="tab" aria-selected="true" aria-controls="kuvaus" data-target="kuvaus" data-i18n="description_tab" type="button">Kuvaus</button>
+                    <button id="tab-specs" class="tab-btn" role="tab" aria-selected="false" aria-controls="tekniset" data-target="tekniset" data-i18n="specs_tab" type="button">Tekniset tiedot</button>
+                    <button id="tab-images" class="tab-btn" role="tab" aria-selected="false" aria-controls="kuvat" data-target="kuvat" data-i18n="images_tab" type="button">Kuvat</button>
+                    <button id="tab-contact" class="tab-btn" role="tab" aria-selected="false" aria-controls="vastuuhenkilo-tab" data-target="vastuuhenkilo-tab" data-i18n="responsible_tab" type="button">Vastuuhenkilö</button>
                 </div>
 
-                <div id="kuvaus" class="tab-pane active">
+                <div id="kuvaus" class="tab-pane active" role="tabpanel" aria-labelledby="tab-desc">
                     <p id="product-desc">Tuotetiedot ladataan tästä...</p>
                     <div id="product-meta"></div>
                     <p class="no-return" data-i18n="no_return_notice">Huom: Noutotuotteilla ei ole palautusoikeutta.</p>
                 </div>
 
-                <div id="tekniset" class="tab-pane">
+                <div id="tekniset" class="tab-pane" role="tabpanel" aria-labelledby="tab-specs">
                     <ul id="product-specs" class="specs-list"></ul>
                 </div>
 
-                <div id="kuvat" class="tab-pane">
+                <div id="kuvat" class="tab-pane" role="tabpanel" aria-labelledby="tab-images">
                     <div class="thumbnail-grid" id="thumbnail-container"></div>
                 </div>
 
-                <div id="vastuuhenkilo-tab" class="tab-pane">
+                <div id="vastuuhenkilo-tab" class="tab-pane" role="tabpanel" aria-labelledby="tab-contact">
                     <div class="contact-card">
                         <i class="fas fa-user-tie fa-3x"></i>
                         <div class="contact-info">

@@ -48,7 +48,12 @@
         <form id="addProductForm">
             <input name="name" id="prodName" placeholder="Tuotteen nimi" required />
             <textarea name="description" id="prodDesc" placeholder="Kuvaus" required></textarea>
-            <input name="imageAlt" id="prodImageAlt" placeholder="Kuvan alt-teksti ruudunlukijalle (esim. Musta huppari vetoketjulla)" />
+            <label for="prodImageAlt" class="input-label">
+                Kuvan alt-teksti
+                <span class="alt-help" title="Kirjoita lyhyt kuvaus siitä, mitä kuvassa näkyy. Alt-teksti auttaa ruudunlukijaa ja parantaa saavutettavuutta.">ⓘ</span>
+            </label>
+            <input name="imageAlt" id="prodImageAlt" placeholder="Kuvan alt-teksti ruudunlukijalle (esim. Koira juoksee nurmikolla)" />
+            <p class="field-note">Alt-teksti kertoo ruudunlukijalle, mitä kuvassa näkyy. Kirjoita selkeä, lyhyt kuvaus, esimerkiksi &quot;Koira juoksee nurmikolla&quot;.</p>
             
             <div class="form-row">
                 <input name="price" type="number" step="0.01" id="prodPrice" placeholder="Hinta (€)" required />

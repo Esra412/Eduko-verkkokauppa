@@ -124,6 +124,11 @@ body { margin: 0; background-color: var(--eduko-bg); color: var(--text-main); }
     box-shadow: 0 4px 10px rgba(176, 160, 120, 0.25);
 }
 
+.thumbnail:focus {
+    outline: 3px solid var(--eduko-gold);
+    outline-offset: 2px;
+}
+
 .thumbnail-limit-note {
     margin: 10px 4px 0;
     font-size: 13px;
