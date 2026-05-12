@@ -182,6 +182,11 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .then((product) => {
                 currentProductData = product;
+                const remainingStock = getRemainingStock(product);
+                if (remainingStock <= 0) {
+                    window.location.replace('/verkkokauppa/');
+                    return;
+                }
 
                 document.getElementById('product-name').innerText = product.name;
                 document.getElementById('product-price').innerText = `${Number(product.price).toFixed(2)} €`;
@@ -194,7 +199,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (metaDiv) {
                     const stockLabel = typeof t === 'function' ? t('stock_label') : 'Varastossa';
                     const pickupLabel = typeof t === 'function' ? t('pickup_point_label') : 'Noutopiste';
-                    const remainingStock = getRemainingStock(product);
                     metaDiv.innerHTML = `
                         <p><strong>${stockLabel}:</strong> ${remainingStock} kpl</p>
                         <p><strong>${pickupLabel}:</strong> ${product.pickup_point || 'Päärakennus'}</p>
@@ -255,12 +259,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateProductStockDisplay() {
         if (!currentProductData) return;
+        const remainingStock = getRemainingStock(currentProductData);
+        if (remainingStock <= 0) {
+            window.location.replace('/verkkokauppa/');
+            return;
+        }
+
         const metaDiv = document.getElementById('product-meta');
         if (!metaDiv) return;
 
         const stockLabel = typeof t === 'function' ? t('stock_label') : 'Varastossa';
         const pickupLabel = typeof t === 'function' ? t('pickup_point_label') : 'Noutopiste';
-        const remainingStock = getRemainingStock(currentProductData);
 
         metaDiv.innerHTML = `
             <p><strong>${stockLabel}:</strong> ${remainingStock} kpl</p>
@@ -270,15 +279,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const buyButtons = [document.querySelector('.buy-now-btn'), document.querySelector('.mobile-buy-btn')];
         buyButtons.forEach((button) => {
             if (!button) return;
-            if (remainingStock <= 0) {
-                button.disabled = true;
-                button.style.opacity = '0.6';
-                button.style.cursor = 'not-allowed';
-            } else {
-                button.disabled = false;
-                button.style.opacity = '';
-                button.style.cursor = '';
-            }
+            button.disabled = false;
+            button.style.opacity = '';
+            button.style.cursor = '';
         });
     }
 
@@ -294,12 +297,25 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('pageshow', () => {
         updateCartBadge();
         updateProductStockDisplay();
+        // Lataa tuotteen tiedot uudelleen kun sivu tulee näkyviin (varastosaldo voi muuttua)
+        loadAndDisplayProduct();
     });
 
     const buyBtn = document.querySelector('.buy-now-btn');
     if (buyBtn) {
-        buyBtn.addEventListener('click', () => {
+        buyBtn.addEventListener('click', async () => {
             if (!currentProductData) return;
+
+            // Hae tuotteen nykyiset tiedot palvelimelta varmistaaksesi varastosaldon
+            try {
+                const response = await fetch(`/verkkokauppa/api/products/${currentProductData.id}`);
+                if (response.ok) {
+                    const freshProduct = await response.json();
+                    currentProductData.stock = freshProduct.stock || 0;
+                }
+            } catch (err) {
+                console.error('Virhe tuotteen tietojen haussa:', err);
+            }
 
             const maxStock = currentProductData.stock || 1;
             const cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
@@ -314,6 +330,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
             } else {
+                if (maxStock <= 0) {
+                    showToast('Tuote ei ole saatavilla!', 'error');
+                    return;
+                }
+                
                 cart.push({
                     id: currentProductData.id,
                     name: currentProductData.name,
@@ -329,6 +350,9 @@ document.addEventListener('DOMContentLoaded', () => {
             updateCartBadge();
             updateProductStockDisplay();
             document.dispatchEvent(new Event('cartUpdated'));
+            
+            // Lataa tuotteen tiedot palvelimelta päivittääkseen varastosaldoa
+            setTimeout(() => loadAndDisplayProduct(), 300);
 
             buyBtn.innerText = typeof t === 'function' ? t('added_btn') : 'Lis\u00E4tty!';
             buyBtn.style.background = '#28a745';
@@ -354,8 +378,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (mobileBuyBtn) {
-        mobileBuyBtn.addEventListener('click', () => {
+        mobileBuyBtn.addEventListener('click', async () => {
             if (!currentProductData) return;
+
+            // Hae tuotteen nykyiset tiedot palvelimelta varmistaaksesi varastosaldon
+            try {
+                const response = await fetch(`/verkkokauppa/api/products/${currentProductData.id}`);
+                if (response.ok) {
+                    const freshProduct = await response.json();
+                    currentProductData.stock = freshProduct.stock || 0;
+                }
+            } catch (err) {
+                console.error('Virhe tuotteen tietojen haussa:', err);
+            }
 
             const maxStock = currentProductData.stock || 1;
             const cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
@@ -390,6 +425,9 @@ document.addEventListener('DOMContentLoaded', () => {
             updateCartBadge();
             updateProductStockDisplay();
             document.dispatchEvent(new Event('cartUpdated'));
+            
+            // Lataa tuotteen tiedot palvelimelta päivittääkseen varastosaldoa
+            setTimeout(() => loadAndDisplayProduct(), 300);
 
             mobileBuyBtn.innerText = typeof t === 'function' ? t('added_btn') : 'Lis\u00E4tty!';
             mobileBuyBtn.style.background = '#28a745';
@@ -414,6 +452,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('languageChanged', () => {
         loadAndDisplayProduct();
     });
+
+    // Lataa tuotteen tiedot säännöllisesti (30 sekunnin välein) varastosaldon päivittämiseksi
+    const productRefreshInterval = setInterval(() => {
+        loadAndDisplayProduct();
+    }, 30000);
 
     loadAndDisplayProduct();
 });

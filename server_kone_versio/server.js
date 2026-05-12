@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 3000;
 
 // Vastuuhenkilöiden tiedot kategorioittain (ID on avain)
 const vastuuhenkilot = {
-    "3": { nimi: "Kalle Metalli", email: "kalle.metalli@eduko.fi", puh: "040 345 6789" },
+    "3": { nimi: "Esra bagdat", email: "esra07bagdat@gmail.com", puh: "040 345 6789" },
     "4": { nimi: "Lauri Lastaus", email: "lauri.logistiikka@eduko.fi", puh: "040 456 7890" },
     "7": { nimi: "Risto Rakentaja", email: "risto.raksa@eduko.fi", puh: "040 789 0123" }
 };
@@ -136,6 +136,9 @@ app.get(``, (req, res) => res.sendFile(path.join(__dirname, 'views/pages/index.h
 app.get(`/login`, (req, res) => res.sendFile(path.join(__dirname, 'views/pages/login.html')));
 // Alias reitti /verkkokauppa/login
 app.get(`/verkkokauppa/login`, (req, res) => res.sendFile(path.join(__dirname, 'views/pages/login.html')));
+
+// Alias reitti /verkkokauppa juureen
+app.get(`/verkkokauppa`, (req, res) => res.sendFile(path.join(__dirname, 'views/pages/index.html')));
 
 app.get(`/admin`, vaadiKirjautuminen, (req, res) => res.sendFile(path.join(__dirname, 'views/pages/admin.html')));
 // Alias reitti /verkkokauppa/admin

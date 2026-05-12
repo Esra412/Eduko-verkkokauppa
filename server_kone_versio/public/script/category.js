@@ -136,32 +136,41 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const addCartText = typeof t === 'function' ? t('add_to_cart') : 'Lis\u00E4\u00E4 koriin';
-        products.forEach(product => {
-            const card = document.createElement('div');
-            card.className = 'product-card';
-            card.dataset.productId = product.id;
-            card.dataset.stock = product.stock || 0;
-            card.style.cursor = 'pointer';
+const visibleProducts = products.filter((product) => (Number(product.stock) || 0) > 0);
+    if (visibleProducts.length === 0) {
+        grid.innerHTML = '<p>Kategoriassa ei ole viela tuotteita.</p>';
+        return;
+    }
 
-            card.innerHTML = `
-                <div class="image-wrapper">
-                    <img src="${resolveImageSrc(product.image)}" alt="${product.name}" onerror="this.onerror=null; this.src='/verkkokauppa/images/edukosmall.png';">
+    const addCartText = typeof t === 'function' ? t('add_to_cart') : 'Lis\u00E4\u00E4 koriin';
+    const stockText = typeof t === 'function' ? t('stock_label') : 'Varasto';
+    visibleProducts.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.dataset.productId = product.id;
+        const stock = product.stock || 0;
+        card.dataset.stock = stock;
+        card.style.cursor = 'pointer';
+
+        card.innerHTML = `
+            <div class="image-wrapper">
+                <img src="${resolveImageSrc(product.image)}" alt="${product.name}" onerror="this.onerror=null; this.src='/verkkokauppa/images/edukosmall.png';">
+            </div>
+            <div class="card-content">
+                <h3>${product.name}</h3>
+                <div class="card-footer">
+                    <span class="price">${Number(product.price).toFixed(2)} €</span>
+                    <button class="bid-btn"
+                        data-id="${product.id}"
+                        data-name="${product.name}"
+                        data-price="${product.price}"
+                        data-image="${resolveImageSrc(product.image)}"
+                        data-i18n="add_to_cart"
+                        type="button">
+                        ${addCartText}
+                    </button>
                 </div>
-                <div class="card-content">
-                    <h3>${product.name}</h3>
-                    <div class="card-footer">
-                        <span class="price">${Number(product.price).toFixed(2)} €</span>
-                        <button class="bid-btn"
-                            data-id="${product.id}"
-                            data-name="${product.name}"
-                            data-price="${product.price}"
-                            data-image="${resolveImageSrc(product.image)}"
-                            data-i18n="add_to_cart"
-                            type="button">
-                            ${addCartText}
-                        </button>
-                    </div>
+                <p style="color: #666; font-size: 0.75rem; margin: 4px 0 0 0;">${stockText}: ${stock} kpl</p>
                 </div>
             `;
 

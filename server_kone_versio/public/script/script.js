@@ -55,10 +55,18 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const visibleProducts = products.filter((product) => (Number(product.stock) || 0) > 0);
+        if (visibleProducts.length === 0) {
+            grid.innerHTML = `<p>${typeof t === 'function' ? t('no_products') : 'Ei tuotteita saatavilla.'}</p>`;
+            return;
+        }
+
         const addCartText = typeof t === 'function' ? t('add_to_cart') : 'Lis\u00E4\u00E4 ostoskoriin';
-        products.forEach((product) => {
+        const stockText = typeof t === 'function' ? t('stock_label') : 'Varasto';
+        visibleProducts.forEach((product) => {
+            const stock = product.stock || 0;
             grid.innerHTML += `
-                <div class="product-card" data-product-id="${product.id}" data-stock="${product.stock || 0}" style="cursor: pointer;">
+                <div class="product-card" data-product-id="${product.id}" data-stock="${stock}" style="cursor: pointer;">
                     <div class="image-wrapper">
                         <img src="${getImageSrc(product.image)}" alt="${product.name}" onerror="this.onerror=null; this.src='/verkkokauppa/images/edukosmall.png';">
                     </div>
@@ -68,6 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <span class="price">${Number(product.price).toFixed(2)} €</span>
                             <button class="bid-btn" type="button" data-i18n="add_to_cart">${addCartText}</button>
                         </div>
+                        <p style="color: #666; font-size: 0.75rem; margin: 4px 0 0 0;">${stockText}: ${stock} kpl</p>
                     </div>
                 </div>`;
         });
@@ -191,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (grid) {
-        grid.addEventListener('click', (e) => {
+        grid.addEventListener('click', async (e) => {
             const addButton = e.target.closest('.bid-btn');
             if (addButton) {
                 e.preventDefault();
@@ -207,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const image = card.querySelector('img')?.src || '/verkkokauppa/images/edukosmall.png';
                 const stock = parseInt(card.dataset.stock, 10) || 0;
 
-                addToCart(productId, name, price, image, stock, {
+                await addToCart(productId, name, price, image, stock, {
                     showToastNotification: false,
                     buttonElement: addButton
                 });
@@ -256,8 +265,21 @@ function getCartItemCount() {
     return cart.reduce((sum, item) => sum + (Number(item.quantity) || 1), 0);
 }
 
-function addToCart(productId, name, price, image, stock, options = {}) {
+async function addToCart(productId, name, price, image, stock, options = {}) {
     const { showToastNotification = true, buttonElement = null } = options;
+    
+    // Hae tuotteen nykyiset tiedot palvelimelta varmistaaksesi varastosaldon
+    try {
+        const response = await fetch(`/verkkokauppa/api/products/${productId}`);
+        if (response.ok) {
+            const product = await response.json();
+            stock = product.stock || 0;
+        }
+    } catch (err) {
+        console.error('Virhe tuotteen tietojen haussa:', err);
+        // Käytä client-side tietoja jos palvelin palauttaa virheen
+    }
+    
     const cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
     const existingItem = cart.find((item) => item.id == productId);
     const currentQuantity = existingItem ? (existingItem.quantity || 1) : 0;
@@ -532,13 +554,14 @@ function loadProducts() {
             })
             .then((products) => {
                 grid.innerHTML = '';
-                if (!products || products.length === 0) {
+                const visibleProducts = (products || []).filter((product) => (Number(product.stock) || 0) > 0);
+                if (visibleProducts.length === 0) {
                     grid.innerHTML = `<p>${typeof t === 'function' ? t('search_no_results') : 'Hakusanalla ei löytynyt tuotteita'} "${searchTerm}".</p>`;
                     return;
                 }
 
                 const addCartText = typeof t === 'function' ? t('add_to_cart') : 'Lis\u00E4\u00E4 ostoskoriin';
-                products.forEach((product) => {
+                visibleProducts.forEach((product) => {
                     grid.innerHTML += `
                         <div class="product-card" data-product-id="${product.id}" data-stock="${product.stock || 0}" style="cursor: pointer;">
                             <div class="image-wrapper">
@@ -572,13 +595,14 @@ function loadProducts() {
         })
         .then((products) => {
             grid.innerHTML = '';
-            if (!products || products.length === 0) {
+            const visibleProducts = (products || []).filter((product) => (Number(product.stock) || 0) > 0);
+            if (visibleProducts.length === 0) {
                 grid.innerHTML = `<p>${typeof t === 'function' ? t('no_products') : 'Ei tuotteita saatavilla.'}</p>`;
                 return;
             }
 
             const addCartText = typeof t === 'function' ? t('add_to_cart') : 'Lis\u00E4\u00E4 ostoskoriin';
-            products.forEach((product) => {
+            visibleProducts.forEach((product) => {
                 grid.innerHTML += `
                     <div class="product-card" data-product-id="${product.id}" data-stock="${product.stock || 0}" style="cursor: pointer;">
                         <div class="image-wrapper">
