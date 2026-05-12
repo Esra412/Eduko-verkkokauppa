@@ -20,13 +20,14 @@
     <title>Tietoa meistä</title>
     <link rel="stylesheet" href="/verkkokauppa/styles/Tietoa_meista.css">
     <link rel="stylesheet" href="/verkkokauppa/styles/style.css">
+    <link rel="stylesheet" href="/verkkokauppa/styles/accessibility.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="icon" href="/verkkokauppa/images/edukosmall.png" type="image/png">
 </head>
 <body>
 <header class="main-header">
     <div class="header-container">
-        <button class="menu-toggle" id="mobile-menu-btn">
+        <button class="menu-toggle" id="mobile-menu-btn" type="button" aria-label="Avaa navigaatio" aria-expanded="false">
             <span></span><span></span><span></span>
         </button>
 
@@ -37,7 +38,7 @@
 
         <div class="search-box">
             <input type="text" placeholder="Hae tuotteita..." data-i18n-placeholder="search_placeholder">
-            <button><i class="fas fa-search"></i></button>
+            <button type="button"><i class="fas fa-search"></i></button>
         </div>
 
         <div class="header-actions-mobile">
@@ -137,6 +138,7 @@
 </main>
 
 <script src="/verkkokauppa/script/language.js"></script>
+<script src="/verkkokauppa/script/accessibility.js"></script>
 <script src="/verkkokauppa/script/script.js"></script>
 
 </body>

@@ -19,6 +19,7 @@
     </style>
     <title data-i18n="login_title">Kirjautuminen | Vahvistuskoodi</title>
     <link rel="stylesheet" href="/verkkokauppa/styles/login.css">
+    <link rel="stylesheet" href="/verkkokauppa/styles/accessibility.css">
     <link rel="icon" href="/verkkokauppa/images/edukosmall.png" type="image/png">
 </head>
 <body>
@@ -34,7 +35,7 @@
             <label data-i18n="password_label">Salasana</label>
             <input type="password" id="password" data-i18n-placeholder="password_placeholder" placeholder="********" required>
         </div>
-        <button onclick="sendCode()" data-i18n="send_code_btn">Lähetä vahvistuskoodi</button>
+        <button type="button" onclick="sendCode()" data-i18n="send_code_btn">Lähetä vahvistuskoodi</button>
         <div id="error-step1" class="message error"></div>
     </div>
 
@@ -45,14 +46,15 @@
             <label data-i18n="code_label">Vahvistuskoodi</label>
             <input type="text" id="code" name="verification_code" maxlength="6" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" data-i18n-placeholder="code_placeholder" placeholder="123456" style="text-align: center; font-weight: bold;">
         </div>
-        <button onclick="verifyCode()" data-i18n="login_confirm_btn">Vahvista ja kirjaudu</button>
-        <button onclick="location.reload()" data-i18n="back_btn" style="background: none; color: #666; font-size: 0.8rem;">Palaa takaisin</button>
+        <button type="button" onclick="verifyCode()" data-i18n="login_confirm_btn">Vahvista ja kirjaudu</button>
+        <button type="button" onclick="location.reload()" data-i18n="back_btn" style="background: none; color: #666; font-size: 0.8rem;">Palaa takaisin</button>
         <div id="error-step2" class="message error"></div>
     </div>
     </div>
 </div>
 
 <script src="/verkkokauppa/script/language.js"></script>
+<script src="/verkkokauppa/script/accessibility.js"></script>
 <script src="/verkkokauppa/script/login.js"></script>
 </body>
 </html>

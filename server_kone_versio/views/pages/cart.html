@@ -21,7 +21,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="icon" href="/verkkokauppa/images/edukosmall.png" type="image/png">
     <link rel="stylesheet" href="/verkkokauppa/styles/cart.css">
+    <link rel="stylesheet" href="/verkkokauppa/styles/accessibility.css">
     <script src="/verkkokauppa/script/language.js"></script>
+    <script src="/verkkokauppa/script/accessibility.js"></script>
 </head>
 <body>
 
@@ -39,8 +41,8 @@
     <div style="margin-top: 20px; text-align: right; display: flex; flex-direction: column; gap: 10px; align-items: flex-end;">
         <h3><span data-i18n="total_label">Yhteensä:</span> <span id="cart-total">0.00</span> €</h3>
         <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; width: 100%;">
-            <button class="checkout-btn" id="empty-cart-btn" data-i18n="clear_cart" style="background: #ff4444;">Tyhjennä ostoskori</button>
-            <button class="checkout-btn" id="show-form-btn" data-i18n="continue_order">Jatka tilaamaan</button>
+            <button class="checkout-btn" id="empty-cart-btn" type="button" data-i18n="clear_cart" style="background: #ff4444;">Tyhjennä ostoskori</button>
+            <button class="checkout-btn" id="show-form-btn" type="button" data-i18n="continue_order">Jatka tilaamaan</button>
         </div>
     </div>
 
@@ -54,7 +56,7 @@
         <input type="text" id="address" placeholder="Osoite" data-i18n-placeholder="address" required>
         <input type="text" id="postcode" placeholder="Postinumero" data-i18n-placeholder="postcode" required>
         <input type="text" id="city" placeholder="Kaupunki" data-i18n-placeholder="city" required>
-        <button class="checkout-btn" id="pay-button" style="background: var(--gold);" data-i18n="proceed_to_payment">Siirry maksamaan</button>
+        <button class="checkout-btn" id="pay-button" type="button" style="background: var(--gold);" data-i18n="proceed_to_payment">Siirry maksamaan</button>
     </div>
 </div>
 

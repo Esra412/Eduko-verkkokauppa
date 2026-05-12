@@ -494,15 +494,15 @@ function renderCart() {
                     <span class="item-name">${item.name}</span>
                     <span class="item-price">${price.toFixed(2)} €</span>
                     <div style="display: flex; align-items: center; gap: 8px; margin-top: 5px;">
-                        <button onclick="updateQuantity(${index}, -1)" style="background: #eee; border: none; width: 24px; height: 24px; border-radius: 3px; cursor: pointer; font-weight: bold;">-</button>
+                        <button type="button" onclick="updateQuantity(${index}, -1)" aria-label="Vahenna maaraa" style="background: #eee; border: none; width: 24px; height: 24px; border-radius: 3px; cursor: pointer; font-weight: bold;">-</button>
                         <input type="number" class="quantity-input" data-index="${index}" value="${quantity}" min="1" max="${item.stock || 999}" style="width: 50px; text-align: center; border: 1px solid #ddd; border-radius: 3px; padding: 2px;">
-                        <button onclick="updateQuantity(${index}, 1)" style="background: #eee; border: none; width: 24px; height: 24px; border-radius: 3px; cursor: pointer; font-weight: bold;">+</button>
+                        <button type="button" onclick="updateQuantity(${index}, 1)" aria-label="Lisaa maaraa" style="background: #eee; border: none; width: 24px; height: 24px; border-radius: 3px; cursor: pointer; font-weight: bold;">+</button>
                     </div>
                     <div class="quantity-error" data-error-index="${index}" style="display: none; color: red; font-size: 0.85rem; margin-top: 4px;"></div>
                 </div>
                 <div style="text-align: right;">
                     <div style="font-weight: bold;">${itemTotal.toFixed(2)} €</div>
-                    <button onclick="removeFromCart(${index})" class="remove-btn" style="background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-top: 5px; font-size: 0.85rem;">
+                    <button type="button" onclick="removeFromCart(${index})" class="remove-btn" aria-label="Poista tuote ostoskorista" style="background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-top: 5px; font-size: 0.85rem;">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>

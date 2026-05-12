@@ -54,9 +54,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h4>${item.name}</h4>
                         <p>${price.toFixed(2)} €</p>
                         <div class="quantity-control">
-                            <button class="quantity-btn decrease-btn" data-index="${index}">-</button>
+                            <button class="quantity-btn decrease-btn" type="button" data-index="${index}" aria-label="Vahenna maaraa">-</button>
                             <input type="number" class="quantity-input" data-index="${index}" value="${quantity}" min="1" max="${item.stock || 999}">
-                            <button class="quantity-btn increase-btn" data-index="${index}">+</button>
+                            <button class="quantity-btn increase-btn" type="button" data-index="${index}" aria-label="Lisaa maaraa">+</button>
                         </div>
                         <div class="quantity-error" data-error-index="${index}" style="display: none; color: red; font-size: 0.85rem; margin-top: 4px;"></div>
                     </div>

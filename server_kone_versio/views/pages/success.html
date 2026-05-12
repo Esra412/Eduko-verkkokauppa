@@ -19,6 +19,7 @@
     </style>
     <title>Kiitos tilauksesta! | Eduko</title>
     <link rel="stylesheet" href="/verkkokauppa/styles/style.css">
+    <link rel="stylesheet" href="/verkkokauppa/styles/accessibility.css">
     <link rel="icon" href="/verkkokauppa/images/edukosmall.png" type="image/png">
     <link rel="stylesheet" href="/verkkokauppa/styles/success.css" />
 </head>
@@ -37,13 +38,14 @@
     <p data-i18n="payment_confirmation_info">Vahvistus on lähetetty sähköpostiisi. Voit nyt sulkea tämän sivun tai palata takaisin etusivulle.</p>
     
     <div class="receipt-actions">
-        <button id="download-receipt" class="btn-download">Lataa kuitti PDF</button>
+        <button id="download-receipt" class="btn-download" type="button">Lataa kuitti PDF</button>
         <a href="/verkkokauppa/" class="btn-home" data-i18n="back_to_home_btn">Palaa etusivulle</a>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="/verkkokauppa/script/language.js"></script>
+<script src="/verkkokauppa/script/accessibility.js"></script>
 <script src="/verkkokauppa/script/success.js"></script>
 </body>
 </html>
