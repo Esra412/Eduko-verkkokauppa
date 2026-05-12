@@ -13,6 +13,28 @@
         return event.key === 'Enter' || event.key === ' ';
     }
 
+    function ensureStatusRegion() {
+        let region = document.getElementById('a11y-status');
+        if (region) return region;
+
+        region = document.createElement('div');
+        region.id = 'a11y-status';
+        region.className = 'sr-only';
+        region.setAttribute('role', 'status');
+        region.setAttribute('aria-live', 'polite');
+        region.setAttribute('aria-atomic', 'true');
+        document.body.appendChild(region);
+        return region;
+    }
+
+    function announce(message) {
+        const region = ensureStatusRegion();
+        region.textContent = '';
+        window.setTimeout(() => {
+            region.textContent = message;
+        }, 50);
+    }
+
     function setButtonLike(element, label) {
         if (!element) return;
         element.setAttribute('role', 'button');
@@ -36,6 +58,25 @@
         skipLink.href = `#${main.id}`;
         skipLink.textContent = 'Siirry sisältöön';
         document.body.prepend(skipLink);
+    }
+
+    function enhanceLandmarks() {
+        document.querySelectorAll('header.main-header').forEach((header) => {
+            header.setAttribute('role', 'banner');
+        });
+
+        document.querySelectorAll('nav.main-nav').forEach((nav) => {
+            if (!nav.getAttribute('aria-label')) nav.setAttribute('aria-label', 'Paavalikko');
+        });
+
+        document.querySelectorAll('.side-nav').forEach((nav) => {
+            if (!nav.getAttribute('aria-label')) nav.setAttribute('aria-label', 'Kategoriat');
+        });
+
+        document.querySelectorAll('.search-box').forEach((search) => {
+            search.setAttribute('role', 'search');
+            if (!search.getAttribute('aria-label')) search.setAttribute('aria-label', 'Tuotehaku');
+        });
     }
 
     function enhanceHeaderControls() {
@@ -80,13 +121,17 @@
         const optionsContainer = document.getElementById('lang-options');
         if (!selected || !optionsContainer) return;
 
-        setButtonLike(selected, 'Valitse kieli');
+        selected.setAttribute('role', 'combobox');
+        selected.setAttribute('tabindex', '0');
+        selected.setAttribute('aria-label', 'Valitse kieli');
         selected.setAttribute('aria-haspopup', 'listbox');
         selected.setAttribute('aria-controls', 'lang-options');
         selected.setAttribute('aria-expanded', String(!optionsContainer.classList.contains('select-hide')));
         optionsContainer.setAttribute('role', 'listbox');
+        optionsContainer.setAttribute('aria-label', 'Kielivaihtoehdot');
 
-        optionsContainer.querySelectorAll('[data-value]').forEach((option) => {
+        optionsContainer.querySelectorAll('[data-value]').forEach((option, index) => {
+            if (!option.id) option.id = `language-option-${index}`;
             option.setAttribute('role', 'option');
             option.setAttribute('tabindex', '-1');
         });
@@ -121,6 +166,8 @@
                 event.preventDefault();
                 event.stopPropagation();
                 document.activeElement.click();
+                const label = document.activeElement.textContent.trim();
+                if (label) announce(`Kieli vaihdettu: ${label}`);
                 selected.focus();
                 syncExpanded();
             }
@@ -178,6 +225,11 @@
         document.querySelectorAll('.quantity-error, .message.error').forEach((error) => {
             error.setAttribute('role', 'alert');
             error.setAttribute('aria-live', 'assertive');
+        });
+
+        document.querySelectorAll('#cart-count, .cart-count, #cart-total, #product-price').forEach((element) => {
+            element.setAttribute('aria-live', 'polite');
+            element.setAttribute('aria-atomic', 'true');
         });
     }
 
@@ -246,6 +298,7 @@
             if (tabButton && isActivationKey(event)) {
                 event.preventDefault();
                 tabButton.click();
+                announce(`${tabButton.textContent.trim()} valittu`);
                 requestAnimationFrame(syncProductTabs);
             }
         });
@@ -275,7 +328,20 @@
             const modal = document.querySelector('.cart-modal:not(.hidden)');
             if (modal) {
                 modal.classList.add('hidden');
-                document.getElementById('cart-btn')?.focus();
+            }
+        });
+    }
+
+    function setPageInert(modal, inert) {
+        Array.from(document.body.children).forEach((child) => {
+            if (child === modal || child.classList.contains('skip-link') || child.id === 'a11y-status') return;
+
+            if (inert) {
+                child.setAttribute('aria-hidden', 'true');
+                if ('inert' in child) child.inert = true;
+            } else {
+                child.removeAttribute('aria-hidden');
+                if ('inert' in child) child.inert = false;
             }
         });
     }
@@ -288,10 +354,27 @@
         modal.setAttribute('aria-modal', 'true');
         modal.setAttribute('aria-label', 'Ostoskori');
 
+        let lastFocusedElement = null;
+
         const observer = new MutationObserver(() => {
-            if (modal.classList.contains('hidden')) return;
-            const firstFocusable = modal.querySelector(focusableSelector);
-            firstFocusable?.focus();
+            const isOpen = !modal.classList.contains('hidden');
+
+            if (isOpen) {
+                lastFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : lastFocusedElement;
+                setPageInert(modal, true);
+                const firstFocusable = modal.querySelector(focusableSelector);
+                firstFocusable?.focus();
+                announce('Ostoskori avattu');
+                return;
+            }
+
+            setPageInert(modal, false);
+            if (lastFocusedElement && document.body.contains(lastFocusedElement)) {
+                lastFocusedElement.focus();
+            } else {
+                document.getElementById('cart-btn')?.focus();
+            }
+            announce('Ostoskori suljettu');
         });
 
         observer.observe(modal, { attributes: true, attributeFilter: ['class'] });
@@ -332,7 +415,9 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+        ensureStatusRegion();
         addSkipLink();
+        enhanceLandmarks();
         enhanceHeaderControls();
         enhanceLanguageSelector();
         enhanceForms();
@@ -343,4 +428,6 @@
         setupModalFocus();
         observeDynamicContent();
     });
+
+    window.announceToScreenReader = announce;
 })();

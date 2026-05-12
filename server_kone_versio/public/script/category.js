@@ -6,6 +6,7 @@ function showToast(message, type = 'success') {
     if (!toast) return;
 
     toast.textContent = message;
+    window.announceToScreenReader?.(message);
     toast.className = `toast-notification ${type} show`;
 
     setTimeout(() => {
@@ -154,7 +155,7 @@ const visibleProducts = products.filter((product) => (Number(product.stock) || 0
 
         card.innerHTML = `
             <div class="image-wrapper">
-                <img src="${resolveImageSrc(product.image)}" alt="${product.name}" onerror="this.onerror=null; this.src='/verkkokauppa/images/edukosmall.png';">
+                <img src="${resolveImageSrc(product.image)}" alt="${product.image_alt || product.name}" onerror="this.onerror=null; this.src='/verkkokauppa/images/edukosmall.png';">
             </div>
             <div class="card-content">
                 <h3>${product.name}</h3>

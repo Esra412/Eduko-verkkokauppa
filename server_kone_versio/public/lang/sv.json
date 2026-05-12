@@ -97,4 +97,14 @@
   "page_under_construction_title": "Sidan är fortfarande under arbete",
   "page_under_construction_text": "Den här sidan håller just nu på att utvecklas. Vi kommer snart tillbaka med mer innehåll.",
   "back_to_main_page": "Tillbaka till startsidan"
+,
+  "field_required": "Fyll i detta fält.",
+  "email_invalid": "Ange en e-postadress i formatet namn@example.com.",
+  "phone_invalid": "Ange ett telefonnummer, till exempel +358 40 123 4567.",
+  "postcode_invalid": "Ange ett femsiffrigt postnummer.",
+  "form_errors": "Kontrollera felen i formuläret.",
+  "cart_added": "Produkten har lagts i varukorgen!",
+  "cart_updated": "Antal uppdaterat: {count} st",
+  "cart_max_limit": "Maximalt antal ({count} st) har uppnåtts!",
+  "product_unavailable": "Produkten är inte tillgänglig!"
 }

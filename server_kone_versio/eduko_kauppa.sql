@@ -111,6 +111,9 @@ CREATE TABLE `products` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `image` longtext DEFAULT NULL,
   `images` longtext DEFAULT NULL,
+  `image_alt_fi` text DEFAULT NULL,
+  `image_alt_sv` text DEFAULT NULL,
+  `image_alt_en` text DEFAULT NULL,
   `stock` int(11) DEFAULT 1,
   `pickup_point` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

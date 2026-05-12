@@ -6,6 +6,7 @@ function showToast(message, type = 'success') {
     if (!toast) return;
 
     toast.textContent = message;
+    window.announceToScreenReader?.(message);
     toast.className = `toast-notification ${type} show`;
 
     setTimeout(() => {
@@ -68,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
             grid.innerHTML += `
                 <div class="product-card" data-product-id="${product.id}" data-stock="${stock}" style="cursor: pointer;">
                     <div class="image-wrapper">
-                        <img src="${getImageSrc(product.image)}" alt="${product.name}" onerror="this.onerror=null; this.src='/verkkokauppa/images/edukosmall.png';">
+                        <img src="${getImageSrc(product.image)}" alt="${product.image_alt || product.name}" onerror="this.onerror=null; this.src='/verkkokauppa/images/edukosmall.png';">
                     </div>
                     <div class="card-content">
                         <h3>${product.name}</h3>
@@ -565,7 +566,7 @@ function loadProducts() {
                     grid.innerHTML += `
                         <div class="product-card" data-product-id="${product.id}" data-stock="${product.stock || 0}" style="cursor: pointer;">
                             <div class="image-wrapper">
-                                <img src="${getImageSrc(product.image)}" alt="${product.name}" onerror="this.onerror=null; this.src='/verkkokauppa/images/edukosmall.png';">
+                                <img src="${getImageSrc(product.image)}" alt="${product.image_alt || product.name}" onerror="this.onerror=null; this.src='/verkkokauppa/images/edukosmall.png';">
                             </div>
                             <div class="card-content">
                                 <h3>${product.name}</h3>
@@ -606,7 +607,7 @@ function loadProducts() {
                 grid.innerHTML += `
                     <div class="product-card" data-product-id="${product.id}" data-stock="${product.stock || 0}" style="cursor: pointer;">
                         <div class="image-wrapper">
-                            <img src="${getImageSrc(product.image)}" alt="${product.name}" onerror="this.onerror=null; this.src='/verkkokauppa/images/edukosmall.png';">
+                            <img src="${getImageSrc(product.image)}" alt="${product.image_alt || product.name}" onerror="this.onerror=null; this.src='/verkkokauppa/images/edukosmall.png';">
                         </div>
                         <div class="card-content">
                             <h3>${product.name}</h3>

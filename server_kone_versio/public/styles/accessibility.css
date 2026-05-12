@@ -52,3 +52,66 @@
 #lang-options[role="listbox"] [role="option"]:focus-visible {
     outline-offset: -3px;
 }
+
+[aria-invalid="true"] {
+    border-color: #b00020 !important;
+    box-shadow: 0 0 0 3px rgba(176, 0, 32, 0.15);
+}
+
+.form-error {
+    color: #b00020;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin: 4px 0 10px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.001ms !important;
+    }
+}
+
+@media (max-width: 360px) {
+    body {
+        min-width: 0;
+        overflow-x: hidden;
+    }
+
+    .header-container,
+    .layout-container,
+    .product-main,
+    .cart-container,
+    .success-container,
+    .cancel-container,
+    .login-card {
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .search-box {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .tab-buttons,
+    .cart-footer-buttons,
+    .quantity-control,
+    .receipt-actions {
+        flex-wrap: wrap;
+    }
+
+    .checkout-btn,
+    .btn-primary,
+    .btn-download,
+    .btn-home,
+    .btn-retry,
+    .btn-secondary {
+        max-width: 100%;
+        white-space: normal;
+    }
+}

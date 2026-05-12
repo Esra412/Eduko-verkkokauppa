@@ -100,4 +100,11 @@
   "page_under_construction_title": "Sivu on vielä muokkauksella",
   "page_under_construction_text": "Tämä sivu on parhaillaan kehitteillä. Tulemme takaisin pian lisätyllä sisällöllä.",
   "back_to_main_page": "Palaa pääsivulle"
+,
+  "field_required": "Täytä tämä kenttä.",
+  "email_invalid": "Syötä sähköpostiosoite muodossa nimi@example.com.",
+  "phone_invalid": "Syötä puhelinnumero, esimerkiksi +358 40 123 4567.",
+  "postcode_invalid": "Syötä postinumero viidellä numerolla.",
+  "form_errors": "Tarkista lomakkeen virheet.",
+  "product_unavailable": "Tuote ei ole saatavilla!"
 }

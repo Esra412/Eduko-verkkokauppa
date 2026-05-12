@@ -12,6 +12,32 @@ const upload = multer({ dest: 'uploads/' }); // Määrittää minne kuvat tallen
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+function ensureProductAltColumns() {
+    const wantedColumns = ['image_alt_fi', 'image_alt_sv', 'image_alt_en'];
+
+    db.query("SHOW COLUMNS FROM products WHERE Field IN (?)", [wantedColumns], (err, rows) => {
+        if (err) {
+            console.error('Alt-tekstikenttien tarkistus epäonnistui:', err);
+            return;
+        }
+
+        const existing = new Set((rows || []).map((row) => row.Field));
+        const missing = wantedColumns.filter((column) => !existing.has(column));
+        if (missing.length === 0) return;
+
+        const additions = missing.map((column) => `ADD COLUMN ${column} TEXT DEFAULT NULL`).join(', ');
+        db.query(`ALTER TABLE products ${additions}`, (alterErr) => {
+            if (alterErr) {
+                console.error('Alt-tekstikenttien lisäys epäonnistui:', alterErr);
+                return;
+            }
+            console.log(`Lisättiin tuotteiden alt-tekstikentät: ${missing.join(', ')}`);
+        });
+    });
+}
+
+ensureProductAltColumns();
+
 
 // Vastuuhenkilöiden tiedot kategorioittain (ID on avain)
 const vastuuhenkilot = {
@@ -682,15 +708,16 @@ function applyProductLanguage(product, lang) {
     if (!product) return product;
     
     const langMap = {
-        fi: { name: 'name_fi', description: 'description_fi', specs: 'specs_fi' },
-        en: { name: 'name_en', description: 'description_en', specs: 'specs_en' },
-        sv: { name: 'name_sv', description: 'description_sv', specs: 'specs_sv' }
+        fi: { name: 'name_fi', description: 'description_fi', specs: 'specs_fi', imageAlt: 'image_alt_fi' },
+        en: { name: 'name_en', description: 'description_en', specs: 'specs_en', imageAlt: 'image_alt_en' },
+        sv: { name: 'name_sv', description: 'description_sv', specs: 'specs_sv', imageAlt: 'image_alt_sv' }
     };
     
     const columns = langMap[lang] || langMap.fi; // Oletuksena suomi
     product.name = product[columns.name] || product.name_fi || product.name || 'Nimetön tuote';
     product.description = product[columns.description] || product.description_fi || product.description || '';
     product.specs = product[columns.specs] || product.specs_fi || product.specs || '';
+    product.image_alt = product[columns.imageAlt] || product.image_alt_fi || product.name;
     
     return product;
 }
@@ -1145,6 +1172,11 @@ function handleProductSave(req, res, isUpdate) {
             sv: parsedTranslations.sv || {},
             en: parsedTranslations.en || {}
         };
+        const imageAlt = {
+            fi: (t.fi.imageAlt || t.fi.name || '').trim(),
+            sv: (t.sv.imageAlt || t.sv.name || '').trim(),
+            en: (t.en.imageAlt || t.en.name || '').trim()
+        };
 
         // Kuvat
         const mainImage = (req.files && req.files.mainImage) ? req.files.mainImage[0].filename : null;
@@ -1160,12 +1192,14 @@ function handleProductSave(req, res, isUpdate) {
                     name_fi=?, description_fi=?, specs_fi=?,
                     name_sv=?, description_sv=?, specs_sv=?,
                     name_en=?, description_en=?, specs_en=?,
+                    image_alt_fi=?, image_alt_sv=?, image_alt_en=?,
                     price=?, category_id=?, stock=?, pickup_point=?, type=?`;
             
             params = [
                 t.fi.name, t.fi.description, t.fi.specs,
                 t.sv.name, t.sv.description, t.sv.specs,
                 t.en.name, t.en.description, t.en.specs,
+                imageAlt.fi, imageAlt.sv, imageAlt.en,
                 price, category, stock, pickup_point, type
             ];
 
@@ -1178,13 +1212,14 @@ function handleProductSave(req, res, isUpdate) {
             // LISÄYS
             sql = `INSERT INTO products (
                     name_fi, description_fi, specs_fi, name_sv, description_sv, specs_sv,
-                    name_en, description_en, specs_en, price, image, category_id, images,
+                    name_en, description_en, specs_en, image_alt_fi, image_alt_sv, image_alt_en, price, image, category_id, images,
                     stock, pickup_point, type
-                   ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
+                   ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
             params = [
                 t.fi.name, t.fi.description, t.fi.specs,
                 t.sv.name, t.sv.description, t.sv.specs,
                 t.en.name, t.en.description, t.en.specs,
+                imageAlt.fi, imageAlt.sv, imageAlt.en,
                 price, mainImage, category, extraImages || '[]', stock, pickup_point, type
             ];
         }

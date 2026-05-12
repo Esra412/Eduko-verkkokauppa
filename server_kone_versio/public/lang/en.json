@@ -97,4 +97,14 @@
   "page_under_construction_title": "This page is still under construction",
   "page_under_construction_text": "This page is currently being developed. We will be back soon with more content.",
   "back_to_main_page": "Back to the main page"
+,
+  "field_required": "Fill in this field.",
+  "email_invalid": "Enter an email address in the format name@example.com.",
+  "phone_invalid": "Enter a phone number, for example +358 40 123 4567.",
+  "postcode_invalid": "Enter a five-digit postal code.",
+  "form_errors": "Check the form errors.",
+  "cart_added": "Product added to cart!",
+  "cart_updated": "Quantity updated: {count} pcs",
+  "cart_max_limit": "Maximum quantity ({count} pcs) reached!",
+  "product_unavailable": "Product is not available!"
 }

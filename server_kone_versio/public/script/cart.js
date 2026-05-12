@@ -233,6 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showFormBtn.style.display = 'none';
         requestAnimationFrame(() => {
             formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            formContainer.querySelector('input')?.focus();
         });
     }
 
@@ -247,6 +248,74 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function getFieldErrorMessage(field) {
+        if (!field.value.trim()) return typeof t === 'function' ? t('field_required') : 'Täytä tämä kenttä.';
+        if (field.type === 'email' && !field.validity.valid) return typeof t === 'function' ? t('email_invalid') : 'Syötä sähköpostiosoite muodossa nimi@example.com.';
+        if (field.id === 'phone' && !/^[+0-9\s()-]{6,}$/.test(field.value.trim())) return typeof t === 'function' ? t('phone_invalid') : 'Syötä puhelinnumero, esimerkiksi +358 40 123 4567.';
+        if (field.id === 'postcode' && !/^\d{5}$/.test(field.value.trim())) return typeof t === 'function' ? t('postcode_invalid') : 'Syötä postinumero viidellä numerolla.';
+        return '';
+    }
+
+    function setFieldError(field, message) {
+        const errorId = `${field.id}-error`;
+        let error = document.getElementById(errorId);
+
+        if (!error) {
+            error = document.createElement('div');
+            error.id = errorId;
+            error.className = 'form-error';
+            error.setAttribute('role', 'alert');
+            error.setAttribute('aria-live', 'assertive');
+            field.insertAdjacentElement('afterend', error);
+        }
+
+        if (message) {
+            field.setAttribute('aria-invalid', 'true');
+            field.setAttribute('aria-describedby', errorId);
+            error.textContent = message;
+            error.style.display = 'block';
+            return;
+        }
+
+        field.removeAttribute('aria-invalid');
+        field.removeAttribute('aria-describedby');
+        error.textContent = '';
+        error.style.display = 'none';
+    }
+
+    function validateCheckoutForm() {
+        const fields = [
+            document.getElementById('fname'),
+            document.getElementById('lname'),
+            document.getElementById('customer-email'),
+            document.getElementById('phone'),
+            document.getElementById('address'),
+            document.getElementById('postcode'),
+            document.getElementById('city')
+        ].filter(Boolean);
+
+        let firstInvalid = null;
+
+        fields.forEach((field) => {
+            const message = getFieldErrorMessage(field);
+            setFieldError(field, message);
+            if (message && !firstInvalid) firstInvalid = field;
+        });
+
+        if (firstInvalid) {
+            firstInvalid.focus();
+            window.announceToScreenReader?.(typeof t === 'function' ? t('form_errors') : 'Tarkista lomakkeen virheet.');
+            return false;
+        }
+
+        return true;
+    }
+
+    formContainer.querySelectorAll('input').forEach((field) => {
+        field.addEventListener('input', () => setFieldError(field, ''));
+        field.addEventListener('blur', () => setFieldError(field, getFieldErrorMessage(field)));
+    });
+
     payBtn.addEventListener('click', async () => {
         const customerData = {
             fname: document.getElementById('fname').value.trim(),
@@ -258,15 +327,15 @@ document.addEventListener('DOMContentLoaded', () => {
             city: document.getElementById('city').value.trim()
         };
 
-        const emptyFields = Object.entries(customerData).filter(([, val]) => val === '');
-        if (emptyFields.length > 0) {
-            alert(typeof t === 'function' ? t('fill_all_fields') : 'Täytä kaikki osoitetiedot jatkaaksesi.');
+        if (!validateCheckoutForm()) {
             return;
         }
 
         const cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
         if (cart.length === 0) {
-            alert(typeof t === 'function' ? t('cart_is_empty') : 'Ostoskorisi on tyhjä!');
+            const message = typeof t === 'function' ? t('cart_is_empty') : 'Ostoskorisi on tyhjä!';
+            window.announceToScreenReader?.(message);
+            alert(message);
             return;
         }
 
@@ -310,7 +379,9 @@ document.addEventListener('DOMContentLoaded', () => {
             throw new Error(data.error || 'Maksun luominen epäonnistui.');
         } catch (err) {
             console.error('Maksuvirhe:', err);
-            alert(err.message || (typeof t === 'function' ? t('server_error_try_again') : 'Yhteysvirhe palvelimeen. Yritä uudelleen.'));
+            const message = err.message || (typeof t === 'function' ? t('server_error_try_again') : 'Yhteysvirhe palvelimeen. Yritä uudelleen.');
+            window.announceToScreenReader?.(message);
+            alert(message);
             payBtn.innerText = typeof t === 'function' ? t('proceed_to_payment') : 'Siirry maksamaan';
             payBtn.disabled = false;
         }

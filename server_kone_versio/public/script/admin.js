@@ -42,9 +42,9 @@ let stickType = "";
 
 // Monikieliset kentät (name, description, specs)
 const formStates = {
-    fi: { name: "", description: "", specs: "" },
-    sv: { name: "", description: "", specs: "" },
-    en: { name: "", description: "", specs: "" }
+    fi: { name: "", description: "", specs: "", imageAlt: "" },
+    sv: { name: "", description: "", specs: "", imageAlt: "" },
+    en: { name: "", description: "", specs: "", imageAlt: "" }
 };
 
 // --- ALUSTUS ---
@@ -110,6 +110,7 @@ function setupLanguageButtons() {
             formStates[currentLanguage].name = document.getElementById('prodName').value;
             formStates[currentLanguage].description = document.getElementById('prodDesc').value;
             formStates[currentLanguage].specs = document.getElementById('prodSpecs').value;
+            formStates[currentLanguage].imageAlt = document.getElementById('prodImageAlt').value;
             
             // Tallenna sticky-kentät (nämä ovat globaaleja, ei per-language)
             stickPrice = document.getElementById('prodPrice').value;
@@ -132,6 +133,7 @@ function setupLanguageButtons() {
             document.getElementById('prodName').value = formStates[currentLanguage].name;
             document.getElementById('prodDesc').value = formStates[currentLanguage].description;
             document.getElementById('prodSpecs').value = formStates[currentLanguage].specs;
+            document.getElementById('prodImageAlt').value = formStates[currentLanguage].imageAlt;
             
             // Lataa sticky-kentät (nämä pysyvät samoina)
             document.getElementById('prodPrice').value = stickPrice;
@@ -142,7 +144,7 @@ function setupLanguageButtons() {
     });
     
     // Päivitys reaaliajassa kun kirjoitetaan (monikieliset kentät)
-    ['prodName', 'prodDesc', 'prodSpecs'].forEach(fieldId => {
+    ['prodName', 'prodDesc', 'prodSpecs', 'prodImageAlt'].forEach(fieldId => {
         const field = document.getElementById(fieldId);
         if (field) {
             field.addEventListener('input', updateLanguageButtonStyles);
@@ -370,17 +372,20 @@ window.editProduct = async (id) => {
         formStates.fi = { 
             name: p.name_fi || p.name || "", 
             description: p.description_fi || p.description || "", 
-            specs: p.specs_fi || p.specs || "" 
+            specs: p.specs_fi || p.specs || "",
+            imageAlt: p.image_alt_fi || p.image_alt || p.name || ""
         };
         formStates.sv = { 
             name: p.name_sv || "", 
             description: p.description_sv || "", 
-            specs: p.specs_sv || "" 
+            specs: p.specs_sv || "",
+            imageAlt: p.image_alt_sv || ""
         };
         formStates.en = { 
             name: p.name_en || "", 
             description: p.description_en || "", 
-            specs: p.specs_en || "" 
+            specs: p.specs_en || "",
+            imageAlt: p.image_alt_en || ""
         };
 
         // Päivitetään nykyinen näkymä (Finnish)
@@ -388,6 +393,7 @@ window.editProduct = async (id) => {
         document.getElementById('prodName').value = formStates.fi.name;
         document.getElementById('prodDesc').value = formStates.fi.description;
         document.getElementById('prodSpecs').value = formStates.fi.specs;
+        document.getElementById('prodImageAlt').value = formStates.fi.imageAlt;
         
         // Päivitä language button styles
         updateLanguageButtonStyles();
@@ -409,9 +415,9 @@ document.getElementById('cancelEditBtn').onclick = () => {
     document.getElementById('imagePreview').innerHTML = '';
     
     // Nollaa formStates
-    formStates.fi = { name: "", description: "", specs: "" };
-    formStates.sv = { name: "", description: "", specs: "" };
-    formStates.en = { name: "", description: "", specs: "" };
+    formStates.fi = { name: "", description: "", specs: "", imageAlt: "" };
+    formStates.sv = { name: "", description: "", specs: "", imageAlt: "" };
+    formStates.en = { name: "", description: "", specs: "", imageAlt: "" };
     stickPrice = "";
     stickStock = "";
     stickPickup = "";
@@ -438,6 +444,7 @@ document.getElementById('addProductForm').onsubmit = async (e) => {
     formStates[currentLanguage].name = document.getElementById('prodName').value;
     formStates[currentLanguage].description = document.getElementById('prodDesc').value;
     formStates[currentLanguage].specs = document.getElementById('prodSpecs').value;
+    formStates[currentLanguage].imageAlt = document.getElementById('prodImageAlt').value;
     
     // 2. Päivitä sticky-kentät muistiin
     stickPrice = document.getElementById('prodPrice').value;
@@ -520,9 +527,9 @@ document.getElementById('addProductForm').onsubmit = async (e) => {
             document.getElementById('editModeBadge').classList.add('hidden');
             
             // Nollaa formStates
-            formStates.fi = { name: "", description: "", specs: "" };
-            formStates.sv = { name: "", description: "", specs: "" };
-            formStates.en = { name: "", description: "", specs: "" };
+            formStates.fi = { name: "", description: "", specs: "", imageAlt: "" };
+            formStates.sv = { name: "", description: "", specs: "", imageAlt: "" };
+            formStates.en = { name: "", description: "", specs: "", imageAlt: "" };
             stickPrice = "";
             stickStock = "";
             stickPickup = "";
