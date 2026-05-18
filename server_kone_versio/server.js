@@ -15,7 +15,9 @@ const PORT = process.env.PORT || 3000;
 function ensureProductAltColumns() {
     const wantedColumns = ['image_alt_fi', 'image_alt_sv', 'image_alt_en'];
 
-    db.query("SHOW COLUMNS FROM products WHERE Field IN (?)", [wantedColumns], (err, rows) => {
+    // Joissain MySQL-ajureissa parametrisoitu IN (?) ei laajennu odotetusti
+    // joten haetaan sarakkeet ilman WHERE-ehdoa ja suoritetaan vertailu Javassa.
+    db.query("SHOW COLUMNS FROM products", (err, rows) => {
         if (err) {
             console.error('Alt-tekstikenttien tarkistus epäonnistui:', err);
             return;
@@ -146,7 +148,7 @@ function vaadiKirjautuminen(req, res, next) {
     if (req.session.isAdmin) {
         next();
     } else {
-        res.status(401).json({ success: false, message: "Kirjaudu sisään" });
+        res.status(401).json({ success: false, message: "Admin sisään" });
     }
 }
 
@@ -769,8 +771,16 @@ function normalizeProductImages(product) {
             try {
                 let images = JSON.parse(product.images);
                 if (Array.isArray(images)) {
-                    product.images = images.map(img => normalizeImagePath(img));
-                    product.images = JSON.stringify(product.images);
+                    const normalized = images.map(img => {
+                        if (img && typeof img === 'object' && img.src) {
+                            return {
+                                ...img,
+                                src: normalizeImagePath(img.src)
+                            };
+                        }
+                        return normalizeImagePath(img);
+                    });
+                    product.images = JSON.stringify(normalized);
                 }
             } catch (e) {
                 // Jos parse epäonnistuu, jätä alkuperäinen
@@ -1178,11 +1188,24 @@ function handleProductSave(req, res, isUpdate) {
             en: (t.en.imageAlt || t.en.name || '').trim()
         };
 
+        const parsedExtraImageAlts = (() => {
+            try {
+                return req.body.extraImageAlts ? JSON.parse(req.body.extraImageAlts) : { fi: [], sv: [], en: [] };
+            } catch (err) {
+                return { fi: [], sv: [], en: [] };
+            }
+        })();
+
         // Kuvat
         const mainImage = (req.files && req.files.mainImage) ? req.files.mainImage[0].filename : null;
-        const extraImages = (req.files && req.files.extraImages) 
-            ? JSON.stringify(req.files.extraImages.map(f => f.filename)) 
-            : null;
+        const extraImages = (req.files && req.files.extraImages) ? JSON.stringify(req.files.extraImages.map((f, index) => ({
+            src: f.filename,
+            alts: {
+                fi: parsedExtraImageAlts.fi?.[index] || '',
+                sv: parsedExtraImageAlts.sv?.[index] || '',
+                en: parsedExtraImageAlts.en?.[index] || ''
+            }
+        }))) : null;
 
         let sql, params;
 

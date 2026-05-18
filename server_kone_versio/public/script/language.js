@@ -3,6 +3,7 @@ let translations = {};
 const routeBasePath = window.location.pathname.startsWith('/verkkokauppa') ? '/verkkokauppa' : '';
 const languageBasePath = `${routeBasePath}/lang`;
 const flagBasePath = `${routeBasePath}/images/flags`;
+const translationCachePrefix = 'translations_cache_';
 
 function markLanguageReady() {
     document.documentElement.classList.remove('i18n-pending');
@@ -13,34 +14,72 @@ function getCurrentLanguage() {
     return localStorage.getItem('language') || 'fi';
 }
 
-async function applyLanguage(lang) {
+function getCachedTranslations(lang) {
     try {
-        const res = await fetch(`${languageBasePath}/${lang}.json`);
-        if (!res.ok) throw new Error('Kaannostiedostoa ei loytynyt');
+        const cached = localStorage.getItem(`${translationCachePrefix}${lang}`);
+        return cached ? JSON.parse(cached) : null;
+    } catch (err) {
+        return null;
+    }
+}
 
-        translations = await res.json();
+function setCachedTranslations(lang, data) {
+    try {
+        localStorage.setItem(`${translationCachePrefix}${lang}`, JSON.stringify(data));
+    } catch (err) {
+        // ignore storage errors
+    }
+}
 
-        document.querySelectorAll('[data-i18n]').forEach((el) => {
-            const key = el.dataset.i18n;
-            if (translations.hasOwnProperty(key)) {
-                el.textContent = translations[key];
-            }
-        });
+function applyTranslations(translationsToApply) {
+    document.querySelectorAll('[data-i18n]').forEach((el) => {
+        const key = el.dataset.i18n;
+        if (translationsToApply && translationsToApply.hasOwnProperty(key)) {
+            el.textContent = translationsToApply[key];
+        }
+    });
 
-        document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
-            const key = el.dataset.i18nPlaceholder;
-            if (translations.hasOwnProperty(key)) {
-                el.placeholder = translations[key];
-            }
-        });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
+        const key = el.dataset.i18nPlaceholder;
+        if (translationsToApply && translationsToApply.hasOwnProperty(key)) {
+            el.placeholder = translationsToApply[key];
+        }
+    });
+}
 
+async function fetchAndCacheTranslations(lang) {
+    const res = await fetch(`${languageBasePath}/${lang}.json`);
+    if (!res.ok) throw new Error('Käännöstiedostoa ei löytynyt');
+
+    const freshTranslations = await res.json();
+    setCachedTranslations(lang, freshTranslations);
+    return freshTranslations;
+}
+
+async function applyLanguage(lang) {
+    const cachedTranslations = getCachedTranslations(lang);
+    if (cachedTranslations) {
+        translations = cachedTranslations;
+        applyTranslations(translations);
+        document.documentElement.lang = lang;
+        localStorage.setItem('language', lang);
+        markLanguageReady();
+        document.dispatchEvent(new Event('languageChanged'));
+    }
+
+    try {
+        const freshTranslations = await fetchAndCacheTranslations(lang);
+        translations = freshTranslations;
+        applyTranslations(translations);
         document.documentElement.lang = lang;
         localStorage.setItem('language', lang);
         markLanguageReady();
         document.dispatchEvent(new Event('languageChanged'));
     } catch (err) {
-        console.error('Kielen lataus epaonnistui:', err);
-        markLanguageReady();
+        if (!cachedTranslations) {
+            console.error('Kielen lataus epäonnistui:', err);
+            markLanguageReady();
+        }
     }
 }
 
@@ -114,8 +153,8 @@ function setupCustomSelect() {
 function initLanguage() {
     const savedLang = localStorage.getItem('language') || 'fi';
     renderLanguageOptions();
-    applyLanguage(savedLang);
     renderSelectedLanguage(savedLang);
+    applyLanguage(savedLang);
     setupCustomSelect();
 }
 

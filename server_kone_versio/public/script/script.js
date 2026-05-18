@@ -29,6 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchBtn = document.querySelector('.search-box button');
     const pageTitle = document.querySelector('.hero-text h1') || document.querySelector('h1') || document.querySelector('h2');
 
+    if (!window.location.pathname.includes('/kori')) {
+        localStorage.setItem('eduko_last_page', window.location.href);
+    }
+
     const getActiveLanguage = () => (
         typeof getCurrentLanguage === 'function' ? getCurrentLanguage() : 'fi'
     );

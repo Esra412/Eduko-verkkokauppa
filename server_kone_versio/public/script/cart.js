@@ -4,6 +4,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const showFormBtn = document.getElementById('show-form-btn');
     const formContainer = document.getElementById('checkout-form-container');
     const payBtn = document.getElementById('pay-button');
+    const backLink = document.querySelector('.back-nav a');
+
+    function updateBackLink() {
+        if (!backLink) return;
+        const referrer = document.referrer;
+        const fromReferrer = referrer && referrer.startsWith(window.location.origin) && !referrer.includes('/kori') ? referrer : null;
+        const stored = localStorage.getItem('eduko_last_page');
+        const fromStorage = stored && !stored.includes('/kori') ? stored : null;
+        backLink.href = fromReferrer || fromStorage || '/verkkokauppa/';
+    }
 
     if (!cartList || !totalElem || !showFormBtn || !formContainer || !payBtn) {
         console.error('Virhe: Ostoskorin DOM-elementit puuttuvat!');
@@ -23,15 +33,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderCart() {
+        updateBackLink();
         const cart = JSON.parse(localStorage.getItem('eduko_cart')) || [];
         cartList.innerHTML = '';
         let total = 0;
 
         if (cart.length === 0) {
+            const continueHref = backLink?.href || '/verkkokauppa/';
             cartList.innerHTML = `
                 <div class="empty-cart" style="text-align: center; padding: 40px 20px; color: #666;">
                     <h3>${typeof t === 'function' ? t('cart_empty_message') : 'Ostoskorisi on tyhjä.'}</h3>
-                    <p><a href="/verkkokauppa/" style="color: #b0a078; text-decoration: none;">${typeof t === 'function' ? t('continue_shopping') : 'Palaa ostoksille tästä.'}</a></p>
+                    <p><a href="${continueHref}" style="color: #b0a078; text-decoration: none;">${typeof t === 'function' ? t('continue_shopping') : 'Palaa ostoksille tästä.'}</a></p>
                 </div>`;
             totalElem.innerText = '0.00';
             showFormBtn.style.display = 'none';

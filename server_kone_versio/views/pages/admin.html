@@ -48,10 +48,10 @@
         <form id="addProductForm">
             <input name="name" id="prodName" placeholder="Tuotteen nimi" required />
             <textarea name="description" id="prodDesc" placeholder="Kuvaus" required></textarea>
-            <label for="prodImageAlt" class="input-label">
-                Kuvan alt-teksti
-                <span class="alt-help" title="Kirjoita lyhyt kuvaus siitä, mitä kuvassa näkyy. Alt-teksti auttaa ruudunlukijaa ja parantaa saavutettavuutta.">ⓘ</span>
-            </label>
+            <div class="label-with-help">
+                <label for="prodImageAlt" class="input-label">Kuvan alt-teksti</label>
+                <button type="button" class="alt-help" aria-label="Näytä alt-teksti ohje" title="Kirjoita lyhyt kuvaus siitä, mitä kuvassa näkyy. Alt-teksti auttaa ruudunlukijaa ja parantaa saavutettavuutta.">ⓘ</button>
+            </div>
             <input name="imageAlt" id="prodImageAlt" placeholder="Kuvan alt-teksti ruudunlukijalle (esim. Koira juoksee nurmikolla)" />
             <p class="field-note">Alt-teksti kertoo ruudunlukijalle, mitä kuvassa näkyy. Kirjoita selkeä, lyhyt kuvaus, esimerkiksi &quot;Koira juoksee nurmikolla&quot;.</p>
             
@@ -73,6 +73,7 @@
                     <b>Muut kuvat (max 5 kpl)</b>
                     <input type="file" name="extraImages" accept="image/*" multiple id="extraImagesInput" />
                 </label>
+                <div id="extraImageAltsContainer" class="extra-image-alts"></div>
             </div>
 
             <div class="form-row">

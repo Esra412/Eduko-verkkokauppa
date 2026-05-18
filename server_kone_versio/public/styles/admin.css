@@ -185,17 +185,33 @@ textarea { min-height: 100px; resize: vertical; }
     font-weight: 700;
 }
 
+.label-with-help {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+}
+
 .alt-help {
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
     background: #f2f0e7;
     color: #333;
-    font-size: 0.85rem;
-    cursor: help;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    transition: 0.2s ease;
+}
+
+.alt-help:hover,
+.alt-help:focus-visible {
+    background: #e7e3d8;
+    outline: 3px solid rgba(176, 160, 120, 0.4);
 }
 
 .field-note {
@@ -226,6 +242,33 @@ textarea { min-height: 100px; resize: vertical; }
     object-fit: cover;
     border-radius: 6px;
     border: 1px solid #ddd;
+}
+
+.extra-image-alts {
+    margin-top: 15px;
+    display: grid;
+    gap: 12px;
+}
+
+.extra-image-alt-field {
+    background: #fafafa;
+    border: 1px solid #ddd;
+    padding: 12px;
+    border-radius: 10px;
+}
+
+.extra-image-alt-field label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.extra-image-alt-field input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 0.95rem;
 }
 
 .form-actions { display: flex; gap: 15px; margin-top: 10px; }
@@ -286,6 +329,44 @@ li:hover {
 
 .order-id-text { color: var(--eduko-gold); font-size: 0.9rem; }
 .customer-name { font-weight: bold; font-size: 1.1rem; }
+
+/* Hakualue */
+.search-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    align-items: stretch;
+}
+
+#searchProduct {
+    flex: 1;
+    min-width: 220px;
+    padding: 12px 14px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 1rem;
+}
+
+#searchBtn {
+    background: var(--eduko-gold);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: 0.2s ease;
+}
+
+#searchBtn:hover {
+    background: #968763;
+}
+
+#searchBtn:focus-visible {
+    outline: 3px solid rgba(176, 160, 120, 0.45);
+    outline-offset: 2px;
+}
 
 /* NAPIT LISTOISSA */
 .action-buttons { display: flex; gap: 10px; }

@@ -56,6 +56,10 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = `/verkkokauppa/${params.toString() ? `?${params.toString()}` : ''}`;
     };
 
+    if (!window.location.pathname.includes('/kori')) {
+        localStorage.setItem('eduko_last_page', window.location.href);
+    }
+
     if (searchBtn) searchBtn.addEventListener('click', goToSearch);
     if (searchInput) {
         searchInput.addEventListener('keypress', (e) => {
@@ -125,35 +129,59 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('.thumbnail-limit-note')?.remove();
 
         let allImages = [];
+        const currentLanguage = (window?.currentLanguage || 'fi');
         if (product.image) {
-            allImages.push(resolveImageUrl(product.image));
+            allImages.push({
+                url: resolveImageUrl(product.image),
+                alt: product.image_alt || product.name || 'Tuotteen kuva'
+            });
         }
 
         if (product.images) {
             try {
                 const extraImages = typeof product.images === 'string' ? JSON.parse(product.images) : product.images;
                 if (Array.isArray(extraImages)) {
-                    allImages = allImages.concat(extraImages.map((img) => resolveImageUrl(img)));
+                    extraImages.forEach((img) => {
+                        if (!img) return;
+                        if (typeof img === 'object' && img.src) {
+                            allImages.push({
+                                url: resolveImageUrl(img.src),
+                                alt: img.alts?.[currentLanguage] || product.image_alt || product.name || 'Lisakuva'
+                            });
+                        } else {
+                            allImages.push({
+                                url: resolveImageUrl(img),
+                                alt: product.image_alt || product.name || 'Lisakuva'
+                            });
+                        }
+                    });
                 }
             } catch (error) {
                 console.error('Kuvien parsinta epäonnistui', error);
             }
         }
 
-        const uniqueImages = [...new Set(allImages.filter(Boolean))];
+        const uniqueImages = [];
+        const seenUrls = new Set();
+        allImages.forEach((img) => {
+            if (img?.url && !seenUrls.has(img.url)) {
+                seenUrls.add(img.url);
+                uniqueImages.push(img);
+            }
+        });
         const limitedImages = uniqueImages.slice(0, 8);
 
         mainImg.onerror = () => {
             mainImg.onerror = null;
             mainImg.src = '/verkkokauppa/images/edukosmall.png';
         };
-        mainImg.alt = product.image_alt || product.name || 'Tuotteen kuva';
-        mainImg.src = limitedImages[0] || '/verkkokauppa/images/edukosmall.png';
+        mainImg.alt = limitedImages[0]?.alt || product.image_alt || product.name || 'Tuotteen kuva';
+        mainImg.src = limitedImages[0]?.url || '/verkkokauppa/images/edukosmall.png';
 
-        limitedImages.forEach((imgUrl, index) => {
+        limitedImages.forEach((imageObj, index) => {
             const thumb = document.createElement('img');
-            thumb.src = imgUrl;
-            thumb.alt = product.image_alt || product.name || `Lisakuva ${index + 1}`;
+            thumb.src = imageObj.url;
+            thumb.alt = imageObj.alt || product.image_alt || product.name || `Lisakuva ${index + 1}`;
             thumb.className = index === 0 ? 'thumbnail active' : 'thumbnail';
             thumb.tabIndex = 0;
             thumb.role = 'button';
@@ -164,7 +192,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 thumb.src = '/verkkokauppa/images/edukosmall.png';
             };
             const activateImage = () => {
-                mainImg.src = imgUrl;
+                mainImg.src = imageObj.url;
+                mainImg.alt = imageObj.alt || product.image_alt || product.name || `Lisakuva ${index + 1}`;
                 thumbContainer.querySelectorAll('.thumbnail').forEach((img) => img.classList.remove('active'));
                 thumb.classList.add('active');
             };

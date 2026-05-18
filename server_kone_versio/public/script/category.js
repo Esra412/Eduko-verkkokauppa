@@ -80,6 +80,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    if (!window.location.pathname.includes('/kori')) {
+        localStorage.setItem('eduko_last_page', window.location.href);
+    }
+
     // --- 2. Kategorian tunnistus osoitepalkista ---
     const pathParts = window.location.pathname.split('/').filter(part => part !== '');
     const categoryId = pathParts[pathParts.length - 1];

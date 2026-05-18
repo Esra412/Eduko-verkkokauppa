@@ -26,7 +26,7 @@
 <a href="/verkkokauppa/" class="back-button">Takaisin etusivulle</a>
 <div class="login-card">
     <div id="step1">
-        <h2 data-i18n="login_header">Kirjaudu sisään</h2>
+        <h2 data-i18n="login_header">Admin sisään</h2>
         <div class="input-group">
             <label data-i18n="email_label">Sähköpostiosoite</label>
             <input type="email" id="email" data-i18n-placeholder="email_placeholder" placeholder="admin@example.com" required>
@@ -46,7 +46,7 @@
             <label data-i18n="code_label">Vahvistuskoodi</label>
             <input type="text" id="code" name="verification_code" maxlength="6" inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" data-i18n-placeholder="code_placeholder" placeholder="123456" style="text-align: center; font-weight: bold;">
         </div>
-        <button type="button" onclick="verifyCode()" data-i18n="login_confirm_btn">Vahvista ja kirjaudu</button>
+        <button type="button" onclick="verifyCode()" data-i18n="login_confirm_btn">Vahvista ja Admin</button>
         <button type="button" onclick="location.reload()" data-i18n="back_btn" style="background: none; color: #666; font-size: 0.8rem;">Palaa takaisin</button>
         <div id="error-step2" class="message error"></div>
     </div>

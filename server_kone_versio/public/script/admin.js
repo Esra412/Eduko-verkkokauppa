@@ -5,7 +5,7 @@
 console.log("Admin.js ladattu!");
 
 function showAdminSessionExpiredMessage() {
-    alert("Istuntosi on vanhentunut. Kirjaudu uudelleen sisään jatkaaksesi.");
+    alert("Istuntosi on vanhentunut. Admin uudelleen sisään jatkaaksesi.");
     window.location.href = "/verkkokauppa/login";
 }
 
@@ -45,6 +45,12 @@ const formStates = {
     fi: { name: "", description: "", specs: "", imageAlt: "" },
     sv: { name: "", description: "", specs: "", imageAlt: "" },
     en: { name: "", description: "", specs: "", imageAlt: "" }
+};
+
+const extraImageAltStates = {
+    fi: [],
+    sv: [],
+    en: []
 };
 
 // --- ALUSTUS ---
@@ -134,6 +140,7 @@ function setupLanguageButtons() {
             document.getElementById('prodDesc').value = formStates[currentLanguage].description;
             document.getElementById('prodSpecs').value = formStates[currentLanguage].specs;
             document.getElementById('prodImageAlt').value = formStates[currentLanguage].imageAlt;
+            renderExtraImageAltFields();
             
             // Lataa sticky-kentät (nämä pysyvät samoina)
             document.getElementById('prodPrice').value = stickPrice;
@@ -156,6 +163,9 @@ function setupImagePreview() {
     const mainInput = document.getElementById('mainImageInput');
     const extraInput = document.getElementById('extraImagesInput');
     const preview = document.getElementById('imagePreview');
+    const extraImageAltsContainer = document.getElementById('extraImageAltsContainer');
+    const altTextInput = document.getElementById('prodImageAlt');
+    const getAltText = () => altTextInput?.value.trim() || '';
 
     const renderPreviews = () => {
         preview.innerHTML = "";
@@ -170,7 +180,7 @@ function setupImagePreview() {
             }
         }
 
-        files.forEach(({ file, label }) => {
+        files.forEach(({ file, label }, index) => {
             const reader = new FileReader();
             reader.onload = (e) => {
                 const wrapper = document.createElement('div');
@@ -180,6 +190,7 @@ function setupImagePreview() {
                 caption.innerText = label;
                 const img = document.createElement('img');
                 img.src = e.target.result;
+                img.alt = getAltText() || label;
                 wrapper.appendChild(img);
                 wrapper.appendChild(caption);
                 preview.appendChild(wrapper);
@@ -188,8 +199,101 @@ function setupImagePreview() {
         });
     };
 
-    mainInput.onchange = renderPreviews;
-    extraInput.onchange = renderPreviews;
+    const renderExtraImageAltFields = () => {
+        if (!extraImageAltsContainer) return;
+        extraImageAltsContainer.innerHTML = '';
+        
+        let hasExisting = false;
+        // Näytä olemassa olevien kuvien alt-tekstit (editointi-tilassa)
+        if (editingProductId && extraImageAltStates[currentLanguage] && extraImageAltStates[currentLanguage].length > 0) {
+            hasExisting = true;
+            const header = document.createElement('div');
+            header.style.marginBottom = '15px';
+            header.style.fontWeight = 'bold';
+            header.style.color = '#333';
+            header.innerHTML = `Olemassa olevat lisäkuvat (${extraImageAltStates[currentLanguage].length} kpl)`;
+            extraImageAltsContainer.appendChild(header);
+            
+            extraImageAltStates[currentLanguage].forEach((altText, index) => {
+                const fieldWrapper = document.createElement('div');
+                fieldWrapper.className = 'extra-image-alt-field';
+                fieldWrapper.style.opacity = '0.9';
+
+                const label = document.createElement('label');
+                label.textContent = `Kuva ${index + 1}`;
+                label.htmlFor = `extra-alt-existing-${index}`;
+
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.id = `extra-alt-existing-${index}`;
+                input.placeholder = 'Muokkaa alt-tekstiä';
+                input.value = altText || '';
+                input.addEventListener('input', () => {
+                    extraImageAltStates[currentLanguage][index] = input.value;
+                });
+
+                fieldWrapper.appendChild(label);
+                fieldWrapper.appendChild(input);
+                extraImageAltsContainer.appendChild(fieldWrapper);
+            });
+        }
+        
+        // Näytä uusien valittujen kuvien alt-tekstit
+        const files = extraInput.files ? Array.from(extraInput.files) : [];
+        if (files.length > 0) {
+            if (hasExisting) {
+                const divider = document.createElement('div');
+                divider.style.margin = '15px 0';
+                divider.style.borderTop = '1px solid #ddd';
+                extraImageAltsContainer.appendChild(divider);
+            }
+            
+            const newHeader = document.createElement('div');
+            newHeader.style.marginBottom = '15px';
+            newHeader.style.fontWeight = 'bold';
+            newHeader.style.color = '#333';
+            newHeader.innerHTML = `Uudet lisäkuvat (${files.length} kpl)`;
+            extraImageAltsContainer.appendChild(newHeader);
+            
+            files.forEach((file, index) => {
+                const fieldWrapper = document.createElement('div');
+                fieldWrapper.className = 'extra-image-alt-field';
+
+                const label = document.createElement('label');
+                label.textContent = `${file.name}`;
+                label.htmlFor = `extra-alt-new-${index}`;
+                label.style.fontSize = '0.9rem';
+                label.style.color = '#666';
+
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.id = `extra-alt-new-${index}`;
+                input.placeholder = 'Kirjoita alt-teksti tälle kuvalle';
+                input.value = extraImageAltStates[currentLanguage][index + (editingProductId && extraImageAltStates[currentLanguage].length > 0 ? extraImageAltStates[currentLanguage].length : 0)] || '';
+                input.addEventListener('input', () => {
+                    const existingCount = (editingProductId && extraImageAltStates[currentLanguage].length > 0) ? extraImageAltStates[currentLanguage].length : 0;
+                    extraImageAltStates[currentLanguage][existingCount + index] = input.value;
+                });
+
+                fieldWrapper.appendChild(label);
+                fieldWrapper.appendChild(input);
+                extraImageAltsContainer.appendChild(fieldWrapper);
+            });
+        }
+    };
+
+    mainInput.onchange = () => {
+        renderPreviews();
+        renderExtraImageAltFields();
+    };
+    extraInput.onchange = () => {
+        // Keep existing values for unchanged indices
+        renderPreviews();
+        renderExtraImageAltFields();
+    };
+    altTextInput?.addEventListener('input', renderPreviews);
+
+    window.renderExtraImageAltFields = renderExtraImageAltFields;
 }
 
 /* =================================================
@@ -367,6 +471,34 @@ window.editProduct = async (id) => {
         document.getElementById('prodPickup').value = stickPickup;
         document.getElementById('prodType').value = stickType;
 
+        // Lataa olemassa olevat extra image alt-tekstit
+        try {
+            const extraImages = p.images && typeof p.images === 'string' ? JSON.parse(p.images) : [];
+            if (Array.isArray(extraImages)) {
+                extraImageAltStates.fi = [];
+                extraImageAltStates.sv = [];
+                extraImageAltStates.en = [];
+                
+                extraImages.forEach((img) => {
+                    if (img && typeof img === 'object' && img.alts) {
+                        extraImageAltStates.fi.push(img.alts.fi || '');
+                        extraImageAltStates.sv.push(img.alts.sv || '');
+                        extraImageAltStates.en.push(img.alts.en || '');
+                    } else {
+                        // Vanha formaatti (pelkkä filename string)
+                        extraImageAltStates.fi.push('');
+                        extraImageAltStates.sv.push('');
+                        extraImageAltStates.en.push('');
+                    }
+                });
+            }
+        } catch (e) {
+            console.warn('Extra image alts parse epäonnistui:', e);
+            extraImageAltStates.fi = [];
+            extraImageAltStates.sv = [];
+            extraImageAltStates.en = [];
+        }
+
         // Täytetään monikieliset tilat
         // API palauttaa name_fi, description_fi, specs_fi jne.
         formStates.fi = { 
@@ -395,6 +527,11 @@ window.editProduct = async (id) => {
         document.getElementById('prodSpecs').value = formStates.fi.specs;
         document.getElementById('prodImageAlt').value = formStates.fi.imageAlt;
         
+        // Renderöi extra image alt-kentät (näyttää olemassa olevat alts)
+        if (typeof window.renderExtraImageAltFields === 'function') {
+            window.renderExtraImageAltFields();
+        }
+        
         // Päivitä language button styles
         updateLanguageButtonStyles();
 
@@ -418,10 +555,17 @@ document.getElementById('cancelEditBtn').onclick = () => {
     formStates.fi = { name: "", description: "", specs: "", imageAlt: "" };
     formStates.sv = { name: "", description: "", specs: "", imageAlt: "" };
     formStates.en = { name: "", description: "", specs: "", imageAlt: "" };
+    extraImageAltStates.fi = [];
+    extraImageAltStates.sv = [];
+    extraImageAltStates.en = [];
     stickPrice = "";
     stickStock = "";
     stickPickup = "";
     stickType = "";
+    
+    if (typeof window.renderExtraImageAltFields === 'function') {
+        window.renderExtraImageAltFields();
+    }
     
     // Päivitä näkymä
     document.getElementById('formTitle').innerText = "Lisää uusi tuote";
@@ -499,6 +643,9 @@ document.getElementById('addProductForm').onsubmit = async (e) => {
         }
     }
 
+    // Lähetetään myös lisäkuvien alt-tekstit JSON-muodossa
+    formData.append('extraImageAlts', JSON.stringify(extraImageAltStates));
+
     try {
         console.log("Lähetetään dataa...", Object.fromEntries(formData.entries())); // Debug-tuloste
         console.log("Tallennetaan osoitteeseen:", url);
@@ -530,6 +677,9 @@ document.getElementById('addProductForm').onsubmit = async (e) => {
             formStates.fi = { name: "", description: "", specs: "", imageAlt: "" };
             formStates.sv = { name: "", description: "", specs: "", imageAlt: "" };
             formStates.en = { name: "", description: "", specs: "", imageAlt: "" };
+            extraImageAltStates.fi = [];
+            extraImageAltStates.sv = [];
+            extraImageAltStates.en = [];
             stickPrice = "";
             stickStock = "";
             stickPickup = "";

@@ -8,15 +8,10 @@
             try {
                 var savedLang = localStorage.getItem('language') || 'fi';
                 document.documentElement.lang = savedLang;
-                document.documentElement.classList.add(savedLang !== 'fi' ? 'i18n-pending' : 'i18n-ready');
+                document.documentElement.classList.add('i18n-ready');
             } catch (err) {}
         })();
     </script>
-    <style>
-        html.i18n-pending body {
-            visibility: hidden;
-        }
-    </style>
     <title>Eduko - Tuotetiedot</title>
 
     <link rel="stylesheet" href="/verkkokauppa/styles/product-details.css">
@@ -50,7 +45,7 @@
                 <span id="cart-count">0</span>
             </div>
             <div class="header-right">
-                <a href="/verkkokauppa/login" class="btn-primary" data-i18n="login_btn">Kirjaudu</a>
+                <a href="/verkkokauppa/login" class="btn-primary" data-i18n="login_btn">Admin</a>
             </div>
             <div class="language-selector">
                 <div id="selected-lang">🇫🇮 FI</div>
@@ -95,7 +90,7 @@
         </section>
 
         <section class="product-info-box">
-            <h1 id="product-name">Ladataan...</h1>
+            <h1 id="product-name" data-i18n="loading_product_details">Ladataan tuotetietoja...</h1>
             <hr class="divider">
 
             <div class="purchase-section">
@@ -114,7 +109,7 @@
                 </div>
 
                 <div id="kuvaus" class="tab-pane active" role="tabpanel" aria-labelledby="tab-desc">
-                    <p id="product-desc">Tuotetiedot ladataan tästä...</p>
+                    <p id="product-desc" data-i18n="loading_description">Tuotetiedot latautuvat...</p>
                     <div id="product-meta"></div>
                     <p class="no-return" data-i18n="no_return_notice">Huom: Noutotuotteilla ei ole palautusoikeutta.</p>
                 </div>
@@ -131,9 +126,9 @@
                     <div class="contact-card">
                         <i class="fas fa-user-tie fa-3x"></i>
                         <div class="contact-info">
-                            <p><strong>Nimi:</strong> <span id="contact-name">Ladataan...</span></p>
-                            <p><strong>Sähköposti:</strong> <a href="#" id="email-link"><span id="contact-email">Ladataan...</span></a></p>
-                            <p><strong>Puhelin:</strong> <a href="#" id="phone-link"><span id="contact-phone">Ladataan...</span></a></p>
+                            <p><strong>Nimi:</strong> <span id="contact-name" data-i18n="loading_contact_info">Ladataan tietoja...</span></p>
+                            <p><strong>Sähköposti:</strong> <a href="#" id="email-link"><span id="contact-email" data-i18n="loading_contact_info">Ladataan tietoja...</span></a></p>
+                            <p><strong>Puhelin:</strong> <a href="#" id="phone-link"><span id="contact-phone" data-i18n="loading_contact_info">Ladataan tietoja...</span></a></p>
                         </div>
                     </div>
                 </div>
