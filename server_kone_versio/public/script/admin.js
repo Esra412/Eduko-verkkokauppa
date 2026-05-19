@@ -422,12 +422,13 @@ async function renderProducts(search = "") {
 
         list.innerHTML = products.map(p => {
             const imgSrc = getImageSrc(p.image);
+            const stockLabel = p.stock <= 0 ? `<span style="color: #e74c3c; font-weight: 700; margin-left: 10px;">Loppunut</span>` : '';
             return `
             <li style="display: flex; gap: 12px; align-items: center;">
                 <img src="${imgSrc}" alt="${p.name}" onerror="this.onerror=null; this.src='/verkkokauppa/images/edukosmall.png';" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
                 <div class="product-basic-info" style="flex: 1;">
                     <strong>${p.name}</strong>
-                    <span style="font-size: 0.85rem; color: #666;">Hinta: ${p.price} € | Varasto: ${p.stock} kpl</span>
+                    <span style="font-size: 0.85rem; color: #666;">Hinta: ${p.price} € | Varasto: ${p.stock} kpl${stockLabel}</span>
                 </div>
                 <div class="action-buttons">
                     <button class="edit-btn" onclick="editProduct(${p.id})" title="Muokkaa">

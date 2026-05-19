@@ -187,6 +187,19 @@ app.get(`/kori`, (req, res) => res.sendFile(path.join(__dirname, 'views/pages/ca
 // Alias reitti /verkkokauppa/kori
 app.get(`/verkkokauppa/kori`, (req, res) => res.sendFile(path.join(__dirname, 'views/pages/cart.html')));
 
+app.all('/error', (req, res) => {
+    res.status(500).sendFile(path.join(__dirname, 'views/pages/error.html'));
+});
+app.all('/error/', (req, res) => {
+    res.status(500).sendFile(path.join(__dirname, 'views/pages/error.html'));
+});
+app.all('/verkkokauppa/error', (req, res) => {
+    res.status(500).sendFile(path.join(__dirname, 'views/pages/error.html'));
+});
+app.all('/verkkokauppa/error/', (req, res) => {
+    res.status(500).sendFile(path.join(__dirname, 'views/pages/error.html'));
+});
+
 // ================= MAKSUN PALUUREITIT =================
 
 async function handleSuccessPage(req, res) {
@@ -829,8 +842,8 @@ app.get(`/api/products`, (req, res) => {
     const lang = req.query.lang || 'fi'; // Oletuksena suomi
     
     let sql = !isNaN(categoryParam) 
-        ? "SELECT p.*, c.slug as category_slug FROM products p LEFT JOIN categories c ON p.category_id = c.id WHERE p.category_id = ? ORDER BY p.id DESC" 
-        : "SELECT p.*, c.slug as category_slug FROM products p JOIN categories c ON p.category_id = c.id WHERE c.slug = ? ORDER BY p.id DESC";
+        ? "SELECT p.*, c.slug as category_slug FROM products p LEFT JOIN categories c ON p.category_id = c.id WHERE p.category_id = ? AND p.stock > 0 ORDER BY p.id DESC" 
+        : "SELECT p.*, c.slug as category_slug FROM products p JOIN categories c ON p.category_id = c.id WHERE c.slug = ? AND p.stock > 0 ORDER BY p.id DESC";
 
     db.query(sql, [categoryParam], (err, results) => {
         if (err) return res.status(500).json({ error: "Tietokantavirhe" });
@@ -851,8 +864,8 @@ app.get(`/verkkokauppa/api/products`, (req, res) => {
     const lang = req.query.lang || 'fi'; // Oletuksena suomi
     
     let sql = !isNaN(categoryParam) 
-        ? "SELECT p.*, c.slug as category_slug FROM products p LEFT JOIN categories c ON p.category_id = c.id WHERE p.category_id = ? ORDER BY p.id DESC" 
-        : "SELECT p.*, c.slug as category_slug FROM products p JOIN categories c ON p.category_id = c.id WHERE c.slug = ? ORDER BY p.id DESC";
+        ? "SELECT p.*, c.slug as category_slug FROM products p LEFT JOIN categories c ON p.category_id = c.id WHERE p.category_id = ? AND p.stock > 0 ORDER BY p.id DESC" 
+        : "SELECT p.*, c.slug as category_slug FROM products p JOIN categories c ON p.category_id = c.id WHERE c.slug = ? AND p.stock > 0 ORDER BY p.id DESC";
 
     db.query(sql, [categoryParam], (err, results) => {
         if (err) return res.status(500).json({ error: "Tietokantavirhe" });
@@ -874,6 +887,7 @@ app.get(`/api/products/latest`, (req, res) => {
         `SELECT p.*, c.slug as category_slug 
          FROM products p 
          LEFT JOIN categories c ON p.category_id = c.id 
+         WHERE p.stock > 0 
          ORDER BY p.created_at DESC LIMIT 15`, 
         (err, results) => {
             if (err) return res.status(500).json({ error: "Tietokantavirhe" });
@@ -897,6 +911,7 @@ app.get(`/verkkokauppa/api/products/latest`, (req, res) => {
         `SELECT p.*, c.slug as category_slug 
          FROM products p 
          LEFT JOIN categories c ON p.category_id = c.id 
+         WHERE p.stock > 0 
          ORDER BY p.created_at DESC LIMIT 15`, 
         (err, results) => {
             if (err) return res.status(500).json({ error: "Tietokantavirhe" });
@@ -1002,7 +1017,7 @@ app.get(`/api/search`, (req, res) => {
     };
     
     const columns = langMap[lang] || langMap.fi;
-    const sql = `SELECT * FROM products WHERE ${columns.name} LIKE ? OR ${columns.description} LIKE ? ORDER BY created_at DESC`;
+    const sql = `SELECT * FROM products WHERE (${columns.name} LIKE ? OR ${columns.description} LIKE ?) AND stock > 0 ORDER BY created_at DESC`;
     const values = [`%${term}%`, `%${term}%` || ''];
 
     db.query(sql, values, (err, results) => {
@@ -1032,7 +1047,7 @@ app.get(`/verkkokauppa/api/search`, (req, res) => {
     };
     
     const columns = langMap[lang] || langMap.fi;
-    const sql = `SELECT * FROM products WHERE ${columns.name} LIKE ? OR ${columns.description} LIKE ? ORDER BY created_at DESC`;
+    const sql = `SELECT * FROM products WHERE (${columns.name} LIKE ? OR ${columns.description} LIKE ?) AND stock > 0 ORDER BY created_at DESC`;
     const values = [`%${term}%`, `%${term}%` || ''];
 
     db.query(sql, values, (err, results) => {
@@ -1270,6 +1285,20 @@ app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
 app.use('/verkkokauppa/images', express.static(path.join(__dirname, 'public', 'images')));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/verkkokauppa', express.static(path.join(__dirname, 'public')));
+
+// Catch all unmatched routes and show the friendly error page
+app.use((req, res) => {
+    res.status(404).sendFile(path.join(__dirname, 'views/pages/error.html'));
+});
+
+// Global error handler for internal server errors
+app.use((err, req, res, next) => {
+    console.error('Palvelinvirhe:', err);
+    if (res.headersSent) {
+        return next(err);
+    }
+    res.status(500).sendFile(path.join(__dirname, 'views/pages/error.html'));
+});
 
 app.listen(PORT, () => {
     console.log(`✅ Serveri käynnissä: http://localhost:${PORT}`);
