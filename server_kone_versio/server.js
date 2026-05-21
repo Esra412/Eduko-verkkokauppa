@@ -1,4 +1,4 @@
-const express = require('express');
+﻿const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const nodemailer = require('nodemailer');
@@ -1065,6 +1065,40 @@ app.get(`/verkkokauppa/api/search`, (req, res) => {
 });
 // ================= ADMIN KIRJAUTUMINEN (OTP) =================
 
+const MAX_LOGIN_ATTEMPTS = 3;
+const LOCKOUT_DURATION_MS = 15 * 60 * 1000; // 15 min. // vaihda 15 min
+const loginFailures = new Map();
+
+function getClientIp(req) {
+    return req.ip || req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.connection?.remoteAddress || 'unknown';
+}
+
+function getLockStatus(ip) {
+    const entry = loginFailures.get(ip);
+    if (!entry) return null;
+    if (entry.lockedUntil && Date.now() < entry.lockedUntil) {
+        return entry;
+    }
+    return null;
+}
+
+function recordLoginFailure(ip) {
+    const now = Date.now();
+    const entry = loginFailures.get(ip) || { count: 0, lockedUntil: null };
+    entry.count += 1;
+
+    if (entry.count >= MAX_LOGIN_ATTEMPTS) {
+        entry.lockedUntil = now + LOCKOUT_DURATION_MS;
+    }
+
+    loginFailures.set(ip, entry);
+    return entry;
+}
+
+function resetLoginFailures(ip) {
+    loginFailures.delete(ip);
+}
+
 // Päivitä nämä omiin tarpeisiisi
 const adminKayttajat = {
     "esra07bagdat@gmail.com": { salasana: "123456" },
@@ -1080,11 +1114,24 @@ const adminKayttajat = {
     "joni.kunnaskari@student.eduko.fi": { salasana: "123456" } 
 };
 
-app.post(`/api/login-step1`, async (req, res) => {
+async function handleLoginStep1(req, res) {
     const { email, password } = req.body;
-    
+    const ip = getClientIp(req);
+    const lockStatus = getLockStatus(ip);
+
+    if (lockStatus) {
+        const remainingMs = lockStatus.lockedUntil - Date.now();
+        const remainingSeconds = Math.ceil(remainingMs / 1000);
+        return res.status(429).json({
+            success: false,
+            message: `Liian monta väärää kirjautumisyritystä. Yritä uudelleen ${remainingSeconds} sekunnin kuluttua.`,
+            retryAfter: remainingSeconds
+        });
+    }
+
     // Tarkistetaan löytyykö sähköposti ja täsmääkö salasana
-    if (adminKayttajat[email] && adminKayttajat[email].salasana === password) { 
+    if (adminKayttajat[email] && adminKayttajat[email].salasana === password) {
+        resetLoginFailures(ip);
         const vahvistuskoodi = Math.floor(100000 + Math.random() * 900000);
         req.session.pendingOtp = vahvistuskoodi;
         req.session.pendingEmail = email; // Tallennetaan kuka yrittää kirjautua
@@ -1119,9 +1166,20 @@ app.post(`/api/login-step1`, async (req, res) => {
             res.status(500).json({ success: false, message: "Email virhe" });
         }
     } else {
+        const entry = recordLoginFailure(ip);
+        if (entry.lockedUntil) {
+            return res.status(429).json({
+                success: false,
+                message: `Liian monta väärää kirjautumisyritystä. Yritä uudelleen ${LOCKOUT_DURATION_MS / 1000} sekunnin jälkeen.`,
+                retryAfter: LOCKOUT_DURATION_MS / 1000
+            });
+        }
         res.status(401).json({ success: false, message: "Väärät tunnukset" });
     }
-});
+}
+
+app.post(`/api/login-step1`, handleLoginStep1);
+app.post(`/verkkokauppa/api/login-step1`, handleLoginStep1);
 
 app.post(`/api/verify-code`, (req, res) => {
     if (req.body.code && req.session.pendingOtp && req.body.code.toString() === req.session.pendingOtp.toString()) {
