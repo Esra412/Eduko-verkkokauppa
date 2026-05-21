@@ -168,9 +168,9 @@ app.get(`/verkkokauppa/login`, (req, res) => res.sendFile(path.join(__dirname, '
 // Alias reitti /verkkokauppa juureen
 app.get(`/verkkokauppa`, (req, res) => res.sendFile(path.join(__dirname, 'views/pages/index.html')));
 
-app.get(`/admin`, vaadiKirjautuminen, (req, res) => res.sendFile(path.join(__dirname, 'views/pages/admin.html')));
-// Alias reitti /verkkokauppa/admin
-app.get(`/verkkokauppa/admin`, vaadiKirjautuminen, (req, res) => res.sendFile(path.join(__dirname, 'views/pages/admin.html')));
+app.get(`/kaupan-takahuone`, vaadiKirjautuminen, (req, res) => res.sendFile(path.join(__dirname, 'views/pages/admin.html')));
+// Alias reitti /verkkokauppa/kaupan-takahuone
+app.get(`/verkkokauppa/kaupan-takahuone`, vaadiKirjautuminen, (req, res) => res.sendFile(path.join(__dirname, 'views/pages/admin.html')));
 app.get(`/kategoria/:id`, (req, res) => res.sendFile(path.join(__dirname, 'views/pages/category.html')));
 // Alias reitti /verkkokauppa/kategoria/:id
 app.get(`/verkkokauppa/kategoria/:id`, (req, res) => res.sendFile(path.join(__dirname, 'views/pages/category.html')));
@@ -1190,7 +1190,7 @@ app.post(`/api/verify-code`, (req, res) => {
             if (err) return res.status(500).json({ success: false, message: "Sessiovirhe" });
             
             // PAKOTETAAN selaimelle oikea polku
-            res.json({ success: true, redirect: `/verkkokauppa/admin` });
+            res.json({ success: true, redirect: `/verkkokauppa/kaupan-takahuone` });
         });
     } else {
         res.status(400).json({ success: false, message: "Väärä koodi" });
