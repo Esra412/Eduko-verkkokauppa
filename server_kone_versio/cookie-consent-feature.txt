@@ -1,0 +1,36 @@
+Cookie consent -ominaisuus verkkokaupassa
+
+Tämä toiminto lisää GDPR-vaatimukset täyttävän evästebannerin, joka näkyy kävijälle heti, kun sivu aukeaa ilman aiemmin tallennettua suostumusta.
+
+Mitä se tekee:
+- näyttää evästevalikon sivun alakulmassa
+- antaa kävijälle vaihtoehdot:
+  * Vain välttämättömät evästeet
+  * Analytiikka
+  * Markkinointi
+- estää analytiikka- ja markkinointiskriptien lataamisen ennen kuin käyttäjä on antanut luvan
+- tallentaa suostumuksen localStorageen avaimella `eduko_cookie_consent`
+- lataa analytiikkaskriptin (Umami tai Matomo) vasta, kun lupa analytiikalle on annettu
+
+GDPR-yhteensopivuus:
+- Välttämättömät evästeet voivat toimia ilman lisälupaa, koska ne ovat tarpeen esimerkiksi ostoskorin ja kielivalinnan toiminnalle.
+- Seurantaevästeitä ei aseteta automaattisesti ennen käyttäjän suostumusta.
+- Käyttäjä voi hyväksyä vain välttämättömät, tallentaa omat valintansa tai hyväksyä kaikki evästeet.
+
+Konfigurointi:
+- `public/script/cookie-consent.js` sisältää `analyticsConfig`-objektin.
+- Voit asettaa `provider`-kentäksi `umami` tai `matomo`.
+- Lisää URL- ja sivustotunniste-arvot:
+  * `umamiScriptUrl`
+  * `umamiWebsiteId`
+  * `matomoUrl`
+  * `matomoSiteId`
+
+Käyttö:
+- kaikki sivut lataavat `public/styles/cookie-consent.css` ja `public/script/cookie-consent.js`
+- banneri rakennetaan ja ajetaan automaattisesti, jos käyttäjällä ei ole tallennettua suostumusta
+- analytiikkaskriptit ladataan vasta, kun `window.edukoCookieConsent.canUseAnalytics()` palauttaa `true`
+
+Lisätieto:
+- tämä ratkaisu on suunniteltu siten, että sivusto voi olla GDPR-yhteensopiva Euroopassa käytettävien seurantapalvelujen kanssa.
+- Jos haluat lisätä Facebook Pixelin tai muita markkinointiskriptejä, sinun tulee käynnistää ne vasta `marketing`-valinnan jälkeen, eikä ennen suostumusta.

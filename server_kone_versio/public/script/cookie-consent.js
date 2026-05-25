@@ -1,3 +1,8 @@
+/*
+ * GDPR-yhteensopiva evästebanneri.
+ * Tämä skripti näyttää evästevalikon, tallentaa käyttäjän suostumuksen ja
+ * lataa analytiikka- tai markkinointiskirjastoja vasta, kun suostumus on annettu.
+ */
 (function () {
     const storageKey = 'eduko_cookie_consent';
     const existing = localStorage.getItem(storageKey);

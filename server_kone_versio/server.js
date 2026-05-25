@@ -63,20 +63,21 @@ let temporaryOrders = {};
 // TÄRKEÄ: Jätä static middleware myöhemmäksi, jotta API-reitit käsitellään ensin!
 
 app.use(session({
-    secret: 'eduko_salaisuus_2024',
+    secret: process.env.SESSION_SECRET || 'eduko_salaisuus_2024',
     resave: false,
     saveUninitialized: false,
-    cookie: { 
-        maxAge: 3600000, 
-        secure: false 
+    cookie: {
+        maxAge: 3600000,
+        secure: process.env.SESSION_SECURE === 'true',
+        sameSite: 'lax'
     }
 }));
 
 // ================= PAYTRAIL CONFIG =================
 const PAYTRAIL_CONFIG = {
-    merchantId: '375917', 
-    secret: 'SAIPPUAKAUPPIAS', 
-    apiEndpoint: 'https://services.paytrail.com'
+    merchantId: process.env.PAYTRAIL_MERCHANT_ID || '375917',
+    secret: process.env.PAYTRAIL_SECRET || 'SAIPPUAKAUPPIAS',
+    apiEndpoint: process.env.PAYTRAIL_API_ENDPOINT || 'https://services.paytrail.com'
 };
 
 function calculateHmac(secret, params, body) {
@@ -132,16 +133,17 @@ app.use('/verkkokauppa/api/verify-code', express.urlencoded({ extended: true, li
 
 // ================= EMAIL CONFIG =================
 const lahetin = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port: Number(process.env.SMTP_PORT || 587),
+    secure: process.env.SMTP_SECURE === 'true',
     requireTLS: true,
     auth: {
-        user: 'kissakoira773@gmail.com',
-        pass: 'utpmakzjcihjrvuf' 
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
     },
-    tls: { rejectUnauthorized: false }
+    tls: { rejectUnauthorized: process.env.SMTP_REJECT_UNAUTHORIZED !== 'false' }
 });
+const EMAIL_FROM = process.env.EMAIL_FROM || process.env.SMTP_USER || 'no-reply@eduko.fi';
 
 // ================= AUTH MIDDLEWARE =================
 function vaadiKirjautuminen(req, res, next) {
@@ -266,7 +268,7 @@ async function handleSuccessPage(req, res) {
                             const v = vastuuhenkilot[String(categoryId)] || oletusHenkilo;
                             try {
                                 await lahetin.sendMail({
-                                    from: '"Eduko Varastojärjestelmä" <kissakoira773@gmail.com>',
+                                    from: `"Eduko Varastojärjestelmä" <${EMAIL_FROM}>`,
                                     to: v.email,
                                     subject: `TUOTE LOPPUMASSA - ${productName}`,
                                     html: `
@@ -319,7 +321,7 @@ async function handleSuccessPage(req, res) {
 
             try {
                 await lahetin.sendMail({
-                    from: '"Eduko Verkkokauppa" <kissakoira773@gmail.com>',
+                    from: `"Eduko Verkkokauppa" <${EMAIL_FROM}>`,
                     to: order.customer_email,
                     subject: `Tilausvahvistus - Tilausnumero: ${orderId}`,
                     html: `
@@ -359,7 +361,7 @@ async function handleSuccessPage(req, res) {
 
                 if (vastuuhenkiloEmailit.size > 0) {
                     await lahetin.sendMail({
-                        from: '"Eduko Tilausjärjestelmä" <kissakoira773@gmail.com>',
+                        from: `"Eduko Tilausjärjestelmä" <${EMAIL_FROM}>`,
                         to: Array.from(vastuuhenkiloEmailit).join(', '),
                         subject: `UUSI TILAUS #${orderId} - Toimenpiteitä vaaditaan`,
                         html: `
@@ -1138,7 +1140,7 @@ async function handleLoginStep1(req, res) {
 
         try {
             await lahetin.sendMail({
-                from: '"Eduko Admin" <kissakoira773@gmail.com>',
+                from: `"Eduko Admin" <${EMAIL_FROM}>`,
                 to: email, // Koodi lähtee VAIN sille, joka syötti oikeat tunnukset
                 subject: "Kirjautumisen vahvistuskoodi - Eduko",
                 html: `

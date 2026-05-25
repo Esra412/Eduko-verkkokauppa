@@ -15,6 +15,6 @@
 - Vaihda tuotannossa `SESSION_SECRET` ympäristömuuttujaan, jotta sessiot pysyvät voimassa palvelimen uudelleenkäynnistyksissä.
 - Siirrä tietokannan, Paytrailin ja SMTP:n salaisuudet pois koodista ympäristömuuttujiin.
 - Vaihda nykyiset harjoitussalasanat vahvoihin yksilöllisiin salasanoihin ja päivitä niiden tiivisteet.
-- Ota kaupan eteen WAF, esimerkiksi Cloudflare, ja laita päälle SQL-injektioiden, XSS-hyökkäysten ja bottiliikenteen suodatus.
+- Ota kaupan eteen WAF, esimerkiksi Cloudflare, ja laita päälle SQL-injektioiden, XSS-hyökkäysten ja bottiliikenteen suodatus. Lue lisäohjeet `cloudflare-waf.md`.
 - Ajasta tietokannan ja `uploads`-kansion varmuuskopio kerran päivässä. Säilytä kopiot vähintään 30 päivää eri palvelimella tai pilvitallennuksessa.
 - Testaa varmuuskopion palautus säännöllisesti. Varmuuskopio on hyödyllinen vasta, kun palautus on todettu toimivaksi.
