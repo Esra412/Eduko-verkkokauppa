@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="/verkkokauppa/styles/Tietoa_meista.css">
     <link rel="stylesheet" href="/verkkokauppa/styles/style.css">
     <link rel="stylesheet" href="/verkkokauppa/styles/accessibility.css">
+    <link rel="stylesheet" href="/verkkokauppa/styles/cookie-consent.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="icon" href="/verkkokauppa/images/edukosmall.png" type="image/png">
 </head>
@@ -75,71 +76,334 @@
     </div>
 </nav>
 
-<main class="about-section">
+<main class="page-section about-section">
     <section class="about-hero">
-        <h1 data-i18n="about_us">Tietoa meistä</h1>
-        <p data-i18n="about_intro_1">
-            Eduko-verkkokauppa on Kouvolan Ammattiopiston opiskelijoiden toteuttama
-            oppimisympäristö, jossa yhdistyvät käytännönläheinen tekeminen,
-            vastuullinen kaupankäynti ja digitaalinen osaaminen.
-        </p>
-        <p data-i18n="about_intro_2">
-            Sivusto toimii osana opiskelijoiden projekteja ja antaa mahdollisuuden
-            harjoitella verkkokaupan, asiakaspalvelun ja IT-järjestelmien käyttöä
-            aidon kaltaisessa ympäristössä.
-        </p>
+        <div class="hero-content">
+            <h1>Tietoa meistä</h1>
+            <p>
+                Eduko on Kouvolassa toimiva ammattiopisto, joka tarjoaa laadukasta ammatillista koulutusta
+                nuorille ja aikuisille useilla eri koulutusaloilla. Oppilaitoksen tavoitteena on tarjota
+                opiskelijoille vahva osaaminen työelämää varten sekä mahdollisuus kehittää käytännön taitojaan
+                aidossa oppimisympäristössä.
+            </p>
+            <p>
+                Edukossa painotetaan käytännönläheistä oppimista, tiivistä yhteistyötä työelämän kanssa sekä opiskelijoiden
+                yksilöllistä kasvua ja monipuolisen osaamisen kehittämistä.
+            </p>
+        </div>
     </section>
 
     <section class="about-grid">
         <div class="about-card">
-            <h3>🎓 <span data-i18n="about_card_1_title">Oppimisympäristö</span></h3>
-            <p data-i18n="about_card_1_text">
-                Eduko-verkkokauppa on rakennettu tukemaan opiskelijoiden oppimista.
-                Projektit vastaavat oikeita työelämän tilanteita ja kehittävät
-                teknistä sekä tiimityöosaamista.
+            <div class="card-icon"><i class="fas fa-graduation-cap"></i></div>
+            <h3>Oppiminen</h3>
+            <p>
+                Edukossa opiskelijat saavat vahvan perustan työelämän vaatimuksiin.
+                Opintojen aikana opitaan tekemällä, jolloin teoriatieto ja käytännön taito kytkeytyvät saumattomasti toisiinsa.
             </p>
         </div>
 
         <div class="about-card">
-            <h3>♻️ <span data-i18n="about_card_2_title">Kestävä kehitys</span></h3>
-            <p data-i18n="about_card_2_text">
-                Kannustamme kierrätykseen ja vastuulliseen kuluttamiseen.
-                Myynnissä olevat tuotteet voivat olla ylijäämämateriaaleja,
-                opiskelijatöitä tai uudelleenkäyttöön soveltuvia tuotteita.
+            <div class="card-icon"><i class="fas fa-laptop-code"></i></div>
+            <h3>Tieto- ja viestintätekniikka</h3>
+            <p>
+                Koulutuksessa opiskellaan muun muassa ohjelmointia, verkkosivujen ja -palveluiden kehittämistä sekä käyttöliittymäsuunnittelua.
+                Opiskelijat pääsevät työskentelemään aitojen asiakasprojektien parissa modernilla teknologialla.
             </p>
         </div>
 
         <div class="about-card">
-            <h3>💻 <span data-i18n="about_card_3_title">Opiskelijatyö</span></h3>
-            <p data-i18n="about_card_3_text">
-                Sivusto on opiskelijoiden suunnittelema ja toteuttama.
-                Mukana on osaajia eri koulutusaloilta, kuten ohjelmistokehityksestä,
-                sähköstä, logistiikasta ja media-alalta.
-            </p>
-        </div>
-
-        <div class="about-card">
-            <h3>🤝 <span data-i18n="about_card_4_title">Yhteistyö</span></h3>
-            <p data-i18n="about_card_4_text">
-                Teemme yhteistyötä opettajien ja eri koulutusalojen kanssa.
-                Tavoitteena on luoda realistinen ja turvallinen alusta
-                kaupankäynnin harjoitteluun.
+            <div class="card-icon"><i class="fas fa-handshake"></i></div>
+            <h3>Yhteistyö</h3>
+            <p>
+                Eduko tekee tiivistä ja jatkuvaa yhteistyötä alueen elinkeinoelämän kanssa. Pyrimme tarjoamaan opiskelijoille parhaat mahdolliset puitteet ja verkostot ammatilliseen kasvuun.
             </p>
         </div>
     </section>
 
     <section class="info-banner">
-        <h2 data-i18n="about_banner_title">Yhdistämme koulutuksen ja käytännön työn</h2>
-        <p data-i18n="about_banner_text">
-            Eduko-verkkokauppa tarjoaa opiskelijoille aidon digitaaliset oppimisympäristön,
-            jossa asiakaskokemus, tuotteiden esittely ja toimitusketju toimivat yhtenä kokonaisuutena.
+        <h2>Oppiminen ja käytännön taito kohtaavat</h2>
+        <p>
+            Tämä Eduko-verkkokauppa on erinomainen osoitus käytännön opetuksestamme. Sivusto tarjoaa opiskelijoille mahdollisuuden harjoitella verkkopalvelun suunnittelua, teknistä toteutusta ja digitaalista asiakaspalvelua täysin aidossa toimintaympäristössä.
         </p>
+    </section>
+
+    <section class="creators-section">
+        <h2>Sivuston toteutus</h2>
+        <p class="creators-intro">Tämän verkkokaupan suunnittelusta ja ohjelmoinnista ovat vastanneet Edukon toisen vuoden ohjelmistokehittäjäopiskelijat asiakastyönä oppilaitokselle:</p>
+        
+        <div class="creators-grid">
+            <div class="creator-badge">
+                <div class="creator-avatar"><i class="fas fa-user-code"></i></div>
+                <h4>Esra Bagdat</h4>
+                <span>Ohjelmistokehittäjäopiskelija</span>
+            </div>
+            <div class="creator-badge">
+                <div class="creator-avatar"><i class="fas fa-user-code"></i></div>
+                <h4>Kati Kemppainen</h4>
+                <span>Ohjelmistokehittäjäopiskelija</span>
+            </div>
+        </div>
     </section>
 </main>
 
 <script src="/verkkokauppa/script/language.js"></script>
 <script src="/verkkokauppa/script/accessibility.js"></script>
+<script src="/verkkokauppa/script/cookie-consent.js"></script>
 <script src="/verkkokauppa/script/script.js"></script>
 
 </body>
 </html>
+
+<style>
+:root {
+    --eduko-gold: #b0a078;
+    --eduko-dark: #333333;
+    --eduko-bg: #fdfcf9;
+    --white: #ffffff;
+    --text-main: #2c3e50;
+    --text-muted: #545454;
+    --shadow: 0 10px 30px rgba(176, 160, 120, 0.06);
+    --border-radius: 16px;
+    --danger: #d9534f;
+}
+
+* {
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    margin: 0;
+    background-color: var(--eduko-bg);
+    color: var(--text-main);
+    line-height: 1.6;
+}
+
+/* --- HEADER & NAV GLOBAL FIXES --- */
+.main-header {
+    background: var(--white);
+    padding: 15px 0;
+    border-bottom: 2px solid var(--eduko-gold);
+    position: sticky;
+    top: 0;
+    z-index: 1100;
+}
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+}
+.btn-primary { background: var(--eduko-gold); color: white; padding: 10px 22px; border-radius: 4px; text-decoration: none; font-weight: bold; }
+.logo { display: flex; flex-direction: column; text-decoration: none; }
+.eduko-text { font-size: 32px; font-weight: 900; letter-spacing: -1px; color: var(--eduko-dark); }
+.eduko-text span { color: var(--eduko-gold); }
+.logo small { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-top: -5px; color: var(--eduko-dark); }
+.search-box { display: flex; flex: 1; max-width: 500px; margin: 0 40px; }
+.search-box input { width: 100%; padding: 10px 15px; border: 1px solid #ddd; border-radius: 4px 0 0 4px; outline: none; }
+.search-box button { background: var(--eduko-gold); border: none; color: white; padding: 0 20px; border-radius: 0 4px 4px 0; cursor: pointer; }
+.main-nav { background: var(--eduko-dark); width: 100%; position: sticky; top: 83px; z-index: 1000; }
+.nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
+.nav-links { display: flex; list-style: none; margin: 0; padding: 0; }
+.nav-links a { display: inline-block; color: var(--white); text-decoration: none; padding: 18px 20px; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.3s ease; }
+.nav-links a:hover, .nav-links a.active { background: var(--eduko-gold); color: var(--eduko-dark); }
+
+/* --- TIETOA MEISTÄ UUDET SISÄLTÖTYYLIT --- */
+.about-section {
+    max-width: 950px;
+    margin: 60px auto 80px;
+    padding: 0 20px;
+}
+
+/* Hero laatikko */
+.about-hero {
+    background: var(--white);
+    padding: 45px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 35px;
+    border-left: 5px solid var(--eduko-gold);
+}
+
+.about-hero h1 {
+    margin: 0 0 16px 0;
+    font-size: 36px;
+    color: var(--eduko-dark);
+    font-weight: 700;
+}
+
+.about-hero p {
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--text-muted);
+}
+
+.about-hero p:last-child {
+    margin-bottom: 0;
+}
+
+/* Korttiruudukko */
+.about-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.about-card {
+    background: var(--white);
+    padding: 30px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(0,0,0,0.01);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.about-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(176, 160, 120, 0.12);
+}
+
+.card-icon {
+    background: #fdfaf2;
+    color: var(--eduko-gold);
+    width: 50px;
+    height: 50px;
+    font-size: 22px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+}
+
+.about-card h3 {
+    margin: 0 0 12px 0;
+    font-size: 20px;
+    color: var(--eduko-dark);
+}
+
+.about-card p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-muted);
+}
+
+/* Banneri */
+.info-banner {
+    background: linear-gradient(135deg, #918567 0%, #b19f71 100%);
+    color: var(--white);
+    padding: 40px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 40px;
+}
+
+.info-banner::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; width: 150px; height: 150px;
+    background: rgba(59, 55, 42, 0.1);
+    border-radius: 50%;
+    transform: translate(50%, -50%);
+}
+
+.info-banner h2 {
+    margin: 0 0 12px 0;
+    font-size: 26px;
+    color: #fff;
+}
+
+.info-banner p {
+    margin: 0 auto;
+    font-size: 16px;
+    line-height: 1.65;
+    max-width: 760px;
+    color: #e2e8f0;
+}
+
+/* Kehittäjät-osio */
+.creators-section {
+    text-align: center;
+    background: var(--white);
+    padding: 40px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+}
+
+.creators-section h2 {
+    margin: 0 0 10px 0;
+    color: var(--eduko-dark);
+    font-size: 24px;
+}
+
+.creators-intro {
+    font-size: 15px;
+    color: var(--text-muted);
+    max-width: 600px;
+    margin: 0 auto 30px auto;
+}
+
+.creators-grid {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.creator-badge {
+    background: #faf9f5;
+    padding: 20px 40px;
+    border-radius: 12px;
+    min-width: 240px;
+    border: 1px solid rgba(176, 160, 120, 0.15);
+}
+
+.creator-avatar {
+    width: 50px;
+    height: 50px;
+    background: var(--eduko-gold);
+    color: white;
+    font-size: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px auto;
+}
+
+.creator-badge h4 {
+    margin: 0 0 4px 0;
+    font-size: 18px;
+    color: var(--eduko-dark);
+}
+
+.creator-badge span {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+    .header-container { flex-direction: column; gap: 15px; }
+    .search-box { margin: 0; max-width: 100%; }
+    .nav-links { flex-wrap: wrap; justify-content: center; }
+    .main-nav { top: 64px; }
+    .nav-links a { padding: 14px; font-size: 13px; }
+
+    .about-section { margin: 30px auto; }
+    .about-hero { padding: 30px; }
+    .about-hero h1 { font-size: 28px; }
+    .info-banner { padding: 30px 20px; }
+    .info-banner h2 { font-size: 22px; }
+    .creators-grid { flex-direction: column; gap: 16px; }
+    .creator-badge { min-width: 100%; }
+}
+</style>

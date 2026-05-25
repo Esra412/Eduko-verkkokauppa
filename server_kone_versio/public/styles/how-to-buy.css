@@ -1,0 +1,182 @@
+
+
+:root {
+    --eduko-gold: #b0a078;
+    --eduko-dark: #333333;
+    --eduko-bg: #fdfcf9;
+    --white: #ffffff;
+    --text-main: #2c3e50;
+    --text-muted: #545454;
+    --shadow: 0 10px 30px rgba(176, 160, 120, 0.08);
+    --border-radius: 16px;
+    --primary-color: #b0a078;
+}
+
+body {
+    background: var(--eduko-bg);
+    color: var(--text-main);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.page-section {
+    max-width: 900px;
+    margin: 60px auto 60px;
+    padding: 0 20px;
+}
+
+/* Hero-osion parannukset */
+.page-hero {
+    background: var(--white);
+    padding: 40px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 40px;
+    border-left: 5px solid var(--eduko-gold);
+}
+
+.page-hero h1 {
+    margin: 0 0 14px;
+    font-size: 34px;
+    color: var(--eduko-dark);
+    font-weight: 700;
+}
+
+.page-hero p {
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--text-muted);
+    margin-bottom: 0;
+}
+
+/* Tärkeä huomautuslaatikko */
+.important-notice {
+    background-color: #fff9eb;
+    border: 1px solid #ffeeba;
+    color: #856404;
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 15px;
+}
+.important-notice i {
+    font-size: 24px;
+    color: #e0a800;
+}
+
+/* Aikajana / Vaiheet päällekkäin (Selkeämpi lukea) */
+.steps-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: relative;
+}
+
+.step-line-card {
+    background: var(--white);
+    padding: 24px 30px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid rgba(0,0,0,0.02);
+}
+
+.step-line-card:hover {
+    transform: translateX(5px);
+    box-shadow: 0 12px 35px rgba(176, 160, 120, 0.15);
+}
+
+/* Numeroitu pallo */
+.step-number {
+    background: var(--eduko-gold);
+    color: var(--white);
+    font-weight: bold;
+    font-size: 18px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(176, 160, 120, 0.3);
+}
+
+/* Sisällöt */
+.step-content {
+    flex-grow: 1;
+}
+
+.step-content h3 {
+    margin: 0 0 10px 0;
+    font-size: 20px;
+    color: var(--eduko-dark);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.step-content h3 i {
+    color: var(--eduko-gold);
+    font-size: 18px;
+    width: 24px;
+}
+
+.step-content p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-muted);
+}
+
+.step-content ul {
+    margin: 10px 0 0 0;
+    padding-left: 24px;
+}
+
+.step-content li {
+    font-size: 15px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+}
+
+/* Viimeisen vaiheen korostus */
+.highlight-step {
+    border: 2px solid #3182ce;
+    background: #f7fafc;
+}
+.highlight-step .step-number {
+    background: #3182ce;
+    box-shadow: 0 4px 10px rgba(49, 130, 206, 0.3);
+}
+.highlight-step h3 i {
+    color: #3182ce;
+}
+
+/* Mobiilioptimointi */
+@media (max-width: 768px) {
+    .page-section {
+        margin: 30px auto;
+    }
+    .page-hero {
+        padding: 24px;
+    }
+    .page-hero h1 {
+        font-size: 26px;
+    }
+    .step-line-card {
+        flex-direction: column;
+        gap: 14px;
+        padding: 20px;
+    }
+    .step-number {
+        width: 35px;
+        height: 35px;
+        font-size: 16px;
+    }
+}

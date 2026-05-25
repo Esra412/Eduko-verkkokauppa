@@ -40,7 +40,7 @@ body {
     line-height: 1.6;
 }
 
-/* --- HEADER --- */
+/* --- HEADER / koko yläosa (ylätunniste) --- */
 .main-header {
     background: var(--white);
     padding: 15px 0;

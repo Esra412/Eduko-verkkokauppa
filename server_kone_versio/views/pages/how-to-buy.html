@@ -19,7 +19,9 @@
     </style>
     <title>Miten ostat? - Eduko Verkkokauppa</title>
     <link rel="stylesheet" href="/verkkokauppa/styles/style.css">
+    <link rel="stylesheet" href="/verkkokauppa/styles/how-to-buy.css">
     <link rel="stylesheet" href="/verkkokauppa/styles/accessibility.css">
+    <link rel="stylesheet" href="/verkkokauppa/styles/cookie-consent.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="icon" href="/verkkokauppa/images/edukosmall.png" type="image/png">
 </head>
@@ -75,22 +77,129 @@
     </div>
 </nav>
 
-<div class="layout-container">
-    <main class="content" style="grid-column: 1 / -1; text-align: center; padding: 80px 20px;">
-        <div class="construction-notice" style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 40px; max-width: 600px; margin: 0 auto;">
-            <h1 style="color: #333; margin-bottom: 20px;" data-i18n="page_under_construction_title">Sivu on vielä muokkauksella</h1>
-            <p style="font-size: 18px; color: #555; margin-bottom: 30px;" data-i18n="page_under_construction_text">
-                Tämä sivu on parhaillaan kehitteillä. Tulemme takaisin pian lisätyllä sisällöllä.
-            </p>
-            <a href="/verkkokauppa/" class="btn-primary" style="display: inline-block; padding: 12px 30px; text-decoration: none;" data-i18n="back_to_main_page">
-                Palaa pääsivulle
-            </a>
+<!-- MAIN-OSIO (Headeriin ei ole koskettu) -->
+<main class="page-section">
+    <section class="page-hero">
+        <h1>Miten ostat Eduko-verkkokaupasta?</h1>
+        <p>Tässä ovat selkeät vaiheet ostoksen tekemiseen. Seuraa ohjeita, niin löydät tuotteet, lisäät ne ostoskoriin ja saat tilauksen valmiiksi.</p>
+        
+        <!-- Tärkeä huomautus heti alkuun -->
+        <div class="important-notice">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+                <strong>Huomioithan:</strong> Tuotteita ei postiteta. Kaikki ostokset noudetaan erikseen sovittavasta paikasta.
+            </div>
         </div>
-    </main>
-</div>
+    </section>
+
+    <section class="steps-timeline">
+        
+        <article class="step-line-card">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <h3><i class="fas fa-home"></i> Aloita etusivulta</h3>
+                <p>Avaa sivu osoitteessa <strong>mc.koudata.fi/verkkokauppa/</strong>. Etusivulla näkyvät uusimmat ilmoitukset.</p>
+            </div>
+        </article>
+
+        <article class="step-line-card">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <h3><i class="fas fa-search"></i> Etsi tai selaa tuotteita</h3>
+                <p>Kirjoita tuotteen nimi hakukenttään löytääksesi haluamasi tuotteen nopeasti. Voit myös selata tuotteita valikon kategorioista rajataksesi hakua.</p>
+            </div>
+        </article>
+
+        <article class="step-line-card">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <h3><i class="fas fa-arrow-left"></i> Palaa etusivulle</h3>
+                <p>Klikkaa vasemmassa yläkulmassa olevaa <strong>Eduko-logoa</strong>, niin pääset milloin tahansa takaisin etusivulle.</p>
+            </div>
+        </article>
+
+        <article class="step-line-card">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <h3><i class="fas fa-info-circle"></i> Katso tuotetiedot</h3>
+                <p>Paina tuotteen kuvaa tai nimeä siirtyäksesi tuotesivulle. Näet lisäkuvia, tekniset tiedot ja vastuuhenkilön yhteystiedot. Hinnat näkyvät selkeästi tuotteen yhteydessä.</p>
+            </div>
+        </article>
+
+        <article class="step-line-card">
+            <div class="step-number">5</div>
+            <div class="step-content">
+                <h3><i class="fas fa-cart-plus"></i> Lisää tuote ostoskoriin</h3>
+                <p>Voit lisätä tuotteen ostoskoriin kahdella tavalla:</p>
+                <ul>
+                    <li>Tuotesivulla painamalla <strong>Osta</strong>.</li>
+                    <li>Etusivulla tai listauksessa painamalla <strong>Lisää ostoskoriin</strong>.</li>
+                </ul>
+            </div>
+        </article>
+
+        <article class="step-line-card">
+            <div class="step-number">6</div>
+            <div class="step-content">
+                <h3><i class="fas fa-shopping-basket"></i> Avaa ostoskori</h3>
+                <p>Sivun yläpalkissa oleva <strong>kärrykuvake</strong> avaa ostoskorin, jossa näet valitsemasi tuotteet, niiden määrät sekä loppusumman.</p>
+            </div>
+        </article>
+
+        <article class="step-line-card">
+            <div class="step-number">7</div>
+            <div class="step-content">
+                <h3><i class="fas fa-sliders-h"></i> Muuta määrää tai poista tuote</h3>
+                <p>Ostoskorissa voit säätää tuotteiden kappalemäärää <strong>+</strong> ja <strong>–</strong> -painikkeilla. Voit poistaa tuotteen kokonaan roskakorikuvakkeesta.</p>
+            </div>
+        </article>
+
+        <article class="step-line-card">
+            <div class="step-number">8</div>
+            <div class="step-content">
+                <h3><i class="fas fa-trash-alt"></i> Tyhjennä ostoskori</h3>
+                <p>Jos haluat peruuttaa kaiken ja aloittaa alusta, voit tyhjentää koko ostoskorin sisällön yhdellä painikkeella korin alaosasta.</p>
+            </div>
+        </article>
+
+        <article class="step-line-card">
+            <div class="step-number">9</div>
+            <div class="step-content">
+                <h3><i class="fas fa-credit-card"></i> Siirry maksamaan</h3>
+                <p>Klikkaa <strong>Kassalle</strong>-painiketta ostoskorissa. Täytä tilaajan tiedot huolellisesti, paina <strong>Siirry maksamaan</strong> ja valitse sinulle sopivin maksutapa.</p>
+            </div>
+        </article>
+
+        <article class="step-line-card">
+            <div class="step-number">10</div>
+            <div class="step-content">
+                <h3><i class="fas fa-wallet"></i> Valitse maksutapa</h3>
+                <p>Voit maksaa heti verkkopankkitunnuksilla tai valita myöhemman maksutavan (esim. <strong>Klarna</strong>, <strong>Walley</strong> tai <strong>Walley yrityslasku</strong>).</p>
+            </div>
+        </article>
+
+        <article class="step-line-card">
+            <div class="step-number">11</div>
+            <div class="step-content">
+                <h3><i class="fas fa-file-invoice"></i> Saat tilausvahvistuksen</h3>
+                <p>Onnistuneen maksun jälkeen ruudulle tulee tilausvahvistus. Voit ladata virallisen kuitin <strong>PDF-tiedostona</strong>, josta löydät myös tuotteen vastuuhenkilön.</p>
+            </div>
+        </article>
+
+        <article class="step-line-card highlight-step">
+            <div class="step-number">12</div>
+            <div class="step-content">
+                <h3><i class="fas fa-box-open"></i> Sovi noudosta</h3>
+                <p><strong>Tärkein vaihe:</strong> Ota yhteyttä kuitissa mainittuun vastuuhenkilöön ja sovi tuotteen noutoajankohta ja -paikka. Tuotteilla ei ole postitustoimitusta.</p>
+            </div>
+        </article>
+
+    </section>
+</main>
 
 <script src="/verkkokauppa/script/language.js"></script>
 <script src="/verkkokauppa/script/accessibility.js"></script>
+<script src="/verkkokauppa/script/cookie-consent.js"></script>
 <script src="/verkkokauppa/script/script.js"></script>
 </body>
 </html>

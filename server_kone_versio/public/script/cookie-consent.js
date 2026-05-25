@@ -2,6 +2,56 @@
     const storageKey = 'eduko_cookie_consent';
     const existing = localStorage.getItem(storageKey);
 
+    const analyticsConfig = {
+        provider: 'umami',
+        // Muuta nämä omiin arvoihisi, jos haluat käyttää europealaista analytiikkaa.
+        umamiScriptUrl: '', // esim. 'https://umami.example.com/umami.js'
+        umamiWebsiteId: '',
+        matomoUrl: '', // esim. 'https://matomo.esimerkki.fi/'
+        matomoSiteId: ''
+    };
+
+    let analyticsLoaded = false;
+
+    function loadUmami() {
+        if (!analyticsConfig.umamiScriptUrl || !analyticsConfig.umamiWebsiteId) return;
+        const script = document.createElement('script');
+        script.async = true;
+        script.defer = true;
+        script.dataset.websiteId = analyticsConfig.umamiWebsiteId;
+        script.src = analyticsConfig.umamiScriptUrl;
+        document.head.appendChild(script);
+        analyticsLoaded = true;
+    }
+
+    function loadMatomo() {
+        if (!analyticsConfig.matomoUrl || !analyticsConfig.matomoSiteId) return;
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = `${analyticsConfig.matomoUrl}matomo.js`;
+        document.head.appendChild(script);
+
+        window._paq = window._paq || [];
+        window._paq.push(['trackPageView']);
+        window._paq.push(['enableLinkTracking']);
+        window._paq.push(['setSiteId', analyticsConfig.matomoSiteId]);
+        window._paq.push(['setTrackerUrl', `${analyticsConfig.matomoUrl}matomo.php`]);
+        analyticsLoaded = true;
+    }
+
+    function loadAnalyticsProvider() {
+        if (analyticsLoaded || !window.edukoCookieConsent.canUseAnalytics()) return;
+
+        if (analyticsConfig.provider === 'matomo') {
+            loadMatomo();
+            return;
+        }
+        if (analyticsConfig.provider === 'umami') {
+            loadUmami();
+            return;
+        }
+    }
+
     window.edukoCookieConsent = {
         get() {
             try {
@@ -18,7 +68,9 @@
         }
     };
 
-    if (existing) return;
+    function notifyConsentState() {
+        window.dispatchEvent(new CustomEvent('eduko:cookie-consent', { detail: window.edukoCookieConsent.get() }));
+    }
 
     function saveConsent(consent) {
         localStorage.setItem(storageKey, JSON.stringify({
@@ -27,7 +79,8 @@
             marketing: Boolean(consent.marketing),
             savedAt: new Date().toISOString()
         }));
-        window.dispatchEvent(new CustomEvent('eduko:cookie-consent', { detail: window.edukoCookieConsent.get() }));
+        notifyConsentState();
+        loadAnalyticsProvider();
     }
 
     function buildBanner() {
@@ -72,9 +125,17 @@
         });
     }
 
+    function initConsent() {
+        if (!existing) {
+            buildBanner();
+        }
+        notifyConsentState();
+        loadAnalyticsProvider();
+    }
+
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', buildBanner);
+        document.addEventListener('DOMContentLoaded', initConsent);
     } else {
-        buildBanner();
+        initConsent();
     }
 })();

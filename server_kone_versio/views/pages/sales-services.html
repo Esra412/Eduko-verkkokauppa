@@ -18,13 +18,16 @@
         }
     </style>
     <title>Myyntipalvelut - Eduko Verkkokauppa</title>
-    <link rel="stylesheet" href="/verkkokauppa/styles/style.css">
     <link rel="stylesheet" href="/verkkokauppa/styles/accessibility.css">
+    <link rel="stylesheet" href="/verkkokauppa/styles/cookie-consent.css">
+    <link rel="stylesheet" href="/verkkokauppa/styles/sales-services.css">   
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="icon" href="/verkkokauppa/images/edukosmall.png" type="image/png">
+
 </head>
 <body>
 
+<!-- HEADER START -->
 <header class="main-header">
     <div class="header-container">
         <button class="menu-toggle" id="mobile-menu-btn" type="button" aria-label="Avaa navigaatio" aria-expanded="false">
@@ -74,23 +77,81 @@
         </div>
     </div>
 </nav>
+<!-- HEADER END -->
 
 <div class="layout-container">
-    <main class="content" style="grid-column: 1 / -1; text-align: center; padding: 80px 20px;">
-        <div class="construction-notice" style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 40px; max-width: 600px; margin: 0 auto;">
-            <h1 style="color: #333; margin-bottom: 20px;" data-i18n="page_under_construction_title">Sivu on vielä muokkauksella</h1>
-            <p style="font-size: 18px; color: #555; margin-bottom: 30px;" data-i18n="page_under_construction_text">
-                Tämä sivu on parhaillaan kehitteillä. Tulemme takaisin pian lisätyllä sisällöllä.
+    <main class="sales-section">
+        
+        <section class="sales-hero">
+            <div class="hero-content">
+                <h1 data-i18n="sales_hero_title">Myyntipalvelut</h1>
+                <p>
+                    Edukon myyntipalveluihin kuuluu opiskelijoiden toteuttamia asiakastöiden myyntiä, suunnittelua sekä käytännön valmistusta. 
+                    Tarjoamme laadukkaita ja kilpailukykyisiä palveluita sekä kuluttajille että yritysasiakkaille, samalla kun mahdollistamme opiskelijoillemme arvokasta ja aitoa työkokemusta.
+                </p>
+                <p>
+                    Kaikki asiakastyöt suunnitellaan ja toteutetaan opettajien ja ohjaajien valvonnassa osana ammatillisia opintoja. Tämä takaa huolellisen lopputuloksen ja alan standardien mukaisen laadun.
+                </p>
+            </div>
+        </section>
+
+        <h2 class="section-title">Palvelutarjontamme aloittain</h2>
+        
+        <section class="sales-grid">
+            <div class="sales-card">
+                <div class="card-icon"><i class="fas fa-tools"></i></div>
+                <h3>Käsityö- ja rakennusalat</h3>
+                <p>
+                    Toteutamme tilauksesta monipuolisia puu-, metalli- ja rakennusalan töitä. Valmistamme esimerkiksi pienkalusteita, teemme pintakäsittelyjä tai kunnostamme vanhaa opetussuunnitelman puitteissa.
+                </p>
+            </div>
+
+            <div class="sales-card">
+                <div class="card-icon"><i class="fas fa-car"></i></div>
+                <h3>Auto- ja logistiikkapalvelut</h3>
+                <p>
+                    Edukon autokorjaamo ottaa vastaan asiakastöitä opiskelijoiden osaamistason mukaan. Palveluihimme kuuluvat muun muassa määräaikaishuollot, renkaanvaihdot, pesut sekä pienet korjaustyöt.
+                </p>
+            </div>
+
+            <div class="sales-card">
+                <div class="card-icon"><i class="fas fa-cut"></i></div>
+                <h3>Hius- ja kauneudenhoito</h3>
+                <p>
+                    Parturi-, kampaamo- ja kosmetologipalvelut ovat asiakkaidemme käytettävissä Edukon omissa moderneissa oppimisympäristöissä. Tarjoamme hiustenleikkuita, värjäyksiä sekä rentouttavia hoitoja.
+                </p>
+            </div>
+
+            <div class="sales-card">
+                <div class="card-icon"><i class="fas fa-laptop-code"></i></div>
+                <h3>Tietotekniikka & Digipalvelut</h3>
+                <p>
+                    Suunnittelemme ja toteutamme digitaalisia ratkaisuja, kuten verkkosivustoja, sovelluksia (esimerkkinä tämä verkkokauppa) sekä hoidamme laitteistoasennuksia ja IT-lähitukitehtäviä asiakastyönä.
+                </p>
+            </div>
+        </section>
+
+        <section class="info-banner">
+            <h2>Miten asiakastyön tilaaminen etenee?</h2>
+            <p>
+                Ota meihin yhteyttä ja esitä ideasi tai tarpeesi. Alan opettajat arvioivat, soveltuuko työ ryhmien senhetkiseen opetussuunnitelmaan ja aikatauluun. Jos työ otetaan vastaan, opiskelijat laativat sille tarkan suunnitelman, hinta-arvion ja vastaavat työn etenemisestä.
             </p>
-            <a href="/verkkokauppa/" class="btn-primary" style="display: inline-block; padding: 12px 30px; text-decoration: none;" data-i18n="back_to_main_page">
-                Palaa pääsivulle
+        </section>
+
+        <section class="contact-cta">
+            <h2>Kiinnostuitko asiakastöistämme?</h2>
+            <p>Jätä meille kysely tai tarjouspyyntö oppilaitoksen virallisten kanavien ja yhteystietojen kautta.</p>
+            <a href="https://www.eduko.fi/eduko/yhteystiedot/" class="btn-primary cta-button" target="_blank" data-i18n="contact_cta_btn">
+                Siirry yhteystietoihin
             </a>
-        </div>
+        </section>
+
     </main>
 </div>
 
 <script src="/verkkokauppa/script/language.js"></script>
 <script src="/verkkokauppa/script/accessibility.js"></script>
+<script src="/verkkokauppa/script/cookie-consent.js"></script>
 <script src="/verkkokauppa/script/script.js"></script>
 </body>
 </html>
