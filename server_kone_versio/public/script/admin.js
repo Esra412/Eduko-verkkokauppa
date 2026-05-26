@@ -64,6 +64,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (searchBtn) {
         searchBtn.onclick = () => renderProducts(document.getElementById("searchProduct").value);
     }
+
+    const backBtn = document.getElementById('BackToMenuBtn');
+    if (backBtn) {
+        backBtn.onclick = () => { window.location.href = '/verkkokauppa'; };
+    }
+
+    const infoBtn = document.getElementById('adminInfoBtn');
+    if (infoBtn) {
+        infoBtn.onclick = showAdminInfoModal;
+    }
 });
 
 /* =================================================
@@ -376,6 +386,14 @@ window.showOrderDetail = async (id) => {
 
 window.closeOrderModal = () => {
     document.getElementById('orderDetailsModal').classList.add('hidden');
+};
+
+function showAdminInfoModal() {
+    document.getElementById('adminInfoModal').classList.remove('hidden');
+}
+
+window.closeAdminInfoModal = () => {
+    document.getElementById('adminInfoModal').classList.add('hidden');
 };
 
 /* =================================================

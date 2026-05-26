@@ -20,6 +20,7 @@
     <title>Myyntipalvelut - Eduko Verkkokauppa</title>
     <link rel="stylesheet" href="/verkkokauppa/styles/accessibility.css">
     <link rel="stylesheet" href="/verkkokauppa/styles/cookie-consent.css">
+    
     <link rel="stylesheet" href="/verkkokauppa/styles/sales-services.css">   
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="icon" href="/verkkokauppa/images/edukosmall.png" type="image/png">
@@ -92,6 +93,7 @@
                 <p>
                     Kaikki asiakastyöt suunnitellaan ja toteutetaan opettajien ja ohjaajien valvonnassa osana ammatillisia opintoja. Tämä takaa huolellisen lopputuloksen ja alan standardien mukaisen laadun.
                 </p>
+                
             </div>
         </section>
 
@@ -149,9 +151,56 @@
     </main>
 </div>
 
+<div id="privacyInfoModal" class="modal-overlay hidden">
+    <div class="modal-window">
+        <div class="modal-header">
+            <h3>Tietosuojatiedot</h3>
+            <button id="closePrivacyModal" class="close-x" aria-label="Sulje tietosuojatiedot">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Tallennamme myyntipalvelun yhteydenottolomakkeella annettavat henkilötiedot turvallisesti vain palvelun käsittelyä varten.</p>
+            <ul>
+                <li><strong>Mitä tietoja:</strong> nimi, puhelinnumero, sähköposti, työkuvaus ja mahdolliset muut yhteydenottotiedot.</li>
+                <li><strong>Mihin ne tallennetaan:</strong> tiedot säilytetään palvelimen tietokannassa ja tarvittaessa oppilaitoksen järjestelmissä asiakaspalveluprosessin tueksi.</li>
+                <li><strong>Ketkä pääsevät käsiksi:</strong> tiedot näkevät vain myyntipalvelutiimi, vastuuopettajat sekä järjestelmän ylläpitohenkilöt.</li>
+            </ul>
+            <p>Tietoja käsitellään ainoastaan tarjouspyynnön käsittelyä ja yhteistyön aloittamista varten, eikä niitä luovuteta kolmansille osapuolille ilman erillistä suostumusta.</p>
+        </div>
+        <div class="modal-footer">
+            <button id="closePrivacyModalFooter" class="btn-primary">Sulje</button>
+        </div>
+    </div>
+</div>
+
 <script src="/verkkokauppa/script/language.js"></script>
 <script src="/verkkokauppa/script/accessibility.js"></script>
 <script src="/verkkokauppa/script/cookie-consent.js"></script>
 <script src="/verkkokauppa/script/script.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const modal = document.getElementById('privacyInfoModal');
+        const openBtn = document.getElementById('privacyInfoBtn');
+        const closeBtn = document.getElementById('closePrivacyModal');
+        const footerClose = document.getElementById('closePrivacyModalFooter');
+
+        function closePrivacyModal() {
+            if (modal) modal.classList.add('hidden');
+        }
+
+        if (openBtn && modal) {
+            openBtn.addEventListener('click', function () {
+                modal.classList.remove('hidden');
+            });
+        }
+
+        if (closeBtn) closeBtn.addEventListener('click', closePrivacyModal);
+        if (footerClose) footerClose.addEventListener('click', closePrivacyModal);
+        if (modal) {
+            modal.addEventListener('click', function (event) {
+                if (event.target === modal) closePrivacyModal();
+            });
+        }
+    });
+</script>
 </body>
 </html>

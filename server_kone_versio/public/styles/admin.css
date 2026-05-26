@@ -134,6 +134,30 @@ header h1 {
 
 #BackToMenuBtn:hover { background: #968763; }
 
+.info-button {
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.25s ease;
+    order: 4;
+    margin-left: auto;
+}
+
+.info-button:hover,
+.info-button:focus-visible {
+    background: #2172b8;
+    outline: none;
+}
+
 /* --- PÄÄALUE --- */
 main {
     max-width: 1000px;

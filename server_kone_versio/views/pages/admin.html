@@ -18,6 +18,7 @@
             <small>Kouvolan Ammattiopisto</small>
         </div>
         <h1>Ylläpito</h1>
+        <button type="button" id="adminInfoBtn" class="info-button" title="Näytä admin-paneelin ohjeet">i</button>
     </div>
 </header>
 
@@ -134,6 +135,29 @@
             </div>
         <div class="modal-footer">
             <button onclick="closeOrderModal()" class="btn-close-modal">Sulje</button>
+        </div>
+    </div>
+</div>
+
+<div id="adminInfoModal" class="modal-overlay hidden">
+    <div class="modal-window">
+        <div class="modal-header">
+            <h3>Admin-paneelin ohje</h3>
+            <button onclick="closeAdminInfoModal()" class="close-x" aria-label="Sulje ohje">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Tämä admin-paneeli auttaa sinua hallinnoimaan verkkokauppaa.</p>
+            <ul>
+                <li>Katso viimeisimmät tilaukset ja avaa tilausten tiedot hakunapin avulla.</li>
+                <li>Lisää uusi tuote täyttämällä lomake ja painamalla "Tallenna tuote".</li>
+                <li>Valitse tuotteen kieli ylhäältä, jotta voit tallentaa eri kieliversiot.</li>
+                <li>Muokkaa tai poista tuotteita alemmasta listasta.</li>
+                <li>Käytä "Palaa etusivulle" -painiketta siirtyäksesi kaupan etusivulle.</li>
+            </ul>
+            <p>Huomaa, että tallennus tapahtuu vasta kun painat "Tallenna tuote".</p>
+        </div>
+        <div class="modal-footer">
+            <button onclick="closeAdminInfoModal()" class="btn-close-modal">Sulje</button>
         </div>
     </div>
 </div>

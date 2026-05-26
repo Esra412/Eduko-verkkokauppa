@@ -14,6 +14,77 @@ function showToast(message, type = 'success') {
     }, 3500);
 }
 
+function createPrivacyInfoModal() {
+    let modal = document.getElementById('privacyInfoModal');
+    if (modal) return modal;
+
+    modal = document.createElement('div');
+    modal.id = 'privacyInfoModal';
+    modal.className = 'privacy-modal-overlay hidden';
+    modal.innerHTML = `
+        <div class="privacy-modal-window" role="dialog" aria-modal="true" aria-labelledby="privacyModalTitle">
+            <button type="button" class="privacy-modal-close" aria-label="Sulje tietosuojatiedot">&times;</button>
+            <h3 id="privacyModalTitle">Tietosuojatiedot</h3>
+            <div class="privacy-modal-content">
+                <p>Tallennamme sivuston tilaus- ja yhteystiedot turvallisesti vain palvelun toimittamista varten.</p>
+                <ul>
+                    <li><strong>Mitä tallennamme:</strong> nimi, sähköposti, puhelinnumero, osoite, tilauksen sisältö ja muut yhteydenottotiedot.</li>
+                    <li><strong>Mihin tiedot tallennetaan:</strong> tiedot säilytetään palvelimen tietokannassa ja tarvittaessa oppilaitoksen järjestelmissä tilauksen käsittelyä varten.</li>
+                    <li><strong>Ketkä pääsevät käsiksi:</strong> tiedot näkevät vain myyntipalvelutiimi, vastuuhenkilöt ja järjestelmän ylläpito.</li>
+                </ul>
+                <p>Tietoja käytetään ainoastaan tilauksen käsittelyyn, noudon sopimiseen ja asiakaspalveluun. Emme luovuta tietoja kolmansille osapuolille ilman erillistä suostumusta.</p>
+            </div>
+            <div class="privacy-modal-footer">
+                <button type="button" class="btn-primary" id="closePrivacyModalButton">Sulje</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+    return modal;
+}
+
+function createFloatingPrivacyButton() {
+    let button = document.getElementById('floatingPrivacyButton');
+    if (button) return button;
+
+    button = document.createElement('button');
+    button.id = 'floatingPrivacyButton';
+    button.type = 'button';
+    button.className = 'floating-privacy-button';
+    button.innerHTML = '<span aria-hidden="true">i</span><span class="btn-label">Tietosuojainfo</span>';
+    button.setAttribute('aria-label', 'Tietosuojainfo');
+    document.body.appendChild(button);
+    return button;
+}
+
+function openPrivacyInfoModal() {
+    const modal = createPrivacyInfoModal();
+    modal.classList.remove('hidden');
+}
+
+function closePrivacyInfoModal() {
+    const modal = document.getElementById('privacyInfoModal');
+    if (modal) modal.classList.add('hidden');
+}
+
+function initializePrivacyInfoWidget() {
+    const button = createFloatingPrivacyButton();
+    const modal = createPrivacyInfoModal();
+    const closeButton = modal.querySelector('.privacy-modal-close');
+    const footerClose = modal.querySelector('#closePrivacyModalButton');
+
+    button.addEventListener('click', openPrivacyInfoModal);
+    if (closeButton) closeButton.addEventListener('click', closePrivacyInfoModal);
+    if (footerClose) footerClose.addEventListener('click', closePrivacyInfoModal);
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) closePrivacyInfoModal();
+    });
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') closePrivacyInfoModal();
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
     const mainNav = document.getElementById('main-navigation');
@@ -42,6 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
             pageTitle.innerText = text;
         }
     };
+
+    initializePrivacyInfoWidget();
 
     const openCartModal = () => {
         if (cartModal) {
