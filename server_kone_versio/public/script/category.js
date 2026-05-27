@@ -111,6 +111,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     let activeFetchId = 0;
+    let activeFetchController = null;
+
+    function startProductFetch() {
+        activeFetchId += 1;
+
+        if (activeFetchController) {
+            activeFetchController.abort();
+        }
+
+        activeFetchController = new AbortController();
+
+        return {
+            fetchId: activeFetchId,
+            signal: activeFetchController.signal
+        };
+    }
+
+    function isLatestFetch(fetchId) {
+        return fetchId === activeFetchId;
+    }
 
     // --- 3. Tuotteiden piirtaminen sivulle ---
     function resolveImageSrc(image) {
@@ -142,28 +162,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderProducts(products) {
         grid.innerHTML = '';
-        if (products.length === 0) {
+        const categoryProducts = (products || []).filter((product) => {
+            return !categoryId || String(product.category_id) === String(categoryId);
+        });
+
+        if (categoryProducts.length === 0) {
             grid.innerHTML = '<p>Kategoriassa ei ole viela tuotteita.</p>';
             return;
         }
 
-const visibleProducts = products.filter((product) => (Number(product.stock) || 0) > 0);
-    if (visibleProducts.length === 0) {
-        grid.innerHTML = '<p>Kategoriassa ei ole viela tuotteita.</p>';
-        return;
-    }
+        const visibleProducts = categoryProducts.filter((product) => (Number(product.stock) || 0) > 0);
+        if (visibleProducts.length === 0) {
+            grid.innerHTML = '<p>Kategoriassa ei ole viela tuotteita.</p>';
+            return;
+        }
 
-    const addCartText = typeof t === 'function' ? t('add_to_cart') : 'Lis\u00E4\u00E4 koriin';
-    const stockText = typeof t === 'function' ? t('stock_label') : 'Varasto';
-    visibleProducts.forEach(product => {
-        const card = document.createElement('div');
-        card.className = 'product-card';
-        card.dataset.productId = product.id;
-        const stock = product.stock || 0;
-        card.dataset.stock = stock;
-        card.style.cursor = 'pointer';
+        const addCartText = typeof t === 'function' ? t('add_to_cart') : 'Lis\u00E4\u00E4 koriin';
+        const stockText = typeof t === 'function' ? t('stock_label') : 'Varasto';
+        visibleProducts.forEach(product => {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.dataset.productId = product.id;
+            const stock = product.stock || 0;
+            card.dataset.stock = stock;
+            card.style.cursor = 'pointer';
 
-        card.innerHTML = `
+            card.innerHTML = `
             <div class="image-wrapper">
                 <img src="${resolveImageSrc(product.image)}" alt="${product.image_alt || product.name}" onerror="this.onerror=null; this.src='/verkkokauppa/images/edukosmall.png';">
             </div>
@@ -273,13 +297,18 @@ const visibleProducts = products.filter((product) => (Number(product.stock) || 0
             return;
         }
 
-        fetch(`/verkkokauppa/api/products?category=${encodeURIComponent(categoryId)}&lang=${currentLang}`)
+        const { fetchId, signal } = startProductFetch();
+
+        fetch(`/verkkokauppa/api/products?category=${encodeURIComponent(categoryId)}&lang=${encodeURIComponent(currentLang)}`, { signal })
             .then(res => res.json())
             .then(products => {
+                if (!isLatestFetch(fetchId)) return;
                 console.log('Kategoriasta haetut tuotteet:', products);
                 renderProducts(products);
             })
             .catch(err => {
+                if (err.name === 'AbortError') return;
+                if (!isLatestFetch(fetchId)) return;
                 console.error('Virhe:', err);
                 grid.innerHTML = '<p>Tuotteiden haku epaonnistui.</p>';
             });
@@ -295,10 +324,18 @@ const visibleProducts = products.filter((product) => (Number(product.stock) || 0
             const label = typeof t === 'function' ? t('search_results_title') : 'Haun tulokset';
             categoryTitle.innerText = `${label}: "${term}"`;
             const categoryQuery = categoryId ? `&category=${encodeURIComponent(categoryId)}` : '';
-            fetch(`/verkkokauppa/api/search?q=${encodeURIComponent(term)}${categoryQuery}&lang=${encodeURIComponent(currentLang)}`)
+            const { fetchId, signal } = startProductFetch();
+            fetch(`/verkkokauppa/api/search?q=${encodeURIComponent(term)}${categoryQuery}&lang=${encodeURIComponent(currentLang)}`, { signal })
                 .then(res => res.json())
-                .then(products => renderProducts(products))
-                .catch(err => console.error('Hakuvirhe:', err));
+                .then(products => {
+                    if (!isLatestFetch(fetchId)) return;
+                    renderProducts(products);
+                })
+                .catch(err => {
+                    if (err.name === 'AbortError') return;
+                    if (!isLatestFetch(fetchId)) return;
+                    console.error('Hakuvirhe:', err);
+                });
         } else {
             loadCategoryProducts();
         }

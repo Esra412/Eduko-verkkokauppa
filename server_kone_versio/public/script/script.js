@@ -710,5 +710,6 @@ document.addEventListener('cartUpdated', () => {
 });
 
 document.addEventListener('languageChanged', () => {
+    if (window.location.pathname.includes('/kategoria/')) return;
     loadProducts();
 });

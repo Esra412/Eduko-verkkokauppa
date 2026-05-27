@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const backBtn = document.getElementById('BackToMenuBtn');
     if (backBtn) {
-        backBtn.onclick = () => { window.location.href = '/verkkokauppa'; };
+        backBtn.onclick = () => { window.location.href = '/verkkokauppa/'; };
     }
 
     const infoBtn = document.getElementById('adminInfoBtn');

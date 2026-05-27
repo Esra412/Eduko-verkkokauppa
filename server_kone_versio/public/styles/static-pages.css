@@ -1,0 +1,216 @@
+/* Shared header and mobile layout fixes for static content pages. */
+.main-header .logo {
+    margin-left: -90px;
+}
+
+@media screen and (max-width: 768px) {
+    .main-header {
+        position: sticky;
+        top: 0;
+        z-index: 1100;
+    }
+
+    .main-header .header-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 5px;
+        min-height: 64px;
+        padding: 10px 14px;
+        position: relative;
+    }
+
+    .main-header .menu-toggle {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 28px;
+        height: 20px;
+        background: none;
+        border: none;
+        appearance: none;
+        -webkit-appearance: none;
+        box-shadow: none;
+        outline: none;
+        cursor: pointer;
+        z-index: 1200;
+        flex: 0 0 auto;
+        order: 0;
+        padding: 0;
+    }
+
+    .main-header .menu-toggle span {
+        width: 100%;
+        height: 3px;
+        background: var(--eduko-dark);
+        border-radius: 2px;
+        transition: 0.3s;
+    }
+
+    .main-header .menu-toggle.open span:nth-child(1) {
+        transform: translateY(9px) rotate(45deg);
+    }
+
+    .main-header .menu-toggle.open span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .main-header .menu-toggle.open span:nth-child(3) {
+        transform: translateY(-9px) rotate(-45deg);
+    }
+
+    .main-header .logo {
+        flex: 0 0 auto;
+        min-width: auto;
+        margin: 0 5px;
+        order: 1;
+    }
+
+    .main-header .eduko-text {
+        font-size: 18px;
+        letter-spacing: 0;
+    }
+
+    .main-header .logo small {
+        display: none;
+    }
+
+    .main-header .search-box {
+        display: flex;
+        flex: 0 1 auto;
+        max-width: 170px;
+        margin: 0 5px;
+        height: 36px;
+        order: 3;
+    }
+
+    .main-header .search-box input {
+        height: 100%;
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+
+    .main-header .search-box button {
+        height: 100%;
+        padding: 0 12px;
+        font-size: 0.9rem;
+    }
+
+    .main-header .header-actions-mobile {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        flex: 0 0 auto;
+        min-width: 0;
+        order: 2;
+        width: 100%;
+    }
+
+    .main-header .header-actions-mobile > * {
+        flex-shrink: 0;
+    }
+
+    .main-header .header-actions-mobile .header-right {
+        order: 1;
+        display: flex;
+        justify-content: center;
+    }
+
+    .main-header .header-right .btn-primary {
+        width: auto;
+        padding: 8px 14px;
+    }
+
+    .main-header .cart-wrapper {
+        order: 2;
+        width: auto;
+        height: auto;
+        font-size: 18px;
+        margin-right: 8px;
+        margin-left: 0;
+    }
+
+    .main-header #cart-count {
+        font-size: 9px;
+        padding: 1px 4px;
+        top: -5px;
+        right: -10px;
+    }
+
+    .main-header .language-selector {
+        position: absolute;
+        top: 52px;
+        left: 8px;
+        right: auto;
+        width: auto;
+        display: flex;
+        justify-content: center;
+        padding: 6px 8px;
+        font-size: 0.85rem;
+        z-index: 1201;
+    }
+
+    .main-header #selected-lang {
+        font-size: 0.8rem;
+    }
+
+    .main-header #lang-options {
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        right: auto;
+        min-width: 150px;
+        z-index: 1300;
+    }
+
+    .main-nav {
+        display: block;
+        max-height: 0;
+        overflow: hidden;
+        position: sticky;
+        top: 64px;
+        z-index: 1000;
+        background: var(--eduko-dark);
+        transition: max-height 0.25s ease;
+    }
+
+    .main-nav.show {
+        max-height: 500px;
+        border-bottom: 3px solid var(--eduko-gold);
+    }
+
+    .main-nav .nav-container {
+        flex-direction: column;
+        padding: 15px 0;
+    }
+
+    .main-nav .nav-links {
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+        gap: 0;
+    }
+
+    .main-nav .nav-links a {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+}
+
+@media screen and (max-width: 420px) {
+    .main-header .search-box {
+        max-width: 145px;
+    }
+
+    .main-header .header-actions-mobile {
+        justify-content: flex-end;
+        padding-left: 56px;
+    }
+}
