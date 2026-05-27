@@ -652,3 +652,346 @@ body {
         justify-content: center;
     }
 }
+
+/* Keep the sales page header identical to index.html / style.css. */
+.main-header {
+    background: var(--white);
+    padding: 15px 0;
+    border-bottom: 2px solid var(--eduko-gold);
+    position: sticky;
+    top: 0;
+    z-index: 1100;
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+}
+
+.logo {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    margin-left: -90px;
+}
+
+.eduko-text {
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    color: var(--eduko-dark);
+}
+
+.eduko-text span {
+    color: var(--eduko-gold);
+}
+
+.logo small {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: -5px;
+    color: var(--eduko-dark);
+}
+
+.search-box {
+    display: flex;
+    flex: 1;
+    max-width: 500px;
+    margin: 0 40px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px 0 0 4px;
+    outline: none;
+}
+
+.search-box button {
+    background: var(--eduko-gold);
+    border: none;
+    color: white;
+    padding: 0 20px;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+}
+
+.header-actions-mobile {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.cart-wrapper {
+    position: relative;
+    cursor: pointer;
+    font-size: 22px;
+    color: var(--eduko-dark);
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+}
+
+#cart-count {
+    position: absolute;
+    top: -8px;
+    right: -12px;
+    background: var(--danger);
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    border-radius: 50%;
+    padding: 2px 6px;
+    min-width: 18px;
+    text-align: center;
+    border: 2px solid white;
+    transition: transform 0.2s ease;
+}
+
+.btn-primary {
+    background: var(--eduko-gold);
+    color: white;
+    padding: 10px 22px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.main-nav {
+    background: var(--eduko-dark);
+    width: 100%;
+    position: sticky;
+    top: 83px;
+    z-index: 1000;
+    transition: max-height 0.4s ease-in-out;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links a {
+    display: inline-block;
+    color: var(--white);
+    text-decoration: none;
+    padding: 18px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: 0.3s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    background: var(--eduko-gold);
+    color: var(--eduko-dark);
+}
+
+@media screen and (max-width: 768px) {
+    .header-container {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 5px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        position: relative;
+    }
+
+    .menu-toggle {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 28px;
+        height: 20px;
+        background: none;
+        border: none;
+        appearance: none;
+        -webkit-appearance: none;
+        box-shadow: none;
+        outline: none;
+        position: static;
+        top: auto;
+        left: auto;
+        cursor: pointer;
+        z-index: 1200;
+        flex-shrink: 0;
+        order: 0;
+        padding: 0;
+    }
+
+    .menu-toggle span {
+        width: 100%;
+        height: 3px;
+        background: var(--eduko-dark);
+        border-radius: 2px;
+        transition: 0.3s;
+    }
+
+    .menu-toggle.open span:nth-child(1) {
+        transform: translateY(9px) rotate(45deg);
+    }
+
+    .menu-toggle.open span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .menu-toggle.open span:nth-child(3) {
+        transform: translateY(-9px) rotate(-45deg);
+    }
+
+    .logo {
+        flex: 0 0 auto;
+        min-width: auto;
+        margin: 0 5px;
+        order: 1;
+    }
+
+    .logo small {
+        display: none;
+    }
+
+    .header-actions-mobile {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        flex: 0 0 auto;
+        min-width: 0;
+        order: 2;
+        width: 100%;
+    }
+
+    .header-actions-mobile > * {
+        flex-shrink: 0;
+    }
+
+    .header-actions-mobile .header-right {
+        order: 1;
+        display: flex;
+        justify-content: center;
+    }
+
+    .header-right .btn-primary {
+        width: auto;
+    }
+
+    .cart-wrapper {
+        order: 2;
+        font-size: 18px;
+        margin-right: 8px;
+        margin-left: 0;
+    }
+
+    .language-selector {
+        position: absolute;
+        top: 52px;
+        left: 8px;
+        width: auto;
+        display: flex;
+        justify-content: center;
+        padding: 6px 8px;
+        font-size: 0.85rem;
+        z-index: 999;
+    }
+
+    #lang-options {
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        right: auto;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        min-width: 150px;
+        z-index: 10001;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    #selected-lang {
+        font-size: 0.8rem;
+    }
+
+    #cart-count {
+        font-size: 9px;
+        padding: 1px 4px;
+        top: -5px;
+        right: -10px;
+    }
+
+    .search-box {
+        flex: 0 1 auto;
+        max-width: 170px;
+        margin: 0 5px;
+        height: 36px;
+    }
+
+    .search-box input {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+        height: 100%;
+    }
+
+    .search-box button {
+        padding: 0 12px;
+        font-size: 0.9rem;
+        height: 100%;
+    }
+
+    .main-nav {
+        display: block;
+        max-height: 0;
+        overflow: hidden;
+        position: sticky;
+        background: var(--eduko-dark);
+        top: 64px;
+    }
+
+    .main-nav.show {
+        max-height: 500px;
+        border-bottom: 3px solid var(--eduko-gold);
+    }
+
+    .nav-container {
+        flex-direction: column;
+        padding: 15px 0;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+    }
+
+    .nav-links a {
+        display: block;
+        padding: 15px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        width: 100%;
+    }
+
+    .eduko-text {
+        font-size: 18px;
+    }
+}

@@ -18,18 +18,20 @@
         }
     </style>
     <title>Myyntipalvelut - Eduko Verkkokauppa</title>
+    <link rel="stylesheet" href="/verkkokauppa/styles/style.css">
     <link rel="stylesheet" href="/verkkokauppa/styles/accessibility.css">
     <link rel="stylesheet" href="/verkkokauppa/styles/cookie-consent.css">
     
     <link rel="stylesheet" href="/verkkokauppa/styles/sales-services.css">   
-    <link rel="stylesheet" href="/verkkokauppa/styles/static-pages.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="icon" href="/verkkokauppa/images/edukosmall.png" type="image/png">
 
 </head>
 <body>
 
-<!-- HEADER START -->
+<!-- Toast Notification -->
+<div id="toast-notification" class="toast-notification"></div>
+
 <header class="main-header">
     <div class="header-container">
         <button class="menu-toggle" id="mobile-menu-btn" type="button" aria-label="Avaa navigaatio" aria-expanded="false">
@@ -37,7 +39,7 @@
         </button>
 
         <a href="/verkkokauppa/" class="logo">
-            <span class="eduko-text">edu<span>ko</span></span>
+            <span class="eduko-text">edu<span>ko</span></span> 
             <small>Kouvolan Ammattiopisto</small>
         </a>
 
@@ -49,7 +51,7 @@
         <div class="header-actions-mobile">
             <div class="cart-wrapper" id="cart-btn">
                 <i class="fas fa-shopping-cart"></i>
-                <span id="cart-count">0</span>
+                <span id="cart-count" class="cart-count">0</span>
             </div>
 
             <div class="header-right">
@@ -79,7 +81,6 @@
         </div>
     </div>
 </nav>
-<!-- HEADER END -->
 
 <div class="layout-container">
     <main class="sales-section">
