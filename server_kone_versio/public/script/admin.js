@@ -332,7 +332,7 @@ async function renderOrders() {
                     <span class="order-id-text">Tilaus #${o.id}</span>
                     <span class="customer-name">${customerName}</span>
                 </div>
-                <button class="search-icon-btn" onclick="showOrderDetail('${o.id}')">
+                <button class="search-icon-btn" onclick="showOrderDetail('${o.id}')" aria-label="Näytä tilauksen tiedot">
                     <i class="fas fa-search"></i>
                 </button>
             </li>
@@ -449,10 +449,10 @@ async function renderProducts(search = "") {
                     <span style="font-size: 0.85rem; color: #666;">Hinta: ${p.price} € | Varasto: ${p.stock} kpl${stockLabel}</span>
                 </div>
                 <div class="action-buttons">
-                    <button class="edit-btn" onclick="editProduct(${p.id})" title="Muokkaa">
+                    <button class="edit-btn" onclick="editProduct(${p.id})" title="Muokkaa" aria-label="Muokkaa tuotetta">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="delete-btn" onclick="deleteProduct(${p.id})" title="Poista">
+                    <button class="delete-btn" onclick="deleteProduct(${p.id})" title="Poista" aria-label="Poista tuote">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>

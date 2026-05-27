@@ -99,6 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.querySelector('.search-box input');
     const searchBtn = document.querySelector('.search-box button');
     const pageTitle = document.querySelector('.hero-text h1') || document.querySelector('h1') || document.querySelector('h2');
+    const isCategoryPage = window.location.pathname.includes('/kategoria/');
 
     if (!window.location.pathname.includes('/kori')) {
         localStorage.setItem('eduko_last_page', window.location.href);
@@ -206,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     };
 
-    if (mobileMenuBtn && mainNav) {
+    if (!isCategoryPage && mobileMenuBtn && mainNav) {
         mobileMenuBtn.addEventListener('click', () => {
             const expanded = mainNav.classList.toggle('show');
             mobileMenuBtn.classList.toggle('open', expanded);
@@ -214,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (categoryToggleBtn && sidebar) {
+    if (!isCategoryPage && categoryToggleBtn && sidebar) {
         const toggleSidebar = (open) => {
             sidebar.classList.toggle('open', open);
             categoryToggleBtn.classList.toggle('open', open);
@@ -231,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (sidebarOverlay && sidebar && categoryToggleBtn) {
+    if (!isCategoryPage && sidebarOverlay && sidebar && categoryToggleBtn) {
         sidebarOverlay.addEventListener('click', () => {
             sidebar.classList.remove('open');
             categoryToggleBtn.classList.remove('open');
@@ -308,11 +309,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    loadProducts();
+    if (!isCategoryPage) {
+        loadProducts();
+    }
     updateCartUI();
 
-    if (searchBtn) searchBtn.addEventListener('click', runSearch);
-    if (searchInput) {
+    if (!isCategoryPage && searchBtn) searchBtn.addEventListener('click', runSearch);
+    if (!isCategoryPage && searchInput) {
         searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') runSearch();
         });

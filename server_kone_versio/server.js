@@ -840,11 +840,16 @@ function detectImageMime(filePath) {
 
 // TUOTTEET: Julkiset reitit
 app.get(`/api/products`, (req, res) => {
-    const categoryParam = req.query.category;
+    const categoryParam = (req.query.category || '').toString().trim();
     const lang = req.query.lang || 'fi'; // Oletuksena suomi
-    
-    let sql = !isNaN(categoryParam) 
-        ? "SELECT p.*, c.slug as category_slug FROM products p LEFT JOIN categories c ON p.category_id = c.id WHERE p.category_id = ? AND p.stock > 0 ORDER BY p.id DESC" 
+
+    if (!categoryParam) {
+        return res.json([]);
+    }
+
+    const isNumericCategory = /^\d+$/.test(categoryParam);
+    const sql = isNumericCategory
+        ? "SELECT p.*, c.slug as category_slug FROM products p LEFT JOIN categories c ON p.category_id = c.id WHERE p.category_id = ? AND p.stock > 0 ORDER BY p.id DESC"
         : "SELECT p.*, c.slug as category_slug FROM products p JOIN categories c ON p.category_id = c.id WHERE c.slug = ? AND p.stock > 0 ORDER BY p.id DESC";
 
     db.query(sql, [categoryParam], (err, results) => {
@@ -862,11 +867,16 @@ app.get(`/api/products`, (req, res) => {
 
 // Alias reitti /verkkokauppa/api/products
 app.get(`/verkkokauppa/api/products`, (req, res) => {
-    const categoryParam = req.query.category;
+    const categoryParam = (req.query.category || '').toString().trim();
     const lang = req.query.lang || 'fi'; // Oletuksena suomi
-    
-    let sql = !isNaN(categoryParam) 
-        ? "SELECT p.*, c.slug as category_slug FROM products p LEFT JOIN categories c ON p.category_id = c.id WHERE p.category_id = ? AND p.stock > 0 ORDER BY p.id DESC" 
+
+    if (!categoryParam) {
+        return res.json([]);
+    }
+
+    const isNumericCategory = /^\d+$/.test(categoryParam);
+    const sql = isNumericCategory
+        ? "SELECT p.*, c.slug as category_slug FROM products p LEFT JOIN categories c ON p.category_id = c.id WHERE p.category_id = ? AND p.stock > 0 ORDER BY p.id DESC"
         : "SELECT p.*, c.slug as category_slug FROM products p JOIN categories c ON p.category_id = c.id WHERE c.slug = ? AND p.stock > 0 ORDER BY p.id DESC";
 
     db.query(sql, [categoryParam], (err, results) => {
@@ -1010,6 +1020,7 @@ app.delete(`/verkkokauppa/api/products/:id`, vaadiKirjautuminen, (req, res) => {
 app.get(`/api/search`, (req, res) => {
     const term = req.query.q;
     const lang = req.query.lang || 'fi';
+    const categoryParam = (req.query.category || '').toString().trim();
     if (!term) return res.json([]);
 
     const langMap = {
@@ -1019,8 +1030,20 @@ app.get(`/api/search`, (req, res) => {
     };
     
     const columns = langMap[lang] || langMap.fi;
-    const sql = `SELECT * FROM products WHERE (${columns.name} LIKE ? OR ${columns.description} LIKE ?) AND stock > 0 ORDER BY created_at DESC`;
-    const values = [`%${term}%`, `%${term}%` || ''];
+    let sql = `SELECT * FROM products WHERE (${columns.name} LIKE ? OR ${columns.description} LIKE ?) AND stock > 0`;
+    const values = [`%${term}%`, `%${term}%`];
+
+    if (categoryParam) {
+        if (/^\d+$/.test(categoryParam)) {
+            sql += ' AND category_id = ?';
+            values.push(categoryParam);
+        } else {
+            sql += ' AND category_id = (SELECT id FROM categories WHERE slug = ? LIMIT 1)';
+            values.push(categoryParam);
+        }
+    }
+
+    sql += ' ORDER BY created_at DESC';
 
     db.query(sql, values, (err, results) => {
         if (err) {
@@ -1040,6 +1063,7 @@ app.get(`/api/search`, (req, res) => {
 app.get(`/verkkokauppa/api/search`, (req, res) => {
     const term = req.query.q;
     const lang = req.query.lang || 'fi';
+    const categoryParam = (req.query.category || '').toString().trim();
     if (!term) return res.json([]);
 
     const langMap = {
@@ -1049,8 +1073,20 @@ app.get(`/verkkokauppa/api/search`, (req, res) => {
     };
     
     const columns = langMap[lang] || langMap.fi;
-    const sql = `SELECT * FROM products WHERE (${columns.name} LIKE ? OR ${columns.description} LIKE ?) AND stock > 0 ORDER BY created_at DESC`;
-    const values = [`%${term}%`, `%${term}%` || ''];
+    let sql = `SELECT * FROM products WHERE (${columns.name} LIKE ? OR ${columns.description} LIKE ?) AND stock > 0`;
+    const values = [`%${term}%`, `%${term}%`];
+
+    if (categoryParam) {
+        if (/^\d+$/.test(categoryParam)) {
+            sql += ' AND category_id = ?';
+            values.push(categoryParam);
+        } else {
+            sql += ' AND category_id = (SELECT id FROM categories WHERE slug = ? LIMIT 1)';
+            values.push(categoryParam);
+        }
+    }
+
+    sql += ' ORDER BY created_at DESC';
 
     db.query(sql, values, (err, results) => {
         if (err) {

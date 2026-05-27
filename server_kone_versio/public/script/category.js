@@ -86,7 +86,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 2. Kategorian tunnistus osoitepalkista ---
     const pathParts = window.location.pathname.split('/').filter(part => part !== '');
-    const categoryId = pathParts[pathParts.length - 1];
+    const categoryIdRaw = pathParts[pathParts.length - 1];
+    const categoryIdParent = pathParts[pathParts.length - 2]?.toLowerCase();
+    const categoryId = (categoryIdParent === 'kategoria' && /^\d+$/.test(categoryIdRaw)) ? categoryIdRaw : null;
 
     const kategoriat = {
         '1': 'cat_auto',
@@ -102,9 +104,13 @@ document.addEventListener('DOMContentLoaded', () => {
         '11': 'cat_ict'
     };
 
-    if (kategoriat[categoryId] && categoryTitle) {
+    if (categoryId && kategoriat[categoryId] && categoryTitle) {
         categoryTitle.innerText = typeof t === 'function' ? t(kategoriat[categoryId]) : kategoriat[categoryId];
+    } else if (categoryTitle) {
+        categoryTitle.innerText = typeof t === 'function' ? t('loading_category_products') : 'Ladataan kategorian tuotteita...';
     }
+
+    let activeFetchId = 0;
 
     // --- 3. Tuotteiden piirtaminen sivulle ---
     function resolveImageSrc(image) {
@@ -262,7 +268,12 @@ const visibleProducts = products.filter((product) => (Number(product.stock) || 0
 
     function loadCategoryProducts() {
         const currentLang = getCurrentLanguage();
-        fetch(`/verkkokauppa/api/products?category=${categoryId}&lang=${currentLang}`)
+        if (!categoryId) {
+            grid.innerHTML = '<p>Virheellinen kategoria.</p>';
+            return;
+        }
+
+        fetch(`/verkkokauppa/api/products?category=${encodeURIComponent(categoryId)}&lang=${currentLang}`)
             .then(res => res.json())
             .then(products => {
                 console.log('Kategoriasta haetut tuotteet:', products);
@@ -283,7 +294,8 @@ const visibleProducts = products.filter((product) => (Number(product.stock) || 0
         if (term.length > 0) {
             const label = typeof t === 'function' ? t('search_results_title') : 'Haun tulokset';
             categoryTitle.innerText = `${label}: "${term}"`;
-            fetch(`/verkkokauppa/api/search?q=${encodeURIComponent(term)}&lang=${encodeURIComponent(currentLang)}`)
+            const categoryQuery = categoryId ? `&category=${encodeURIComponent(categoryId)}` : '';
+            fetch(`/verkkokauppa/api/search?q=${encodeURIComponent(term)}${categoryQuery}&lang=${encodeURIComponent(currentLang)}`)
                 .then(res => res.json())
                 .then(products => renderProducts(products))
                 .catch(err => console.error('Hakuvirhe:', err));
@@ -296,6 +308,14 @@ const visibleProducts = products.filter((product) => (Number(product.stock) || 0
     if (searchInput) {
         searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') suoritaHaku();
+        });
+        searchInput.addEventListener('input', () => {
+            if (searchInput.value.trim().length === 0) {
+                if (kategoriat[categoryId] && categoryTitle) {
+                    categoryTitle.innerText = typeof t === 'function' ? t(kategoriat[categoryId]) : kategoriat[categoryId];
+                }
+                loadCategoryProducts();
+            }
         });
     }
 
